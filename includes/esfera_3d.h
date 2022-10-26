@@ -290,6 +290,10 @@ public:
         if(ret.g<0) ret.g=0;
         if(ret.b<0) ret.b=0;
 
+        if(EVENT_DOWN(SPACE)){
+          std::cout << "Color: {" << (int)ret.r << ", " << (int)ret.g << ", " << (int)ret.b << ", " << (int)ret.a << " }" << std::endl;
+        }
+
         return ret;
     }
 

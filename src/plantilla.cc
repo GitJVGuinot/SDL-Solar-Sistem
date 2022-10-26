@@ -26,57 +26,10 @@ MV::Pnt2 max_win = {(float)(k_TextWitdh * g_Columnas), (float)(k_TextHeight *g_F
 MV::Pnt2 middle_win = {max_win.x / 2, max_win.y / 2};
 MV::Pnt2 min_win = {0, 0};
 
-void Orbitar_Camara(MV::Pnt3 centro_orbita, MV::Pnt3 p_orbita, MV::Pnt3 &punto)
-{
-  MV::Mat4 rot_x;
-  if (p_orbita.x != 0)
-    rot_x = MV::Mat4RotateX((p_orbita.x * PI) / 180);
-  MV::Mat4 rot_y;
-  if (p_orbita.y != 0)
-    rot_y = MV::Mat4RotateY((p_orbita.y * PI) / 180);
-  MV::Mat4 rot_z;
-  if (p_orbita.z != 0)
-    rot_z = MV::Mat4RotateZ((p_orbita.z * PI) / 180);
-
-  MV::Mat4 model = MV::Mat4Identity();
-  if (p_orbita.x != 0)
-    model = MV::Mat4Multiply(model, rot_x);
-  if (p_orbita.y != 0)
-    model = MV::Mat4Multiply(model, rot_y);
-  if (p_orbita.z != 0)
-    model = MV::Mat4Multiply(model, rot_z);
-
-  punto = MV::Vec_Resta(punto, centro_orbita);
-  punto = MV::Mat4TransformVec3(model, punto);
-  punto = MV::Vec_Sum(punto, centro_orbita);
-}
-
 int main(int argc, char **argv)
 {
 
   srand(time(nullptr));
-  //////////////////////////////////////////////////////////////////////////
-  // Comprobante de metodo burbuja para ordenar numeros
-  /*
-    int array[220];
-
-    for(int i=0; i<220; i++) array[i]=iRand(2000,-1000);
-
-    for(int i=0; i<220; i++){
-      for(int j = 0; j<220; j++){
-        if(array[i]<array[j]){
-          int aux = array[i];
-          array[i]=array[j];
-          array[j]=aux;
-        }
-      }
-    }
-    for(int i=0; i<220; i++){
-      std::cout << "I: " << i << ", Array: " << array[i] << std::endl;
-    }
-    std::cout << std::endl;
-  */
-  //////////////////////////////////////////////////////////////////////////
 
   // Inicializacion de los servicios de SDL
   TTF_Init();
@@ -127,47 +80,37 @@ int main(int argc, char **argv)
       std::cout << "Magnitud: " << MV::Vec_Magn(MV::Vec_Resta(camara, sun.desp_)) << std::endl;
     }
 
-    // for (int i = 0; i < max_planets; i++)
+    // for (int i = 0; i < max_planets/4; i++)
     // {
     //   (planet + i)->orbitar(0.1f);
     //   (planet + i)->draw(win.render, camara, mira, light, false);
     // }
 
-    if (EVENT_DOWN(DOWN))
-      Orbitar_Camara(mira, {1, 0, 0}, camara);
-    if (EVENT_DOWN(UP))
-      Orbitar_Camara(mira, {-1, 0, 0}, camara);
-    if (EVENT_DOWN(RIGHT))
-      Orbitar_Camara(mira, {0, 1, 0}, camara);
-    if (EVENT_DOWN(LEFT))
-      Orbitar_Camara(mira, {0, -1, 0}, camara);
-    if (EVENT_DOWN(K_n))
-      Orbitar_Camara(mira, {0, 0, 1}, camara);
-    if (EVENT_DOWN(K_m))
-      Orbitar_Camara(mira, {0, 0, -1}, camara);
+    if (EVENT_DOWN(DOWN)){ Orbitar_Punto(mira, MV::Vec3{1, 0, 0}, camara); }
+    if (EVENT_DOWN(UP)){ Orbitar_Punto(mira, MV::Vec3{-1, 0, 0}, camara); }
+    if (EVENT_DOWN(RIGHT)){ Orbitar_Punto(mira, MV::Vec3{0, 1, 0}, camara); }
+    if (EVENT_DOWN(LEFT)){ Orbitar_Punto(mira, MV::Vec3{0, -1, 0}, camara); }
+    if (EVENT_DOWN(K_n)){ Orbitar_Punto(mira, MV::Vec3{0, 0, 1}, camara); }
+    if (EVENT_DOWN(K_m)){ Orbitar_Punto(mira, MV::Vec3{0, 0, -1}, camara); }
 
-    if (EVENT_DOWN(K_a))
-    {
+    Orbitar_Punto(mira, {fRand(0.5f,0), fRand(0.5f,0), fRand(0.5f,0)}, light);
+
+    if (EVENT_DOWN(K_a)){
       camara.x--;
     }
-    if (EVENT_DOWN(K_d))
-    {
+    if (EVENT_DOWN(K_d)){
       camara.x++;
     }
-    if (EVENT_DOWN(K_w))
-    {
+    if (EVENT_DOWN(K_w)){
       camara.y--;
     }
-    if (EVENT_DOWN(K_s))
-    {
+    if (EVENT_DOWN(K_s)){
       camara.y++;
     }
-    if (EVENT_DOWN(K_q))
-    {
+    if (EVENT_DOWN(K_q)){
       camara.z--;
     }
-    if (EVENT_DOWN(K_e))
-    {
+    if (EVENT_DOWN(K_e)){
       camara.z++;
     }
 
