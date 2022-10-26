@@ -278,12 +278,12 @@ public:
         if (angulo < 0)
             angulo *= -1;
 
-        if(angulo>140) angulo+=(140-angulo);
-        angleRest *= (angulo+40);
+        if(angulo>130) angulo+=(130-angulo);
+        angleRest *= (angulo+50);
 
-        if(ret.r>0) ret.r -= angleRest;
-        if(ret.g>0) ret.g -= angleRest;
-        if(ret.a>0) ret.b -= angleRest;
+        if(ret.r>0) ret.r -= (Uint8)angleRest;
+        if(ret.g>0) ret.g -= (Uint8)angleRest;
+        if(ret.a>0) ret.b -= (Uint8)angleRest;
         ret.a = SDL_ALPHA_OPAQUE;
 
         if(ret.r<0) ret.r=0;
@@ -383,18 +383,8 @@ public:
                 point1[0] = draw_sdl_.at(caras[order[i]].points[2]);
                 point1[2] = draw_sdl_.at(caras[order[i]].points[0]);
 
-                // SDL_Vertex *point2=(SDL_Vertex*)calloc(4,sizeof(SDL_Vertex));
-                // for(int j=0; j<4; j++){
-                //   point2[j]=draw_sdl_.at(caras[i].points[j]);
-                // }
-
                 SDL_RenderGeometry(render, NULL, point, 3, NULL, 0);
                 SDL_RenderGeometry(render, NULL, point1, 3, NULL, 0);
-
-                // SDL_RenderDrawLine(render, point2[0].position.x, point2[0].position.y, point2[1].position.x, point2[1].position.y);
-                // SDL_RenderDrawLine(render, point2[1].position.x, point2[1].position.y, point2[2].position.x, point2[2].position.y);
-                // SDL_RenderDrawLine(render, point2[2].position.x, point2[2].position.y, point2[3].position.x, point2[3].position.y);
-                // SDL_RenderDrawLine(render, point2[3].position.x, point2[3].position.y, point2[0].position.x, point2[0].position.y);
 
                 DESTROY(point);
             }

@@ -1,0 +1,14 @@
+# VSCode
+
+*.vscode
+
+#VS
+
+*.vs
+
+# Objects
+
+*.obj
+*.ilk
+*.pdb
+*.exe

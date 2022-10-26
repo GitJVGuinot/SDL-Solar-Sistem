@@ -37,9 +37,12 @@ private:
   float win_x;
   float win_y;
 
-  const double fps = 60.0;
+  const double fps = 120.0;
   double current_time = 0.0;
   double last_time = 0.0;
+
+  float frame_rate;
+  int ticks;
 
 public:
   bool runing;
@@ -69,7 +72,7 @@ public:
 
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL |
         SDL_WINDOW_RESIZABLE |
-        SDL_WINDOW_ALLOW_HIGHDPI);
+        SDL_WINDOW_ALLOW_HIGHDPI );
     window = SDL_CreateWindow("SLD test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, win_x, win_y, window_flags);
 
     render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -80,20 +83,51 @@ public:
     std::cout << "My_Window creada" << std::endl;
   }
 
+  void changeResolution(MV::Pnt2 row_col){
+    filas=row_col.x;
+    columnas=row_col.y;
+
+    win_x = columnas * textWidth;
+    win_y = filas * textHeight;
+    SDL_DestroyRenderer(render);
+    SDL_DestroyWindow(window);
+
+    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL |
+        SDL_WINDOW_RESIZABLE |
+        SDL_WINDOW_ALLOW_HIGHDPI );
+    window = SDL_CreateWindow("SLD test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, win_x, win_y, window_flags);
+
+    render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  }
+
   void whileInit()
   {
+    ticks=SDL_GetTicks();
     // Limpia la pantalla dejandola en negro
     SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
     SDL_RenderClear(render);
     TakeKeyboard();
   }
 
-  void whileEnd()
+  void whileEnd(bool b_frame_rate)
   {
-    do
-    { // control fps por segundo.
-      current_time = SDL_GetTicks();
-    } while (((current_time - last_time) <= (1000.0*100.0) / fps) && runing);
+
+    // do
+    // { // control fps por segundo.
+    //   current_time = SDL_GetTicks();
+    // } while (((current_time - last_time) <= (1000) / fps) && runing);
+    // last_time=SDL_GetTicks();
+
+    if(b_frame_rate){
+      static int cont=0;
+      ticks=SDL_GetTicks()-ticks;
+      if(cont >= 30){ frame_rate=1000/ticks; cont-=30; }
+      cont++;
+
+      char texto[5];
+      snprintf(texto, 5, "%d", (int)frame_rate);
+      text(texto, 1, columnas-1-strlen(texto), colores[BLANCO]);
+    }
 
     SDL_RenderPresent(render);
 
@@ -104,7 +138,6 @@ public:
   {
 
     font = TTF_OpenFont(font_path, textHeight);
-
     if (!font)
     {
       TTF_CloseFont(font);
@@ -117,7 +150,6 @@ public:
       TTF_CloseFont(font);
       font = TTF_OpenFont(font_path, textHeight);
     }
-
     std::cout << "Font Height: " << TTF_FontHeight(font) << std::endl;
 
     return font;
