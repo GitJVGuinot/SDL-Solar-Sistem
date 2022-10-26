@@ -26,10 +26,33 @@ MV::Pnt2 max_win = {(float)(k_TextWitdh * g_Columnas), (float)(k_TextHeight *g_F
 MV::Pnt2 middle_win = {max_win.x / 2, max_win.y / 2};
 MV::Pnt2 min_win = {0, 0};
 
+SDL_Color colores[MAX_COLORS] = {
+  {255, 000, 000, SDL_ALPHA_OPAQUE},    // ROJO
+
+  {000, 255, 000, SDL_ALPHA_OPAQUE},    // VERDE
+
+  {000, 000, 255, SDL_ALPHA_OPAQUE},    // AZUL
+
+  {000, 255, 255, SDL_ALPHA_OPAQUE},    // CYAN
+
+  {255, 000, 255, SDL_ALPHA_OPAQUE},    // MAGENTA
+
+  {255, 255, 000, SDL_ALPHA_OPAQUE},    // AMARILLO
+
+  {255, 255, 255, SDL_ALPHA_OPAQUE},    // BLANCO
+  {127, 127, 127, SDL_ALPHA_OPAQUE},    // GRIS
+  {000, 000, 000, SDL_ALPHA_OPAQUE},    // NEGRO
+};
+
+
 int main(int argc, char **argv)
 {
 
   srand(time(nullptr));
+
+  Keys keys[MAX_INPUTS];
+
+  InitKeyboard(keys);
 
   // Inicializacion de los servicios de SDL
   TTF_Init();
@@ -48,7 +71,7 @@ int main(int argc, char **argv)
   }
   win.setGameTitle(*argv);
 
-  Esfera sun = *new Esfera(colores[BLANCO], 20, {30,30,30}, {middle_win.x, middle_win.y, 0.0f});
+  Esfera sun = *new Esfera(colores[BLANCO], 12, {30,30,30}, {middle_win.x, middle_win.y, 0.0f});
   int max_planets = 4;
   Esfera *planet = (Esfera *)calloc(max_planets, sizeof(Esfera));
   sun.rotar({ fRand(0.075f,0),fRand(0.075f,0), fRand(0.075f,0) });
@@ -67,14 +90,14 @@ int main(int argc, char **argv)
   MV::Pnt3 mira = sun.desp_;
   while (win.runing)
   {
-    win.whileInit();
+    win.whileInit(keys);
 
     sun.draw(win.render, camara, sun.desp_, light, false);
     sun.rotar({fRand(0.0075f,0),fRand(0.0075f,0), fRand(0.0075f,0)});
 
-    // Orbitar_Punto(mira, {fRand(0.5f,0), fRand(0.5f,0), fRand(0.5f,0)}, light);
+    Orbitar_Punto(mira, {fRand(0.5f,0), fRand(0.5f,0), fRand(0.5f,0)}, light);
 
-    if (EVENT_DOWN(K_o))
+    if (EVENT_DOWN(K_o, keys))
     {
       sun.imprime();
       MV::Vec_Print(camara, "Camera point");
@@ -88,34 +111,34 @@ int main(int argc, char **argv)
     //   (planet + i)->draw(win.render, camara, mira, light, false);
     // }
 
-    if (EVENT_DOWN(DOWN)){ Orbitar_Punto(mira, MV::Vec3{1, 0, 0}, camara); }
-    if (EVENT_DOWN(UP)){ Orbitar_Punto(mira, MV::Vec3{-1, 0, 0}, camara); }
-    if (EVENT_DOWN(RIGHT)){ Orbitar_Punto(mira, MV::Vec3{0, 1, 0}, camara); }
-    if (EVENT_DOWN(LEFT)){ Orbitar_Punto(mira, MV::Vec3{0, -1, 0}, camara); }
-    if (EVENT_DOWN(K_n)){ Orbitar_Punto(mira, MV::Vec3{0, 0, 1}, camara); }
-    if (EVENT_DOWN(K_m)){ Orbitar_Punto(mira, MV::Vec3{0, 0, -1}, camara); }
+    if (EVENT_DOWN(DOWN, keys)){ Orbitar_Punto(mira, MV::Vec3{1, 0, 0}, camara); }
+    if (EVENT_DOWN(UP, keys)){ Orbitar_Punto(mira, MV::Vec3{-1, 0, 0}, camara); }
+    if (EVENT_DOWN(RIGHT, keys)){ Orbitar_Punto(mira, MV::Vec3{0, 1, 0}, camara); }
+    if (EVENT_DOWN(LEFT, keys)){ Orbitar_Punto(mira, MV::Vec3{0, -1, 0}, camara); }
+    if (EVENT_DOWN(K_n, keys)){ Orbitar_Punto(mira, MV::Vec3{0, 0, 1}, camara); }
+    if (EVENT_DOWN(K_m, keys)){ Orbitar_Punto(mira, MV::Vec3{0, 0, -1}, camara); }
 
 
-    if (EVENT_DOWN(K_a)){
+    if (EVENT_DOWN(K_a, keys)){
       camara.x--;
     }
-    if (EVENT_DOWN(K_d)){
+    if (EVENT_DOWN(K_d, keys)){
       camara.x++;
     }
-    if (EVENT_DOWN(K_w)){
+    if (EVENT_DOWN(K_w, keys)){
       camara.y--;
     }
-    if (EVENT_DOWN(K_s)){
+    if (EVENT_DOWN(K_s, keys)){
       camara.y++;
     }
-    if (EVENT_DOWN(K_q)){
+    if (EVENT_DOWN(K_q, keys)){
       camara.z--;
     }
-    if (EVENT_DOWN(K_e)){
+    if (EVENT_DOWN(K_e, keys)){
       camara.z++;
     }
 
-    win.whileEnd(true);
+    win.whileEnd(keys);
   }
 
   win.Destroy();
