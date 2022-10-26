@@ -1207,12 +1207,12 @@ namespace MV
     punto = Vec_Sum(punto, centro_orbita);
   }
 
-  MV::Pnt3 Centro_Triangulo(MV::Pnt3 *triangulos) {
+  MV::Pnt3 Centro_Triangulo(MV::Pnt3 *triangulo) {
     MV::Pnt3 ret={0,0,0};
 
-    ret.x = ((triangulos + 0)->x, (triangulos + 1)->x, (triangulos + 2)->x);
-    ret.y = ((triangulos + 0)->y, (triangulos + 1)->y, (triangulos + 2)->y);
-    ret.z = ((triangulos + 0)->z, (triangulos + 1)->z, (triangulos + 2)->z);
+    ret.x = ((triangulo + 0)->x, (triangulo + 1)->x, (triangulo + 2)->x);
+    ret.y = ((triangulo + 0)->y, (triangulo + 1)->y, (triangulo + 2)->y);
+    ret.z = ((triangulo + 0)->z, (triangulo + 1)->z, (triangulo + 2)->z);
 
     return ret;
   }

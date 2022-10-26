@@ -116,7 +116,7 @@ int main(int argc, char **argv)
   {
     win.whileInit();
 
-    sun.draw(win.render, camara, sun.desp_, light, true);
+    sun.draw(win.render, camara, sun.desp_, light, false);
     sun.rotar({fRand(0.0075f,0),fRand(0.0075f,0), fRand(0.0075f,0)});
 
     if (EVENT_DOWN(K_o))

@@ -12,13 +12,12 @@ bool print = true;
 class Esfera
 {
 private:
-    MV::Pnt3 *points_;
-
     MV::Pnt3 escala_;
     MV::Pnt3 rotado_;
 
     int res_;
-    MV::Pnt2 *draw_;
+    MV::Pnt3 *points_;
+    MV::Pnt3 *centros_;
     std::vector<SDL_Vertex> draw_sdl_;
 
     struct Caras
@@ -34,7 +33,7 @@ private:
         vertices_ = (2 * res_) * (res_ + 1);
 
         points_ = (MV::Pnt3 *)calloc(vertices_, sizeof(MV::Pnt3));
-        draw_ = (MV::Pnt2 *)calloc(vertices_, sizeof(MV::Pnt2));
+        centros_ = (MV::Pnt3 *)calloc(vertices_, sizeof(MV::Pnt3));
         caras = (Caras *)calloc(vertices_, sizeof(Caras));
 
         float incremento = (PI / res_);
@@ -81,6 +80,13 @@ private:
 
                 i++;
             }
+        }
+
+        for(int i=0; i<vertices_; i++){
+          centros_[i]={0,0,0};
+          centros_[i]=Vec_Resta(points_[caras[i].points[0]], points_[caras[i].points[2]]);
+          centros_[i]=Vec_Escalado(centros_[i], 0.5f);
+          centros_[i]=Vec_Sum(centros_[i], points_[caras[i].points[2]]);
         }
     }
 
@@ -154,6 +160,7 @@ public:
         for (int i = 0; i < vertices_; i++)
         {
             *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
+            *(centros_ + i) = MV::Mat4TransformVec3(model, *(centros_ + i));
         }
         desplazar(desp__);
     }
@@ -184,7 +191,8 @@ public:
         desplazar({-centro_orbita_.x, -centro_orbita_.y, -centro_orbita_.z});
         for (int i = 0; i < vertices_; i++)
         {
-            *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
+          *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
+          *(centros_ + i) = MV::Mat4TransformVec3(model, *(centros_ + i));
         }
         desplazar(centro_orbita_);
     }
@@ -194,7 +202,8 @@ public:
         desp_ = MV::Vec_Sum(desp_, p_desp_);
         for (int i = 0; i < vertices_; i++)
         {
-            *(points_ + i) = MV::Vec_Sum(*(points_ + i), p_desp_);
+          *(points_ + i) = MV::Vec_Sum(*(points_ + i), p_desp_);
+          *(centros_ + i) = MV::Vec_Sum(*(centros_ + i), p_desp_);
         }
     }
 
@@ -212,7 +221,8 @@ public:
         desplazar({-desp_.x, -desp_.y, -desp_.z});
         for (int i = 0; i < vertices_; i++)
         {
-            *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
+          *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
+          *(centros_ + i) = MV::Mat4TransformVec3(model, *(centros_ + i));
         }
         desplazar(desp__);
     }
@@ -274,22 +284,17 @@ public:
         ret.r -= angleRest;
         ret.g -= angleRest;
         ret.b -= angleRest;
-        ret.a = SDL_ALPHA_OPAQUE; 
+        ret.a = SDL_ALPHA_OPAQUE;
 
         return ret;
     }
 
-    void obtenerSDLVertex(MV::Pnt3 light)
+    void obtenerSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point)
     {
-
-        draw_sdl_.clear();
-        for (int i = 0; i < vertices_; i++)
-        {
-            SDL_Color color;
-            color = obtenerColorLight(*(points_ + i), light);
-            SDL_Vertex valor = {{draw_[i].x, draw_[i].y}, color, {0, 0}};
-            draw_sdl_.push_back(valor);
-        }
+      SDL_Color color;
+      color = obtenerColorLight(point, light);
+      SDL_Vertex valor = {{draw.x,draw.y}, color, {0, 0}};
+      draw_sdl_.push_back(valor);
     }
 
     void draw(SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light = {0, 0, 0}, bool puntos = true)
@@ -303,6 +308,7 @@ public:
         MV::Mat3 model = MV::Mat3Identity();
         MV::Mat3 scala = MV::Mat3Scale({200, 200});
         MV::Mat3 desp;
+
         if ((centro_orbita_.x + centro_orbita_.y + centro_orbita_.z) == 0)
         {
             desp = MV::Mat3Translate(MV::Vec3_Tr_Vec2(desp_));
@@ -313,19 +319,21 @@ public:
         }
         model = MV::Mat3Multiply(desp, scala);
 
+        MV::Pnt2 draw;
+        draw_sdl_.clear();
         for (int i = 0; i < vertices_; i++)
         {
             MV::Vec3 new_point = MV::Mat4TransformVec3(vMatrix, *(points_ + i));
-            *(draw_ + i) = MV::Vec3_Tr_Vec2(new_point);
+            draw = MV::Vec3_Tr_Vec2(new_point);
 
-            new_point = MV::Vec2_Tr_Vec3(*(draw_ + i), 1);
+            new_point = MV::Vec2_Tr_Vec3(draw, 1);
 
             new_point = MV::Mat3TransformVec3(model, new_point);
 
-            *(draw_ + i) = MV::Vec3_Tr_Vec2(new_point);
+            draw = MV::Vec3_Tr_Vec2(new_point);
+            obtenerSDLVertex(light, draw, *(points_ + i));
         }
 
-        obtenerSDLVertex(light);
 
         // Dibujado de puntos
         if (!puntos)
@@ -335,22 +343,11 @@ public:
             for (int i = 0; i < vertices_; i++)
                 distance[i] = i;
 
-            MV::Pnt3* centros = (MV::Pnt3*)calloc(vertices_, sizeof(MV::Pnt3));
-            
-            MV::Pnt3* triangle = (MV::Pnt3*)calloc(3, sizeof(MV::Pnt3));
-            for(int i=0; i<vertices_; i++){
-              triangle[0] = points_[caras[i].points[0]];
-              triangle[1] = points_[caras[i].points[1]];
-              triangle[2] = points_[caras[i].points[2]];
-              centros[i] = MV::Centro_Triangulo(triangle);
-            }
-            DESTROY(triangle);
-
             for (int i = 0; i < vertices_; i++)
             {
                 for (int j = 1; j < vertices_; j++)
                 {
-                    if (MV::Vec_Magn(centros[distance[i]]) <= MV::Vec_Magn(centros[distance[j]]))
+                    if (MV::Vec_Magn(centros_[distance[i]]) <= MV::Vec_Magn(centros_[distance[j]]))
                     {
                         int aux = distance[i];
                         distance[i] = distance[j];
@@ -361,15 +358,14 @@ public:
 
             if (print)
               for (int i = 0; i < vertices_; i++) {
-                std::cout << "I: " << i << ", Magn: " << MV::Vec_Magn(centros[distance[i]]) << ", distance[i]=" << distance[i] << std::endl;
-                MV::Vec_Print(centros[distance[i]], "Centro 1: ");
+                std::cout << "I: " << i << ", Magn: " << MV::Vec_Magn(centros_[distance[i]]) << ", distance[i]=" << distance[i] << std::endl;
+                MV::Vec_Print(centros_[distance[i]], "Centro 1: ");
                 MV::Vec_Print(points_[caras[distance[i]].points[0]], "Vertex 0: ");
                 MV::Vec_Print(points_[caras[distance[i]].points[1]], "Vertex 1: ");
                 MV::Vec_Print(points_[caras[distance[i]].points[2]], "Vertex 2: ");
                 std::cout << std::endl;
               }
             print = false;
-            DESTROY(centros);
             // That is for lines
             for (int i = 0; i < vertices_; i++)
             {
@@ -405,7 +401,7 @@ public:
             for (int i = 0; i < vertices_; i++)
             {
                 SDL_SetRenderDrawColor(render, RGBA(draw_sdl_.at(i).color));
-                SDL_RenderDrawPoint(render, (draw_ + i)->x, (draw_ + i)->y);
+                SDL_RenderDrawPoint(render, draw_sdl_.at(i).position.x, draw_sdl_.at(i).position.y);
             }
         }
     }
