@@ -95,7 +95,7 @@ int main(int argc, char **argv)
   }
   win.setGameTitle(*argv);
 
-  Esfera sun = *new Esfera(colores[BLANCO], 10, {50,50,50}, {middle_win.x, middle_win.y, 0.0f});
+  Esfera sun = *new Esfera(colores[BLANCO], 20, {50,50,50}, {middle_win.x, middle_win.y, 0.0f});
   int max_planets = 4;
   Esfera *planet = (Esfera *)calloc(max_planets, sizeof(Esfera));
   sun.rotar({ fRand(0.075f,0),fRand(0.075f,0), fRand(0.075f,0) });

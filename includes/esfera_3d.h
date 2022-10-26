@@ -82,8 +82,8 @@ private:
             }
         }
 
-        for(int i=0; i<vertices_; i++){
-          centros_[i]={0,0,0};
+        for(int i=0; i<vertices_; i++)
+        {
           centros_[i]=Vec_Resta(points_[caras[i].points[0]], points_[caras[i].points[2]]);
           centros_[i]=Vec_Escalado(centros_[i], 0.5f);
           centros_[i]=Vec_Sum(centros_[i], points_[caras[i].points[2]]);
@@ -279,12 +279,17 @@ public:
         if (angulo < 0)
             angulo *= -1;
 
-        angleRest *= angulo;
+        if(angulo>140) angulo+=(140-angulo);
+        angleRest *= (angulo+40);
 
-        ret.r -= angleRest;
-        ret.g -= angleRest;
-        ret.b -= angleRest;
+        if(ret.r>0) ret.r -= angleRest;
+        if(ret.g>0) ret.g -= angleRest;
+        if(ret.a>0) ret.b -= angleRest;
         ret.a = SDL_ALPHA_OPAQUE;
+
+        if(ret.r<0) ret.r=0;
+        if(ret.g<0) ret.g=0;
+        if(ret.b<0) ret.b=0;
 
         return ret;
     }
@@ -347,7 +352,7 @@ public:
             {
                 for (int j = 1; j < vertices_; j++)
                 {
-                    if (MV::Vec_Magn(centros_[distance[i]]) <= MV::Vec_Magn(centros_[distance[j]]))
+                    if (MV::Vec_Magn(MV::Vec_Resta(centros_[distance[i]],camara)) <= MV::Vec_Magn(MV::Vec_Resta(centros_[distance[j]],camara)))
                     {
                         int aux = distance[i];
                         distance[i] = distance[j];
