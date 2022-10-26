@@ -8,7 +8,6 @@
 #define RGBA(x) x.r, x.g, x.b, x.a
 #endif
 
-bool print = true;
 class Esfera
 {
 private:
@@ -343,46 +342,42 @@ public:
         // Dibujado de puntos
         if (!puntos)
         {
-            int *distance = (int *)calloc(vertices_, sizeof(int));
+            int *order = (int *)calloc(vertices_, sizeof(int));
 
             for (int i = 0; i < vertices_; i++)
-                distance[i] = i;
+                order[i] = i;
 
             for (int i = 0; i < vertices_; i++)
             {
                 for (int j = 1; j < vertices_; j++)
                 {
-                    if (MV::Vec_Magn(MV::Vec_Resta(centros_[distance[i]],camara)) <= MV::Vec_Magn(MV::Vec_Resta(centros_[distance[j]],camara)))
+                    if (MV::Vec_Magn(MV::Vec_Resta(centros_[order[i]],camara)) <= MV::Vec_Magn(MV::Vec_Resta(centros_[order[j]],camara)))
                     {
-                        int aux = distance[i];
-                        distance[i] = distance[j];
-                        distance[j] = aux;
+                        int aux = order[i];
+                        order[i] = order[j];
+                        order[j] = aux;
                     }
                 }
             }
 
-            if (print)
-              for (int i = 0; i < vertices_; i++) {
-                std::cout << "I: " << i << ", Magn: " << MV::Vec_Magn(centros_[distance[i]]) << ", distance[i]=" << distance[i] << std::endl;
-                MV::Vec_Print(centros_[distance[i]], "Centro 1: ");
-                MV::Vec_Print(points_[caras[distance[i]].points[0]], "Vertex 0: ");
-                MV::Vec_Print(points_[caras[distance[i]].points[1]], "Vertex 1: ");
-                MV::Vec_Print(points_[caras[distance[i]].points[2]], "Vertex 2: ");
-                std::cout << std::endl;
-              }
-            print = false;
+            for(int i=0; i<vertices_-1; i++){
+              int aux=order[i];
+              order[i]=order[i+1];
+              order[i+1]=aux;
+            }
+
             // That is for lines
             for (int i = 0; i < vertices_; i++)
             {
                 SDL_Vertex *point = (SDL_Vertex *)calloc(3, sizeof(SDL_Vertex));
-                point[0] = draw_sdl_.at(caras[distance[i]].points[0]);
-                point[1] = draw_sdl_.at(caras[distance[i]].points[1]);
-                point[2] = draw_sdl_.at(caras[distance[i]].points[2]);
+                point[0] = draw_sdl_.at(caras[order[i]].points[0]);
+                point[1] = draw_sdl_.at(caras[order[i]].points[1]);
+                point[2] = draw_sdl_.at(caras[order[i]].points[2]);
 
                 SDL_Vertex *point1 = (SDL_Vertex *)calloc(3, sizeof(SDL_Vertex));
-                point1[1] = draw_sdl_.at(caras[distance[i]].points[3]);
-                point1[0] = draw_sdl_.at(caras[distance[i]].points[2]);
-                point1[2] = draw_sdl_.at(caras[distance[i]].points[0]);
+                point1[1] = draw_sdl_.at(caras[order[i]].points[3]);
+                point1[0] = draw_sdl_.at(caras[order[i]].points[2]);
+                point1[2] = draw_sdl_.at(caras[order[i]].points[0]);
 
                 // SDL_Vertex *point2=(SDL_Vertex*)calloc(4,sizeof(SDL_Vertex));
                 // for(int j=0; j<4; j++){

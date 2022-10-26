@@ -95,15 +95,15 @@ int main(int argc, char **argv)
   }
   win.setGameTitle(*argv);
 
-  Esfera sun = *new Esfera(colores[BLANCO], 20, {50,50,50}, {middle_win.x, middle_win.y, 0.0f});
+  Esfera sun = *new Esfera(colores[BLANCO], 10, {30,30,30}, {middle_win.x, middle_win.y, 0.0f});
   int max_planets = 4;
   Esfera *planet = (Esfera *)calloc(max_planets, sizeof(Esfera));
   sun.rotar({ fRand(0.075f,0),fRand(0.075f,0), fRand(0.075f,0) });
 
-  *(planet + 0) = *new Esfera(colores[0], 5, {6, 6, 6}, {sun.desp_.x - 70, sun.desp_.y + 70, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, sun.desp_);
-  *(planet + 1) = *new Esfera(colores[1], 5, {5, 5, 5}, {sun.desp_.x, sun.desp_.y + 70, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, sun.desp_);
-  *(planet + 2) = *new Esfera(colores[2], 5, {4, 4, 4}, {sun.desp_.x - 90, sun.desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, sun.desp_);
-  *(planet + 3) = *new Esfera(colores[3], 5, {3, 3, 3}, {sun.desp_.x + 90, sun.desp_.y + 90, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, sun.desp_);
+  *(planet + 0) = *new Esfera(colores[0], 3, {6, 6, 6}, {sun.desp_.x - 50, sun.desp_.y + 50, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, sun.desp_);
+  *(planet + 1) = *new Esfera(colores[1], 3, {5, 5, 5}, {sun.desp_.x, sun.desp_.y + 50, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, sun.desp_);
+  *(planet + 2) = *new Esfera(colores[2], 3, {4, 4, 4}, {sun.desp_.x - 70, sun.desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, sun.desp_);
+  *(planet + 3) = *new Esfera(colores[3], 3, {3, 3, 3}, {sun.desp_.x + 70, sun.desp_.y + 70, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, sun.desp_);
 
   // Imprimir en pantalla los datos de la ventana
   std::cout << "WIN_X: " << max_win.x << ", WIN_Y: " << max_win.y << std::endl;
