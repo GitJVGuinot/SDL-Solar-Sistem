@@ -1,7 +1,5 @@
 #include <mv_math.h>
 
-
-
   int InF()
   {
     int inf = 0x7F800000;

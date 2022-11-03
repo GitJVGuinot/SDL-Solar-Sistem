@@ -291,6 +291,7 @@
         model = MV::Mat3Multiply(desp, scala);
 
         MV::Pnt2 draw;
+
         draw_sdl_.clear();
         for (int i = 0; i < vertices_; i++)
         {
