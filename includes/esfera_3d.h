@@ -8,6 +8,10 @@
 #define RGBA(x) x.r, x.g, x.b, x.a
 #endif
 
+#ifndef VEC3_PRINT
+#define VEC3_PRINT(v) v.x<<", "<<v.y<<", "<<v.z
+#endif
+
 ////////////////////////
 // GUARDAS NO TOCAR
 #ifndef esfera_3d_h
@@ -58,11 +62,11 @@ public:
 
     void inputs(Keys *keys);
 
-    SDL_Color obtenerColorLight(MV::Pnt3 point, MV::Pnt3 light);
+    SDL_Color renderColorLight(MV::Pnt3 point, MV::Pnt3 light);
 
     SDL_Vertex obtenerSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point);
 
-    void draw(SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light = {0, 0, 0}, bool puntos = true);
+    void draw(Keys *keys, SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light = {0, 0, 0}, bool puntos = true);
 
     void imprime();
 };

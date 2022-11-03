@@ -22,8 +22,6 @@ int g_Columnas = 85;
 #define FONT_PATH "../data/fonts/anonymous_pro.ttf"
 #define FONT_PATH_1 "/usr/share/fonts/truetype/lao/Phetsarath_OT.ttf"
 
-#define VEC3_PRINT(v) v.x<<", "<<v.y<<", "<<v.z
-
 MV::Pnt2 max_win = {(float)(k_TextWitdh * g_Columnas), (float)(k_TextHeight *g_Filas)};
 MV::Pnt2 middle_win = {max_win.x / 2, max_win.y / 2};
 MV::Pnt2 min_win = {0, 0};
@@ -152,18 +150,11 @@ int main(int argc, char **argv)
       draw_order[i+1]=aux;
     }
 
-    if(EVENT_DOWN(K_p, keys)){
-      std::cout << std::endl;
-      std::cout << "Camera: " << VEC3_PRINT(camara) << std::endl;
-      for(int i = 0; i<max_planets; i++){
-        std::cout << "Order[" << i << "] = " << draw_order[i] << std::endl;
-        std::cout << "Distancia a camara: " << MV::Vec_Magn(MV::Vec_Resta(planet[draw_order[i]].desp_,camara)) << std::endl;
-      }
-      std::cout << std::endl;
-    }
-
     for(int i=0; i<max_planets; i++){
-      (planet + draw_order[i])->draw(win.render, camara, mira, light, false);
+      if(EVENT_DOWN(K_p, keys)){
+        std::cout << "Drawing planet " << draw_order[i] << std::endl;
+      }
+      (planet + draw_order[i])->draw(keys, win.render, camara, mira, light, false);
     }
 
     win.whileEnd(keys);

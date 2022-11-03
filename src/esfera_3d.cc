@@ -156,6 +156,7 @@
             model = MV::Mat4Multiply(model, rot_z);
 
         desplazar(MV::Vec3{-centro_orbita_.x, -centro_orbita_.y, -centro_orbita_.z});
+        desp_ = MV::Mat4TransformVec3(model, desp_);
         for (int i = 0; i < vertices_; i++)
         {
           *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
@@ -228,26 +229,23 @@
             escalar({1.1f, 1.1f, 1.1f});
     }
 
-    SDL_Color Esfera::obtenerColorLight(MV::Pnt3 point, MV::Pnt3 light)
+    SDL_Color Esfera::renderColorLight(MV::Pnt3 point, MV::Pnt3 light)
     {
 
         SDL_Color ret = color_;
 
-        float angleRest = 255 / 180;
+        MV::Vec3 point_vector = MV::Vec_Resta(desp_, point);  // Vector director  al centro desde el punto
+        MV::Vec3 light_vector = MV::Vec_Resta(desp_, light);  // Vector director apuntando al centro desde la luz
 
-        MV::Vec3 vector = MV::Vec_Resta(point, desp_);  // Vector director contrario al centro desde el punto
-        MV::Vec3 vector1 = MV::Vec_Resta(desp_, light); // Vector director apuntando al centro desde la luz
+        point_vector = MV::Normalizar_Vec(point_vector);
+        light_vector = MV::Normalizar_Vec(light_vector);
 
-        vector = MV::Normalizar_Vec(vector);
-        vector1 = MV::Normalizar_Vec(vector1);
-
-        float angulo = Obten_Angulo(vector, vector1);
+        float angulo = Obten_Angulo(point_vector, light_vector);
 
         if (angulo < 0)
             angulo *= -1;
 
-        if(angulo>130) angulo+=(130-angulo);
-        angleRest *= (angulo+50);
+        float angleRest = (255 / 180) * (angulo);
 
         if(ret.r>0) ret.r -= (Uint8)angleRest;
         if(ret.g>0) ret.g -= (Uint8)angleRest;
@@ -264,11 +262,11 @@
     SDL_Vertex Esfera::obtenerSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point)
     {
       SDL_Color color;
-      color = obtenerColorLight(point, light);
+      color = renderColorLight(point, light);
       return SDL_Vertex{{draw.x,draw.y}, color, {0, 0}};
     }
 
-    void Esfera::draw(SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light, bool puntos)
+    void Esfera::draw(Keys *keys, SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light, bool puntos)
     {
         // Proyeccion de puntos 3D a 2D teniendo en cuenta la camara
         MV::Mat4 vMatrix = MV::Mat4View(camara, mira);
@@ -305,10 +303,10 @@
             draw_sdl_[i]=obtenerSDLVertex(light, draw, *(points_ + i));
         }
 
-
-        // Dibujado de puntos
+        // This is to draw with texture | light
         if (!puntos)
         {
+            // Ordenado de puntos
             static int *order = (int *)calloc(vertices_, sizeof(int));
 
             for (int i = 0; i < vertices_; i++)
@@ -318,7 +316,7 @@
             {
                 for (int j = 1; j < vertices_; j++)
                 {
-                    if (MV::Vec_Magn(MV::Vec_Resta(centros_[order[i]],camara)) <= MV::Vec_Magn(MV::Vec_Resta(centros_[order[j]],camara)))
+                    if (MV::Vec_Magn(MV::Vec_Resta(centros_[order[i]],camara)) >= MV::Vec_Magn(MV::Vec_Resta(centros_[order[j]],camara)))
                     {
                         int aux = order[i];
                         order[i] = order[j];
@@ -333,7 +331,7 @@
               order[i+1]=aux;
             }
 
-            // That is for lines
+            // Draw Triangles
             for (int i = 0; i < vertices_; i++)
             {
                 static SDL_Vertex triangle[3];
