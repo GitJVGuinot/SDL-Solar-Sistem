@@ -9,6 +9,7 @@
         points_ = (MV::Pnt3 *)calloc(vertices_, sizeof(MV::Pnt3));
         centros_ = (MV::Pnt3 *)calloc(vertices_, sizeof(MV::Pnt3));
         caras = (Caras *)calloc(vertices_, sizeof(Caras));
+        draw_sdl_ = (SDL_Vertex*)calloc(vertices_, sizeof(SDL_Vertex));
 
         float incremento = (PI / res_);
 
@@ -154,7 +155,7 @@
         if (p_orbita_.z != 0)
             model = MV::Mat4Multiply(model, rot_z);
 
-        desplazar({-centro_orbita_.x, -centro_orbita_.y, -centro_orbita_.z});
+        desplazar(MV::Vec3{-centro_orbita_.x, -centro_orbita_.y, -centro_orbita_.z});
         for (int i = 0; i < vertices_; i++)
         {
           *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
@@ -260,12 +261,11 @@
         return ret;
     }
 
-    void Esfera::obtenerSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point)
+    SDL_Vertex Esfera::obtenerSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point)
     {
       SDL_Color color;
       color = obtenerColorLight(point, light);
-      SDL_Vertex valor = {{draw.x,draw.y}, color, {0, 0}};
-      draw_sdl_.push_back(valor);
+      return SDL_Vertex{{draw.x,draw.y}, color, {0, 0}};
     }
 
     void Esfera::draw(SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light, bool puntos)
@@ -292,7 +292,6 @@
 
         MV::Pnt2 draw;
 
-        draw_sdl_.clear();
         for (int i = 0; i < vertices_; i++)
         {
             MV::Vec3 new_point = MV::Mat4TransformVec3(vMatrix, *(points_ + i));
@@ -303,14 +302,14 @@
             new_point = MV::Mat3TransformVec3(model, new_point);
 
             draw = MV::Vec3_Tr_Vec2(new_point);
-            obtenerSDLVertex(light, draw, *(points_ + i));
+            draw_sdl_[i]=obtenerSDLVertex(light, draw, *(points_ + i));
         }
 
 
         // Dibujado de puntos
         if (!puntos)
         {
-            int *order = (int *)calloc(vertices_, sizeof(int));
+            static int *order = (int *)calloc(vertices_, sizeof(int));
 
             for (int i = 0; i < vertices_; i++)
                 order[i] = i;
@@ -337,20 +336,28 @@
             // That is for lines
             for (int i = 0; i < vertices_; i++)
             {
-                SDL_Vertex *point = (SDL_Vertex *)calloc(3, sizeof(SDL_Vertex));
-                point[0] = draw_sdl_.at(caras[order[i]].points[0]);
-                point[1] = draw_sdl_.at(caras[order[i]].points[1]);
-                point[2] = draw_sdl_.at(caras[order[i]].points[2]);
+                static SDL_Vertex triangle[3];
+                triangle[0] = draw_sdl_[caras[order[i]].points[0]];
+                triangle[1] = draw_sdl_[caras[order[i]].points[1]];
+                triangle[2] = draw_sdl_[caras[order[i]].points[2]];
 
-                SDL_Vertex *point1 = (SDL_Vertex *)calloc(3, sizeof(SDL_Vertex));
-                point1[1] = draw_sdl_.at(caras[order[i]].points[3]);
-                point1[0] = draw_sdl_.at(caras[order[i]].points[2]);
-                point1[2] = draw_sdl_.at(caras[order[i]].points[0]);
+                static SDL_Vertex triangle1[3];
+                triangle1[0] = draw_sdl_[caras[order[i]].points[3]];
+                triangle1[1] = draw_sdl_[caras[order[i]].points[2]];
+                triangle1[2] = draw_sdl_[caras[order[i]].points[0]];
 
-                SDL_RenderGeometry(render, NULL, point, 3, NULL, 0);
-                SDL_RenderGeometry(render, NULL, point1, 3, NULL, 0);
+                /*
+                static SDL_Vertex square[4];
+                square[0] = draw_sdl_[caras[order[i]].points[0]];
+                square[1] = draw_sdl_[caras[order[i]].points[1]];
+                square[2] = draw_sdl_[caras[order[i]].points[2]];
+                square[3] = draw_sdl_[caras[order[i]].points[3]];
+                SDL_RenderGeometry(render, NULL, square, 4, NULL, 0);
+                */
 
-                DESTROY(point);
+                SDL_RenderGeometry(render, NULL, triangle, 3, NULL, 0);
+                SDL_RenderGeometry(render, NULL, triangle1, 3, NULL, 0);
+
             }
         }
         else
@@ -358,8 +365,8 @@
             // That is for points_
             for (int i = 0; i < vertices_; i++)
             {
-                SDL_SetRenderDrawColor(render, RGBA(draw_sdl_.at(i).color));
-                SDL_RenderDrawPoint(render, draw_sdl_.at(i).position.x, draw_sdl_.at(i).position.y);
+                SDL_SetRenderDrawColor(render, RGBA(draw_sdl_[i].color));
+                SDL_RenderDrawPoint(render, draw_sdl_[i].position.x, draw_sdl_[i].position.y);
             }
         }
     }

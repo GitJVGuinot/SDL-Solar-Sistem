@@ -23,7 +23,7 @@ private:
     int res_;
     MV::Pnt3 *points_;
     MV::Pnt3 *centros_;
-    std::vector<SDL_Vertex> draw_sdl_;
+    SDL_Vertex *draw_sdl_;
 
     struct Caras
     {
@@ -60,7 +60,7 @@ public:
 
     SDL_Color obtenerColorLight(MV::Pnt3 point, MV::Pnt3 light);
 
-    void obtenerSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point);
+    SDL_Vertex obtenerSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point);
 
     void draw(SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light = {0, 0, 0}, bool puntos = true);
 
