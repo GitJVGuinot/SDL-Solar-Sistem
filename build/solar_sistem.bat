@@ -1,5 +1,7 @@
 @echo off
 
+cls
+
 set "name=%~n0"
 
 REM Compilación y Enlace con librería gráfica.
