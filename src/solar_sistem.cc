@@ -71,16 +71,22 @@ int main(int argc, char **argv)
   }
   win.setGameTitle(*argv);
 
-  int max_planets = 5;
-  Esfera *planet = (Esfera *)calloc(max_planets, sizeof(Esfera));
+  const int max_planets = 5;
+  Esfera* planet=nullptr;
+  planet = (Esfera*)realloc(planet, max_planets*sizeof(Esfera));
+  //Esfera* planet = new Esfera[max_planets];
 
   // 0 -> *(planet + 0), 1 - 4 -> Planets
   std::cout << "Generando planetas..." << std::endl;
   *(planet + 0) = *new Esfera(colores[BLANCO], 10, {30,30,30}, {middle_win.x, middle_win.y, 0.0f});
-  *(planet + 1) = *new Esfera(colores[1], 10, {5, 5, 5}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
-  *(planet + 2) = *new Esfera(colores[2], 10, {5, 5, 5}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
-  *(planet + 3) = *new Esfera(colores[3], 10, {5, 5, 5}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
-  *(planet + 4) = *new Esfera(colores[4], 10, {5, 5, 5}, {(planet + 0)->desp_.x + 60, (planet + 0)->desp_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, (planet + 0)->desp_);
+
+  *(planet + 1) = *new Esfera(colores[0], 20, {5, 5, 5}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
+
+  *(planet + 2) = *new Esfera(colores[1], 20, {5, 5, 5}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
+
+  *(planet + 3) = *new Esfera(colores[2], 20, {5, 5, 5}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
+
+  *(planet + 4) = *new Esfera(colores[3], 20, { 5, 5, 5 }, { (planet + 0)->desp_.x + 60, (planet + 0)->desp_.y + 60, 0.0f }, { 0, 0, 0 }, { 0.01f, -0.01f, 0.0f }, (planet + 0)->desp_);
   std::cout << "Planetas generados" << std::endl;
 
   // Imprimir en pantalla los datos de la ventana
@@ -154,7 +160,7 @@ int main(int argc, char **argv)
 
     for(int i=0; i<max_planets; i++){
       if(EVENT_DOWN(K_p, keys)){
-        std::cout << "Drawing planet " << draw_order[i] << std::endl;
+        std::cout << std::endl << "Drawing planet " << draw_order[i] << std::endl;
       }
       (planet + draw_order[i])->draw(keys, win.render, camara, mira, light, false);
     }

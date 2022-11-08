@@ -28,7 +28,7 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL |
                                                    SDL_WINDOW_RESIZABLE |
                                                    SDL_WINDOW_ALLOW_HIGHDPI);
-                                                   
+
   window = SDL_CreateWindow("SLD test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, win_x, win_y, window_flags);
 
   render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -65,13 +65,14 @@ void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
     ticks = SDL_GetTicks() - ticks;
     if (cont >= 100)
     {
-      frame_rate = 1000 / ticks;
+      if (ticks != NULL)frame_rate = 1000 / ticks;
+      else frame_rate = FLT_MAX;
       cont -= 100;
     }
     cont++;
 
-    char texto[5];
-    snprintf(texto, 5, "%d", (int)frame_rate);
+    char texto[15];
+    snprintf(texto, 15, "%d", (int)frame_rate);
     text(texto, 1, columns - 1 - strlen(texto), {255, 255, 255, SDL_ALPHA_OPAQUE});
   }
 

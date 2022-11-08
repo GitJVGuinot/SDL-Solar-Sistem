@@ -36,7 +36,7 @@ private:
   double current_time = 0.0;
   double last_time = 0.0;
 
-  float frame_rate;
+  float frame_rate = 0;
   int ticks;
 
 public:

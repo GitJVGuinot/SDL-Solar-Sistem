@@ -48,6 +48,7 @@ public:
     SDL_Color color_;
 
     // Inicializa la esfera
+    Esfera();
     Esfera(SDL_Color color, int p_res_ = 10, MV::Pnt3 p_escala_ = {1, 1, 1}, MV::Pnt3 p_desp_ = {0, 0, 0}, MV::Pnt3 p_rot = {0, 0, 0}, MV::Pnt3 p_orbita_ = {0, 0, 0}, MV::Pnt3 centro_orbita = {0, 0, 0});
 
     MV::Pnt3 point(int i);
@@ -64,7 +65,7 @@ public:
 
     SDL_Color renderColorLight(MV::Pnt3 point, MV::Pnt3 light);
 
-    SDL_Vertex obtenerSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point);
+    SDL_Vertex renderSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point);
 
     void draw(Keys *keys, SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light = {0, 0, 0}, bool puntos = true);
 

@@ -817,6 +817,9 @@
       float radian = acos(dividendo / (divisor * divisor1));
       float angulo = (radian * 180 / PI) * (-1);
 
+      if (!Between(180, angulo, -180))
+        return 180;
+      
       return angulo;
     }
 

@@ -11,6 +11,11 @@
         caras = (Caras *)calloc(vertices_, sizeof(Caras));
         draw_sdl_ = (SDL_Vertex*)calloc(vertices_, sizeof(SDL_Vertex));
 
+        if (points_ == nullptr) { vertices_ = 0; return; }
+        if (centros_ == nullptr) { vertices_ = 0; return; }
+        if (caras == nullptr) { vertices_ = 0; return; }
+        if (draw_sdl_ == nullptr) { vertices_ = 0; return; }
+
         float incremento = (PI / res_);
 
         int i = 0;
@@ -66,6 +71,7 @@
     }
 
     // Inicializa la esfera
+    Esfera::Esfera(){};
     Esfera::Esfera(SDL_Color color, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
     {
         color_ = color;
@@ -242,17 +248,18 @@
         point_vector = MV::Normalizar_Vec(point_vector);
         light_vector = MV::Normalizar_Vec(light_vector);
 
-        float angulo = Obten_Angulo(point_vector, light_vector);
+        float angulo = MV::Obten_Angulo(point_vector, light_vector);
 
-        if (angulo < 0)
-            angulo *= -1;
+        if (light.x == desp_.x && light.y == desp_.y && light.z == desp_.z)
+          angulo = 0;
 
-        float angleRest = (255 / 180) * (angulo);
+        if (angulo < 0) angulo *= -1;
+
+        Uint8 angleRest = (Uint8)((float)255 / 180 * angulo);
 
         if(ret.r>0) ret.r -= (Uint8)angleRest;
         if(ret.g>0) ret.g -= (Uint8)angleRest;
-        if(ret.a>0) ret.b -= (Uint8)angleRest;
-        ret.a = SDL_ALPHA_OPAQUE;
+        if(ret.b>0) ret.b -= (Uint8)angleRest;
 
         if(ret.r<0) ret.r=0;
         if(ret.g<0) ret.g=0;
@@ -261,11 +268,9 @@
         return ret;
     }
 
-    SDL_Vertex Esfera::obtenerSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point)
+    SDL_Vertex Esfera::renderSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point)
     {
-      SDL_Color color;
-      color = renderColorLight(point, light);
-      return SDL_Vertex{{draw.x,draw.y}, color, {0, 0}};
+      return SDL_Vertex{{draw.x,draw.y}, renderColorLight(point, light), {0, 0}};
     }
 
     void Esfera::draw(Keys *keys, SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light, bool puntos)
@@ -302,7 +307,7 @@
             new_point = MV::Mat3TransformVec3(model, new_point);
 
             draw = MV::Vec3_Tr_Vec2(new_point);
-            draw_sdl_[i]=obtenerSDLVertex(light, draw, *(points_ + i));
+            draw_sdl_[i]=renderSDLVertex(light, draw, points_[i]);
         }
 
         // This is to draw with texture | light
