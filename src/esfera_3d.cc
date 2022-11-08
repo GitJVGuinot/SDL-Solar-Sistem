@@ -66,11 +66,11 @@
     }
 
     // Inicializa la esfera
-    Esfera::Esfera(SDL_Color color, int p_res_, MV::Pnt3 p_escala_, MV::Pnt3 p_desp_, MV::Pnt3 p_rot, MV::Pnt3 p_orbita_, MV::Pnt3 centro_orbita)
+    Esfera::Esfera(SDL_Color color, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
     {
         color_ = color;
-        res_ = p_res_;
-        orbita_ = p_orbita_;
+        res_ = res;
+        orbita_ = orbita;
         centro_orbita_ = centro_orbita;
         rotado_ = {0, 0, 0};
         escala_ = {1, 1, 1};
@@ -79,12 +79,14 @@
 
         obtenerEsfera();
 
-        if ((p_escala_.x + p_escala_.x + p_escala_.x) != 3)
-        {
-            escalar(p_escala_);
-        }
-        desplazar(p_desp_);
-        rotar(p_rot);
+        if (( escala.x + escala.y + escala.z) != 3)
+            escalar(escala);
+
+        if (( desp.x + desp.y + desp.z) != 0)
+          desplazar(desp);
+
+        if (( rot.x + rot.y + rot.z) != 0)
+          rotar(rot);
     }
 
     MV::Pnt3 Esfera::point(int i)
