@@ -390,3 +390,17 @@
         MV::Vec_Print(escala_, "Escala");
         std::cout << std::endl;
     }
+
+    Esfera::~Esfera(){
+
+      DESTROY(points_);
+      DESTROY(centros_);
+      DESTROY(draw_sdl_);
+
+      if(caras!=NULL){
+        for(int i=0; i<vertices_; i++){
+          DESTROY(caras[i].points);
+        }
+      }
+      DESTROY(caras);
+    }

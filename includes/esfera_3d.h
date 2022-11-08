@@ -69,6 +69,8 @@ public:
     void draw(Keys *keys, SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light = {0, 0, 0}, bool puntos = true);
 
     void imprime();
+
+    ~Esfera();
 };
 
 ////////////////////////
