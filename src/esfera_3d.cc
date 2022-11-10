@@ -253,48 +253,8 @@
             escalar({1.1f, 1.1f, 1.1f});
     }
 
-    SDL_Color Esfera::renderColorLight(MV::Pnt3 point, MV::Pnt3 light)
+    void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 light, bool puntos)
     {
-
-        SDL_Color ret = color_;
-
-        MV::Vec3 point_vector = MV::Vec_Resta(desp_, point);  // Vector director  al centro desde el punto
-        MV::Vec3 light_vector = MV::Vec_Resta(desp_, light);  // Vector director apuntando al centro desde la luz
-
-        point_vector = MV::Normalizar_Vec(point_vector);
-        light_vector = MV::Normalizar_Vec(light_vector);
-
-        float angulo = MV::Obten_Angulo(point_vector, light_vector);
-
-        if (light.x == desp_.x && light.y == desp_.y && light.z == desp_.z)
-          angulo = 0;
-
-        if (angulo < 0) angulo *= -1;
-
-        Uint8 angleRest = (Uint8)((float)255 / 180 * angulo);
-
-        if(ret.r>0) ret.r -= (Uint8)angleRest;
-        if(ret.g>0) ret.g -= (Uint8)angleRest;
-        if(ret.b>0) ret.b -= (Uint8)angleRest;
-
-        if(ret.r<0) ret.r=0;
-        if(ret.g<0) ret.g=0;
-        if(ret.b<0) ret.b=0;
-
-        return ret;
-    }
-
-    SDL_Vertex Esfera::renderSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point)
-    {
-      return SDL_Vertex{{draw.x,draw.y}, renderColorLight(point, light), {0, 0}};
-    }
-
-    void Esfera::draw(Keys *keys, SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light, bool puntos)
-    {
-        // Proyeccion de puntos 3D a 2D teniendo en cuenta la camara
-        MV::Mat4 vMatrix = MV::Mat4View(camara, mira);
-        MV::Mat4 pro = MV::Mat4Projection();
-        vMatrix = MV::Mat4Multiply(pro, vMatrix);
 
         // Transformacion de puntos 2D
         MV::Mat3 model = MV::Mat3Identity();
@@ -311,19 +271,9 @@
         }
         model = MV::Mat3Multiply(desp, scala);
 
-        MV::Pnt2 draw;
-
         for (int i = 0; i < vertices_; i++)
         {
-            MV::Vec3 new_point = MV::Mat4TransformVec3(vMatrix, *(points_ + i));
-            draw = MV::Vec3_Tr_Vec2(new_point);
-
-            new_point = MV::Vec2_Tr_Vec3(draw, 1);
-
-            new_point = MV::Mat3TransformVec3(model, new_point);
-
-            draw = MV::Vec3_Tr_Vec2(new_point);
-            draw_sdl_[i]=renderSDLVertex(light, draw, points_[i]);
+          draw_sdl_[i]=drawRender.renderPoint(points_[i], desp_, light, color_, model);
         }
 
         // This is to draw with texture | light
@@ -339,7 +289,7 @@
             {
                 for (int j = 1; j < vertices_; j++)
                 {
-                    if (MV::Vec_Magn(MV::Vec_Resta(centros_[order[i]],camara)) >= MV::Vec_Magn(MV::Vec_Resta(centros_[order[j]],camara)))
+                    if (MV::Vec_Magn(MV::Vec_Resta(centros_[order[i]],drawRender.camara_)) >= MV::Vec_Magn(MV::Vec_Resta(centros_[order[j]],drawRender.camara_)))
                     {
                         int aux = order[i];
                         order[i] = order[j];

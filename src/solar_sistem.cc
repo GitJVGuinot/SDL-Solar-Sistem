@@ -7,6 +7,7 @@
 #include <SDL_event_control.h>
 #include <SDL_colors.h>
 
+#include <render.h>
 #include <esfera_3d.h>
 #include <my_window.h>
 
@@ -89,10 +90,10 @@ int main(int argc, char **argv)
   std::cout << "WIN_X: " << max_win.x << ", WIN_Y: " << max_win.y << std::endl;
   std::cout << "HEIGHT: " << k_TextHeight << ", WIDTH: " << k_TextWitdh << ", g_Filas: " << g_Filas << ", g_Columnas: " << g_Columnas << std::endl;
 
-  MV::Pnt3 camara = {middle_win.x, middle_win.y, 100.0f};
   MV::Pnt3 light = (planet + 0)->desp_;
-  MV::Pnt3 mira = (planet + 0)->desp_;
-  int *draw_order=(int*)calloc(max_planets, sizeof(int));
+
+  Render drawRender({middle_win.x, middle_win.y, 100.0f}, (planet+0)->desp_, max_planets);
+  MV::Pnt3 *object_desp=(MV::Pnt3*)calloc(max_planets,sizeof(MV::Pnt3));
   while (win.runing)
   {
     win.whileInit(keys);
@@ -103,73 +104,23 @@ int main(int argc, char **argv)
       (planet + i)->orbitar(10.0f);
     }
 
-    if (EVENT_DOWN(DOWN, keys)){ Orbitar_Punto(mira, MV::Vec3{1, 0, 0}, camara); }
-    if (EVENT_DOWN(UP, keys)){ Orbitar_Punto(mira, MV::Vec3{-1, 0, 0}, camara); }
-    if (EVENT_DOWN(RIGHT, keys)){ Orbitar_Punto(mira, MV::Vec3{0, 1, 0}, camara); }
-    if (EVENT_DOWN(LEFT, keys)){ Orbitar_Punto(mira, MV::Vec3{0, -1, 0}, camara); }
-    if (EVENT_DOWN(K_n, keys)){ Orbitar_Punto(mira, MV::Vec3{0, 0, 1}, camara); }
-    if (EVENT_DOWN(K_m, keys)){ Orbitar_Punto(mira, MV::Vec3{0, 0, -1}, camara); }
+    drawRender.inputs(keys);
 
-
-    if (EVENT_DOWN(K_a, keys)){
-      camara.x--;
-      mira.x--;
-    }
-    if (EVENT_DOWN(K_d, keys)){
-      camara.x++;
-      mira.x++;
-    }
-    if (EVENT_DOWN(K_w, keys)){
-      camara.y++;
-      mira.y++;
-    }
-    if (EVENT_DOWN(K_s, keys)){
-      camara.y--;
-      mira.y--;
-    }
-    if (EVENT_DOWN(K_q, keys)){
-      camara.z--;
-      mira.z--;
-    }
-    if (EVENT_DOWN(K_e, keys)){
-      camara.z++;
-      mira.z++;
+    for(int i = 0; i<max_planets; i++){
+      object_desp[i]=planet[i].desp_;
     }
 
-    // Draw Planets ir order
-    for(int i=0; i<max_planets; i++){
-      draw_order[i]=i;
-    }
-
-    for (int i = 0; i < max_planets; i++)
-    {
-      for (int j = 1; j < max_planets; j++)
-      {
-        if (MV::Vec_Magn(MV::Vec_Resta(planet[draw_order[i]].desp_,camara)) >= MV::Vec_Magn(MV::Vec_Resta(planet[draw_order[j]].desp_,camara)))
-        {
-          int aux = draw_order[i];
-          draw_order[i] = draw_order[j];
-          draw_order[j] = aux;
-        }
-      }
-    }
-
-    for(int i=0; i<max_planets-1; i++){
-      int aux=draw_order[i];
-      draw_order[i]=draw_order[i+1];
-      draw_order[i+1]=aux;
-    }
+    drawRender.order(object_desp, max_planets);
 
     for(int i=0; i<max_planets; i++){
       if(EVENT_DOWN(K_p, keys)){
-        std::cout << std::endl << "Drawing planet " << draw_order[i] << std::endl;
+        std::cout << std::endl << "Drawing planet " << drawRender.draw_order_[i] << std::endl;
       }
-      (planet + draw_order[i])->draw(keys, win.render, camara, mira, light, false);
+      (planet + drawRender.draw_order_[i])->draw(keys, win.render, drawRender, light, false);
     }
 
     win.whileEnd(keys);
   }
-
 
   std::cout << "Eliminando planetas..." << std::endl;
   delete planet;

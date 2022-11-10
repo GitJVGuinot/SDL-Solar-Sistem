@@ -3,6 +3,7 @@
 #include <mv_math.h>
 #include <SDL_event_control.h>
 #include <SDL_colors.h>
+#include <render.h>
 
 #ifndef RGBA
 #define RGBA(x) x.r, x.g, x.b, x.a
@@ -68,7 +69,7 @@ public:
 
     SDL_Vertex renderSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point);
 
-    void draw(Keys *keys, SDL_Renderer *render, MV::Pnt3 camara /* Ubicacion de la camara */, MV::Pnt3 mira, MV::Pnt3 light = {0, 0, 0}, bool puntos = true);
+    void draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 light = {0, 0, 0}, bool puntos = true);
 
     void imprime();
 
