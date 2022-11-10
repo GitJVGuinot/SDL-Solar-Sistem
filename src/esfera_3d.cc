@@ -1,7 +1,7 @@
 #include <esfera_3d.h>
 
 
-        // Obtiene los puntos de la esfera
+    // Obtiene los puntos de la esfera
     void Esfera::obtenerEsfera()
     {
         vertices_ = (2 * res_) * (res_ + 1);
@@ -71,7 +71,23 @@
     }
 
     // Inicializa la esfera
-    Esfera::Esfera(){};
+    Esfera::Esfera(){
+      escala_=NULL;
+      rotado_=NULL;
+      res_=NULL;
+      points_=nullptr;
+      centros_=nullptr;
+      draw_sdl_=nullptr;
+
+      caras=nullptr;
+      dim_=NULL;
+      vertices_=NULL;
+      desp_=NULL;
+      orbita_=NULL;
+      centro_orbita_=NULL;
+      color_=NULL;
+    };
+
     Esfera::Esfera(SDL_Color color, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
     {
         color_ = color;

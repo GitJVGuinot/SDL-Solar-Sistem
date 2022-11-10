@@ -18,6 +18,12 @@
 #define esfera_3d_h
 ////////////////////////
 
+struct Caras
+{
+    int n_points;
+    int *points;
+};
+
 class Esfera
 {
 private:
@@ -29,11 +35,6 @@ private:
     MV::Pnt3 *centros_;
     SDL_Vertex *draw_sdl_;
 
-    struct Caras
-    {
-        int n_points;
-        int *points;
-    };
     Caras *caras;
 
     // Obtiene los puntos de la esfera
