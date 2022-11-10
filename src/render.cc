@@ -15,37 +15,38 @@ Render::Render(MV::Pnt3 camara, MV::Pnt3 mira, int max_objects){
 };
 
 void Render::inputs(Keys *keys){
-  if (EVENT_DOWN(DOWN, keys)){ Orbitar_Punto(mira_, MV::Vec3{1, 0, 0}, camara_); }
-  if (EVENT_DOWN(UP, keys)){ Orbitar_Punto(mira_, MV::Vec3{-1, 0, 0}, camara_); }
-  if (EVENT_DOWN(RIGHT, keys)){ Orbitar_Punto(mira_, MV::Vec3{0, 1, 0}, camara_); }
-  if (EVENT_DOWN(LEFT, keys)){ Orbitar_Punto(mira_, MV::Vec3{0, -1, 0}, camara_); }
-  if (EVENT_DOWN(K_n, keys)){ Orbitar_Punto(mira_, MV::Vec3{0, 0, 1}, camara_); }
-  if (EVENT_DOWN(K_m, keys)){ Orbitar_Punto(mira_, MV::Vec3{0, 0, -1}, camara_); }
+
+  if (EVENT_DOWN(DOWN, keys)){ Orbitar_Punto(camara_, MV::Vec3{1, 0, 0}, mira_); }
+  if (EVENT_DOWN(UP, keys)){ Orbitar_Punto(camara_, MV::Vec3{-1, 0, 0},mira_); }
+  if (EVENT_DOWN(RIGHT, keys)){ Orbitar_Punto(camara_, MV::Vec3{0, 1, 0}, mira_); }
+  if (EVENT_DOWN(LEFT, keys)){ Orbitar_Punto(camara_, MV::Vec3{0, -1, 0},mira_); }
+  if (EVENT_DOWN(K_n, keys)){ Orbitar_Punto(camara_, MV::Vec3{0, 0, 1}, mira_); }
+  if (EVENT_DOWN(K_m, keys)){ Orbitar_Punto(camara_, MV::Vec3{0, 0, -1},mira_); }
 
 
   if (EVENT_DOWN(K_a, keys)){
-    camara_.x--;
-    mira_.x--;
-  }
-  if (EVENT_DOWN(K_d, keys)){
     camara_.x++;
     mira_.x++;
   }
+  if (EVENT_DOWN(K_d, keys)){
+    camara_.x--;
+    mira_.x--;
+  }
   if (EVENT_DOWN(K_w, keys)){
-    camara_.y++;
-    mira_.y++;
-  }
-  if (EVENT_DOWN(K_s, keys)){
-    camara_.y--;
-    mira_.y--;
-  }
-  if (EVENT_DOWN(K_q, keys)){
     camara_.z--;
     mira_.z--;
   }
-  if (EVENT_DOWN(K_e, keys)){
+  if (EVENT_DOWN(K_s, keys)){
     camara_.z++;
     mira_.z++;
+  }
+  if (EVENT_DOWN(K_q, keys)){
+    camara_.y++;
+    mira_.y++;
+  }
+  if (EVENT_DOWN(K_e, keys)){
+    camara_.y--;
+    mira_.y--;
   }
 }
 
