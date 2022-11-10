@@ -72,20 +72,20 @@
 
     // Inicializa la esfera
     Esfera::Esfera(){
-      escala_=NULL;
-      rotado_=NULL;
-      res_=NULL;
+      escala_={0,0,0};
+      rotado_={0,0,0};
+      res_=0;
       points_=nullptr;
       centros_=nullptr;
       draw_sdl_=nullptr;
 
       caras=nullptr;
-      dim_=NULL;
-      vertices_=NULL;
-      desp_=NULL;
-      orbita_=NULL;
-      centro_orbita_=NULL;
-      color_=NULL;
+      dim_=0;
+      vertices_=0;
+      desp_={0,0,0};
+      orbita_={0,0,0};
+      centro_orbita_={0,0,0};
+      color_={0,0,0};
     };
 
     Esfera::Esfera(SDL_Color color, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
