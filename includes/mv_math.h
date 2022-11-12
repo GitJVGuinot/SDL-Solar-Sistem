@@ -215,6 +215,8 @@ namespace MV
 
   MV::Pnt3 Centro_Triangulo(MV::Pnt3 *triangulos);
 
+  Pnt3 Rotate_Point_3D(Pnt3 rot, Pnt3 point);
+
 }
 
 //////////////////////

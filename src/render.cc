@@ -17,31 +17,6 @@ Render::Render(MV::Pnt3 camara, MV::Pnt3 mira, int max_objects)
   max_order_ = max_objects;
 };
 
-MV::Pnt3 Rotar_Punto(MV::Pnt3 rot, MV::Pnt3 point)
-{
-  MV::Mat4 rot_x;
-  if (rot.x != 0)
-    rot_x = MV::Mat4RotateX((rot.x * PI) / 180);
-
-  MV::Mat4 rot_y;
-  if (rot.y != 0)
-    rot_y = MV::Mat4RotateY((rot.y * PI) / 180);
-
-  MV::Mat4 rot_z;
-  if (rot.z != 0)
-    rot_z = MV::Mat4RotateZ((rot.z * PI) / 180);
-
-  MV::Mat4 model = MV::Mat4Identity();
-  if (rot.x != 0)
-    model = MV::Mat4Multiply(model, rot_x);
-  if (rot.y != 0)
-    model = MV::Mat4Multiply(model, rot_y);
-  if (rot.z != 0)
-    model = MV::Mat4Multiply(model, rot_z);
-
-  return MV::Mat4TransformVec3(model, point);
-}
-
 void Render::inputs(Keys *keys)
 {
 
@@ -93,7 +68,7 @@ void Render::inputs(Keys *keys)
   {
     MV::Vec3 left = MV::Vec_Resta(mira_, camara_);
     left = MV::Normalizar_Vec(left);
-    left = Rotar_Punto({0,-90,0}, left);
+    left = Rotate_Point_3D({0,-90,0}, left);
 
     camara_ = MV::Vec_Sum(camara_, left);
     mira_ = MV::Vec_Sum(mira_, left);
@@ -102,7 +77,7 @@ void Render::inputs(Keys *keys)
   {
     MV::Vec3 left = MV::Vec_Resta(mira_, camara_);
     left = MV::Normalizar_Vec(left);
-    left = Rotar_Punto({0,90,0}, left);
+    left = Rotate_Point_3D({0,90,0}, left);
 
     camara_ = MV::Vec_Sum(camara_, left);
     mira_ = MV::Vec_Sum(mira_, left);
@@ -112,7 +87,7 @@ void Render::inputs(Keys *keys)
   {
     MV::Vec3 left = MV::Vec_Resta(mira_, camara_);
     left = MV::Normalizar_Vec(left);
-    left = Rotar_Punto({-90,0,0}, left);
+    left = Rotate_Point_3D({-90,0,0}, left);
 
     camara_ = MV::Vec_Sum(camara_, left);
     mira_ = MV::Vec_Sum(mira_, left);
@@ -121,7 +96,7 @@ void Render::inputs(Keys *keys)
   {
     MV::Vec3 left = MV::Vec_Resta(mira_, camara_);
     left = MV::Normalizar_Vec(left);
-    left = Rotar_Punto({90,0,0}, left);
+    left = Rotate_Point_3D({90,0,0}, left);
 
     camara_ = MV::Vec_Sum(camara_, left);
     mira_ = MV::Vec_Sum(mira_, left);
@@ -207,7 +182,6 @@ SDL_Vertex renderSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point, MV::Pn
 
 SDL_Vertex Render::renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model)
 {
-
   // Proyeccion de puntos 3D a 2D teniendo en cuenta la camara
   MV::Mat4 vMatrix = MV::Mat4View(camara_, mira_);
   MV::Mat4 pro = MV::Mat4Projection();
