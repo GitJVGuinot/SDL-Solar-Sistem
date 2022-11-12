@@ -25,6 +25,8 @@ struct Caras
     int *points;
 };
 
+#define MAX_VERTEX 20200
+
 class Esfera
 {
 private:
@@ -32,11 +34,11 @@ private:
     MV::Pnt3 rotado_;
 
     int res_;
-    MV::Pnt3 *points_;
-    MV::Pnt3 *centros_;
-    SDL_Vertex *draw_sdl_;
+    MV::Pnt3 points_[MAX_VERTEX];
+    MV::Pnt3 centros_[MAX_VERTEX];
+    SDL_Vertex draw_sdl_[MAX_VERTEX];
 
-    Caras *caras;
+    Caras caras[MAX_VERTEX];
 
     // Obtiene los puntos de la esfera
     void obtenerEsfera();
@@ -51,7 +53,7 @@ public:
 
     // Inicializa la esfera
     Esfera();
-    Esfera(SDL_Color color, int p_res_ = 10, MV::Pnt3 p_escala_ = {1, 1, 1}, MV::Pnt3 p_desp_ = {0, 0, 0}, MV::Pnt3 p_rot = {0, 0, 0}, MV::Pnt3 p_orbita_ = {0, 0, 0}, MV::Pnt3 centro_orbita = {0, 0, 0});
+    void init(SDL_Color color, int p_res_ = 10, MV::Pnt3 p_escala_ = {1, 1, 1}, MV::Pnt3 p_desp_ = {0, 0, 0}, MV::Pnt3 p_rot = {0, 0, 0}, MV::Pnt3 p_orbita_ = {0, 0, 0}, MV::Pnt3 centro_orbita = {0, 0, 0});
 
     MV::Pnt3 point(int i);
 

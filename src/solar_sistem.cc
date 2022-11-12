@@ -73,17 +73,16 @@ int main(int argc, char **argv)
   win.setGameTitle(*argv);
 
   const int max_planets = 5;
-  Esfera* planet=nullptr;
-  planet = (Esfera*)realloc(planet, max_planets*sizeof(Esfera));
+  Esfera planet[max_planets];
   //Esfera planet[max_planets];
 
-  // 0 -> *(planet + 0), 1 - 4 -> Planets
+  // 0 -> planet[0], 1 - 4 -> Planets
   std::cout << "Generando planetas..." << std::endl;
-  *(planet + 0) = *new Esfera(colores[BLANCO], 10, {30,30,30}, {middle_win.x, middle_win.y, 0.0f});
-  *(planet + 1) = *new Esfera(colores[0], 10, {5, 5, 5}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
-  *(planet + 2) = *new Esfera(colores[1], 10, {5, 5, 5}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
-  *(planet + 3) = *new Esfera(colores[2], 10, {5, 5, 5}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
-  *(planet + 4) = *new Esfera(colores[3], 10, { 5, 5, 5 }, { (planet + 0)->desp_.x + 60, (planet + 0)->desp_.y + 60, 0.0f }, { 0, 0, 0 }, { 0.01f, -0.01f, 0.0f }, (planet + 0)->desp_);
+  (planet + 0)->init(colores[BLANCO], 10, {30,30,30}, {middle_win.x, middle_win.y, 0.0f});
+  (planet + 1)->init(colores[0], 10, {5, 5, 5}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
+  (planet + 2)->init(colores[1], 10, {5, 5, 5}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
+  (planet + 3)->init(colores[2], 10, {5, 5, 5}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
+  (planet + 4)->init(colores[3], 10, { 5, 5, 5 }, { (planet + 0)->desp_.x + 60, (planet + 0)->desp_.y + 60, 0.0f }, { 0, 0, 0 }, { 0.01f, -0.01f, 0.0f }, (planet + 0)->desp_);
   std::cout << "Planetas generados" << std::endl;
 
   // Imprimir en pantalla los datos de la ventana
@@ -121,10 +120,6 @@ int main(int argc, char **argv)
 
     win.whileEnd(keys);
   }
-
-  std::cout << "Eliminando planetas..." << std::endl;
-  delete planet;
-  std::cout << "Planetas eliminados" << std::endl;
 
   win.Destroy();
   TTF_Quit();

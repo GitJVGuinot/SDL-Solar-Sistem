@@ -10,6 +10,7 @@ Render::Render(){
 Render::Render(MV::Pnt3 camara, MV::Pnt3 mira, int max_objects){
   camara_=camara;
   mira_=mira;
+  draw_order_=nullptr;
   draw_order_=(int*)realloc(draw_order_, max_objects*sizeof(int));
   max_order_=max_objects;
 };

@@ -6,16 +6,6 @@
     {
         vertices_ = (2 * res_) * (res_ + 1);
 
-        points_ = (MV::Pnt3 *)calloc(vertices_, sizeof(MV::Pnt3));
-        centros_ = (MV::Pnt3 *)calloc(vertices_, sizeof(MV::Pnt3));
-        caras = (Caras *)calloc(vertices_, sizeof(Caras));
-        draw_sdl_ = (SDL_Vertex*)calloc(vertices_, sizeof(SDL_Vertex));
-
-        if (points_ == nullptr) { vertices_ = 0; return; }
-        if (centros_ == nullptr) { vertices_ = 0; return; }
-        if (caras == nullptr) { vertices_ = 0; return; }
-        if (draw_sdl_ == nullptr) { vertices_ = 0; return; }
-
         float incremento = (PI / res_);
 
         int i = 0;
@@ -75,11 +65,7 @@
       escala_={0,0,0};
       rotado_={0,0,0};
       res_=0;
-      points_=nullptr;
-      centros_=nullptr;
-      draw_sdl_=nullptr;
 
-      caras=nullptr;
       dim_=0;
       vertices_=0;
       desp_={0,0,0};
@@ -88,7 +74,7 @@
       color_={0,0,0};
     };
 
-    Esfera::Esfera(SDL_Color color, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
+    void Esfera::init(SDL_Color color, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
     {
         color_ = color;
         res_ = res;
@@ -366,14 +352,10 @@
 
     Esfera::~Esfera(){
 
-      DESTROY(points_);
-      DESTROY(centros_);
-      DESTROY(draw_sdl_);
-
       if(caras!=NULL){
         for(int i=0; i<vertices_; i++){
           DESTROY(caras[i].points);
         }
       }
-      DESTROY(caras);
+      
     }

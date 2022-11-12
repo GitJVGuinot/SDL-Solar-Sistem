@@ -1,6 +1,7 @@
 /// @author F.c.o Javier Guinot Almenar
 
 #include "my_window.h"
+#include <cfloat>
 
 #ifndef DESTROY
 #define DESTROY(x)  \
@@ -65,7 +66,7 @@ void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
     ticks = SDL_GetTicks() - ticks;
     if (cont >= 100)
     {
-      if (ticks != NULL)frame_rate = 1000 / ticks;
+      if (ticks != 0)frame_rate = 1000 / ticks;
       else frame_rate = FLT_MAX;
       cont -= 100;
     }
