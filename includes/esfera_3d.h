@@ -9,10 +9,6 @@
 #define RGBA(x) x.r, x.g, x.b, x.a
 #endif
 
-#ifndef VEC3_PRINT
-#define VEC3_PRINT(v) v.x<<", "<<v.y<<", "<<v.z
-#endif
-
 ////////////////////////
 // GUARDAS NO TOCAR
 #ifndef esfera_3d_h
@@ -36,7 +32,8 @@ private:
     int res_;
     MV::Pnt3 points_[MAX_VERTEX];
     MV::Pnt3 centros_[MAX_VERTEX];
-    SDL_Vertex draw_sdl_[MAX_VERTEX];
+
+    Render_Vert draw_sdl_[MAX_VERTEX];
 
     Caras caras[MAX_VERTEX];
 
