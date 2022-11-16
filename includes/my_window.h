@@ -106,6 +106,8 @@ public:
    */
   void drawRect(int row, int column, int height, int width, SDL_Color color = {255, 255, 255, SDL_ALPHA_OPAQUE}, SDL_Color fill = {255, 255, 255, SDL_ALPHA_OPAQUE});
 
+  void drawLine(int x1, int y1, int x2, int y2, SDL_Color color = {255,255,255,SDL_ALPHA_OPAQUE});
+
   /**
    * Destroyer of the window. Use it before you close your window
    */

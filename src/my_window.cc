@@ -43,7 +43,7 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
 void My_Window::whileInit(Keys *keys)
 {
   // Limpia la pantalla dejandola en negro
-  SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
+  SDL_SetRenderDrawColor(render, background_color.r, background_color.g, background_color.b, background_color.a);
   SDL_RenderClear(render);
   TakeKeyboard(keys);
   ticks=SDL_GetTicks();
@@ -260,6 +260,11 @@ void My_Window::drawRect(int fila, int columna, int height, int width, SDL_Color
   SDL_RenderFillRect(render, &rect);
   SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
   SDL_RenderDrawRect(render, &rect);
+}
+
+void My_Window::drawLine(int x1, int y1, int x2, int y2, SDL_Color color){
+  SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
+  SDL_RenderDrawLine(render, x1, y1, x2, y2);
 }
 
 void My_Window::Destroy()

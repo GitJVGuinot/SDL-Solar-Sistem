@@ -294,15 +294,17 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
         // Draw Triangles
         for (int i = 0; i < vertices_; i++)
         {
+          if(draw_sdl_[caras[order[i]].points[0]].active)
+          {
             static SDL_Vertex triangle[3];
-            triangle[0] = draw_sdl_[caras[order[i]].points[0]];
-            triangle[1] = draw_sdl_[caras[order[i]].points[1]];
-            triangle[2] = draw_sdl_[caras[order[i]].points[2]];
+            triangle[0] = draw_sdl_[caras[order[i]].points[0]].point;
+            triangle[1] = draw_sdl_[caras[order[i]].points[1]].point;
+            triangle[2] = draw_sdl_[caras[order[i]].points[2]].point;
 
             static SDL_Vertex triangle1[3];
-            triangle1[0] = draw_sdl_[caras[order[i]].points[3]];
-            triangle1[1] = draw_sdl_[caras[order[i]].points[2]];
-            triangle1[2] = draw_sdl_[caras[order[i]].points[0]];
+            triangle1[0] = draw_sdl_[caras[order[i]].points[3]].point;
+            triangle1[1] = draw_sdl_[caras[order[i]].points[2]].point;
+            triangle1[2] = draw_sdl_[caras[order[i]].points[0]].point;
 
             /*
             static SDL_Vertex square[4];
@@ -315,6 +317,7 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
 
             SDL_RenderGeometry(render, NULL, triangle, 3, NULL, 0);
             SDL_RenderGeometry(render, NULL, triangle1, 3, NULL, 0);
+          }
         }
     }
     else
@@ -322,8 +325,8 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
         // That is for points_
         for (int i = 0; i < vertices_; i++)
         {
-            SDL_SetRenderDrawColor(render, RGBA(draw_sdl_[i].color));
-            SDL_RenderDrawPoint(render, draw_sdl_[i].position.x, draw_sdl_[i].position.y);
+            SDL_SetRenderDrawColor(render, RGBA(draw_sdl_[i].point.color));
+            SDL_RenderDrawPoint(render, draw_sdl_[i].point.position.x, draw_sdl_[i].point.position.y);
         }
     }
 }

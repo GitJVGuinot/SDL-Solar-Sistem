@@ -9,25 +9,37 @@
 #define render_h
 ////////////////////////
 
+struct Render_Vert{
+  SDL_Vertex point;
+  bool active;
+};
+
 class Render{
 public:
   MV::Pnt3 camara_;
-  MV::Pnt3 light_;
-  MV::Pnt3 mira_;
-  int *draw_order_;
-  int max_order_;
 
   Render();
 
-  Render(MV::Pnt3 camara, MV::Pnt3 mira, int max_objects);
+  Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max_objects);
 
   void inputs(Keys *keys);
 
-  void order(MV::Pnt3 *object_desp, int max_objects);
+  int* getOrder(MV::Pnt3 *object_desp, int max_objects);
 
-  SDL_Vertex renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model);
+  Render_Vert renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model);
 
 private:
+  int *draw_order_;
+  MV::Pnt3 mira_;
+  int max_order_;
+  int far_;
+  int near_;
+
+  MV::Pnt3 vector_caras_[6];
+  MV::Pnt3 centros_caras_[6];
+  MV::Pnt3 centro_render_;
+  
+  bool active(MV::Pnt3 point);
 
 };
 
