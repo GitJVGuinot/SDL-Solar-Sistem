@@ -18,3 +18,4 @@ bin\*.pdb
 *.exe
 *.elf
 build\imgui.ini
+bin\imgui.ini
