@@ -17,14 +17,14 @@ del *.obj *.pdb *.ilk
 @echo -----------------------------------------------------------------------
 
 REM COMPILER
-cl /nologo /Zi /EHs /GR- /MDd -I ..\deps\includes\SDL2 /c ..\deps\includes\IMGUI\*.cpp
 
 cl /nologo /Zi /EHs /GR- /MDd ^
 -I ..\includes ^
 -I ..\deps\includes ^
 -I ..\deps\includes\IMGUI ^
 -I ..\deps\includes\SDL2 ^
-/c ..\src\*.cc
+/c ..\src\*.cc ^
+/c ..\deps\includes\IMGUI\*.cpp
 
 pause
 
