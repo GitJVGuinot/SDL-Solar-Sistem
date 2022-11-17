@@ -13,6 +13,8 @@
 *.obj
 *.ilk
 *.pdb
+bin\*.pdb
+\bin\*.pdb
 *.exe
 *.elf
 build\imgui.ini
