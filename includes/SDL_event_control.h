@@ -1,6 +1,5 @@
 /// @author F.c.o Javier Guinot Almenar
 
-
 ////////////////////////////////
 // Guardas, NO TOCAR
 #ifndef SDL_event_control_h
