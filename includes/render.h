@@ -44,6 +44,7 @@ private:
 
   MV::Pnt3 vector_caras_[6];
   MV::Pnt3 centros_caras_[6];
+  MV::Pnt3 paint_square_[4];
   MV::Pnt3 centro_render_;
 
   bool active(MV::Pnt3 point);

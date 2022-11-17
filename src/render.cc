@@ -10,6 +10,7 @@ Render::Render()
 
 Render::Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max_objects)
 {
+  std::cout << "Creando camara..." << std::endl;
   camara_ = camara;
   near_ = near;
   far_ = far;
@@ -58,6 +59,12 @@ Render::Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max
   vector_caras_[5] = MV::Vec_Resta(camara_, centros_caras_[5]);
   vector_caras_[5] = MV::Rotate_Point_3D({-90,0,0}, vector_caras_[5]);
 
+  // Need to change
+  paint_square_[0] = {centros_caras_[3].x, centros_caras_[4].y, centros_caras_[2].z};
+  paint_square_[1] = {centros_caras_[2].x, centros_caras_[4].y, centros_caras_[2].z};
+  paint_square_[2] = {centros_caras_[2].x, centros_caras_[5].y, centros_caras_[2].z};
+  paint_square_[3] = {centros_caras_[3].x, centros_caras_[5].y, centros_caras_[2].z};
+
   for(int i=0; i<6; i++)
   {
     char str[100];
@@ -73,6 +80,7 @@ Render::Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max
   MV::Vec_Print(mira_, "Mira: ");
   MV::Vec_Print(centro_render_, "Centro: ");
 
+  std::cout << "Camara creada" << std::endl;
 };
 
 void Render::inputs(Keys *keys)
@@ -82,6 +90,7 @@ void Render::inputs(Keys *keys)
   {
     MV::Orbitar_Punto(camara_, MV::Vec3{1, 0, 0}, mira_);
     for(int i=0; i<6; i++){
+      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{1, 0, 0}, paint_square_[i]);
       MV::Orbitar_Punto(camara_, MV::Vec3{1, 0, 0}, centros_caras_[i]);
       vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{1, 0, 0}, vector_caras_[i]);
     }
@@ -90,6 +99,7 @@ void Render::inputs(Keys *keys)
   {
     MV::Orbitar_Punto(camara_, MV::Vec3{-1, 0, 0}, mira_);
     for(int i=0; i<6; i++){
+      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{-1, 0, 0}, paint_square_[i]);
       MV::Orbitar_Punto(camara_, MV::Vec3{-1, 0, 0}, centros_caras_[i]);
       vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{-1, 0, 0}, vector_caras_[i]);
     }
@@ -98,6 +108,7 @@ void Render::inputs(Keys *keys)
   {
     MV::Orbitar_Punto(camara_, MV::Vec3{0, 1, 0}, mira_);
     for(int i=0; i<6; i++){
+      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{0, 1, 0}, paint_square_[i]);
       MV::Orbitar_Punto(camara_, MV::Vec3{0, 1, 0}, centros_caras_[i]);
       vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{0, 1, 0}, vector_caras_[i]);
     }
@@ -106,6 +117,7 @@ void Render::inputs(Keys *keys)
   {
     MV::Orbitar_Punto(camara_, MV::Vec3{0, -1, 0}, mira_);
     for(int i=0; i<6; i++){
+      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{0, -1, 0}, paint_square_[i]);
       MV::Orbitar_Punto(camara_, MV::Vec3{0, -1, 0}, centros_caras_[i]);
       vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{0, -1, 0}, vector_caras_[i]);
     }
@@ -114,6 +126,7 @@ void Render::inputs(Keys *keys)
   {
     MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, 1}, mira_);
     for(int i=0; i<6; i++){
+      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, 1}, paint_square_[i]);
       MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, 1}, centros_caras_[i]);
       vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{0, 0, 1}, vector_caras_[i]);
     }
@@ -122,6 +135,7 @@ void Render::inputs(Keys *keys)
   {
     MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, -1}, mira_);
     for(int i=0; i<6; i++){
+      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, -1}, paint_square_[i]);
       MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, -1}, centros_caras_[i]);
       vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{0, 0, -1}, vector_caras_[i]);
     }
@@ -135,7 +149,10 @@ void Render::inputs(Keys *keys)
     camara_ = MV::Vec_Sum(camara_, front);
     mira_ = MV::Vec_Sum(mira_, front);
 
-    for(int i=0; i<6; i++) centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], front);
+    for(int i=0; i<6; i++){
+      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], front);
+      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], front);
+    }
   }
 
   if (EVENT_DOWN(K_s, keys))
@@ -146,7 +163,10 @@ void Render::inputs(Keys *keys)
 
     camara_ = MV::Vec_Sum(camara_, back);
     mira_ = MV::Vec_Sum(mira_, back);
-    for(int i=0; i<6; i++) centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], back);
+    for(int i=0; i<6; i++){
+      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], back);
+      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], back);
+    }
   }
 
   if (EVENT_DOWN(K_a, keys))
@@ -157,7 +177,10 @@ void Render::inputs(Keys *keys)
 
     camara_ = MV::Vec_Sum(camara_, left);
     mira_ = MV::Vec_Sum(mira_, left);
-    for(int i=0; i<6; i++) centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], left);
+    for(int i=0; i<6; i++){
+      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], left);
+      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], left);
+    }
   }
 
   if (EVENT_DOWN(K_d, keys))
@@ -168,7 +191,10 @@ void Render::inputs(Keys *keys)
 
     camara_ = MV::Vec_Sum(camara_, right);
     mira_ = MV::Vec_Sum(mira_, right);
-    for(int i=0; i<6; i++) centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], right);
+    for(int i=0; i<6; i++){
+      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], right);
+      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], right);
+    }
   }
 
   if (EVENT_DOWN(K_q, keys))
@@ -179,8 +205,12 @@ void Render::inputs(Keys *keys)
 
     camara_ = MV::Vec_Sum(camara_, down);
     mira_ = MV::Vec_Sum(mira_, down);
-    for(int i=0; i<6; i++) centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], down);
+    for(int i=0; i<6; i++){
+      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], down);
+      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], down);
+    }
   }
+
   if (EVENT_DOWN(K_e, keys))
   {
     MV::Vec3 up = MV::Vec_Resta(mira_, camara_);
@@ -189,7 +219,10 @@ void Render::inputs(Keys *keys)
 
     camara_ = MV::Vec_Sum(camara_, up);
     mira_ = MV::Vec_Sum(mira_, up);
-    for(int i=0; i<6; i++) centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], up);
+    for(int i=0; i<6; i++){
+      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], up);
+      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], up);
+    }
   }
 }
 
@@ -316,7 +349,10 @@ void Render::cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win)
   model = MV::Mat3Multiply(desp, scala);
   Render_Vert draw[6];
 
+  Render_Vert square[4];
+
   for(int i=0; i<6; i++){
+    if(i<4) square[i] = renderPoint(paint_square_[i], {0}, {0}, {0}, model);
     draw[i] = renderPoint(centros_caras_[i], {0}, {0}, {0}, model);
   }
 
@@ -325,22 +361,14 @@ void Render::cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win)
   SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
   SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
 
-  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[2].point.position.x,draw[4].point.position.y);
-  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[4].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
-
-  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[2].point.position.x,draw[5].point.position.y);
-  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[5].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
-
   SDL_SetRenderDrawColor(render, 255, 0, 255, SDL_ALPHA_OPAQUE);
 
   SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
   SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
 
-  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[3].point.position.x,draw[4].point.position.y);
-  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[4].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
-
-  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[3].point.position.x,draw[5].point.position.y);
-  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[5].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
-
-
+  SDL_SetRenderDrawColor(render, 127, 127, 127, SDL_ALPHA_OPAQUE);
+  SDL_RenderDrawLine(render, square[0].point.position.x,square[0].point.position.y, square[1].point.position.x,square[1].point.position.y);
+  SDL_RenderDrawLine(render, square[1].point.position.x,square[1].point.position.y, square[2].point.position.x,square[2].point.position.y);
+  SDL_RenderDrawLine(render, square[2].point.position.x,square[2].point.position.y, square[3].point.position.x,square[3].point.position.y);
+  SDL_RenderDrawLine(render, square[3].point.position.x,square[3].point.position.y, square[0].point.position.x,square[0].point.position.y);
 }

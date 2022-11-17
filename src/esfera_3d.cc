@@ -25,7 +25,6 @@ void Esfera::obtenerEsfera()
         for (int columnas = 0; columnas < (res_ * 2); columnas++)
         {
             caras[i].n_points = 4;
-            caras[i].points = (int *)calloc(caras[i].n_points, sizeof(int));
 
             caras[i].points[0] = i;
             caras[i].points[1] = i + 1;
@@ -355,14 +354,4 @@ void Esfera::imprime()
     std::cout << std::endl;
 }
 
-Esfera::~Esfera()
-{
-
-    if (caras != NULL)
-    {
-        for (int i = 0; i < vertices_; i++)
-        {
-            DESTROY(caras[i].points);
-        }
-    }
-}
+Esfera::~Esfera(){}

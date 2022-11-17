@@ -18,7 +18,7 @@
 struct Caras
 {
     int n_points;
-    int *points;
+    int points[4];
 };
 
 #define MAX_VERTEX 20200
