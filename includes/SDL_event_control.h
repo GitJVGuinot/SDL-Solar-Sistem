@@ -1,12 +1,17 @@
 /// @author F.c.o Javier Guinot Almenar
 
-#include <SDL2/SDL.h>
 
 ////////////////////////////////
 // Guardas, NO TOCAR
 #ifndef SDL_event_control_h
 #define SDL_event_control_h
 ////////////////////////////////
+
+#include <SDL2/SDL.h>
+
+#include <IMGUI/imgui.h>
+#include <IMGUI/imgui_impl_sdl.h>
+#include <IMGUI/imgui_impl_sdlrenderer.h>
 
 // Numbers
 const int K_0 = 0;

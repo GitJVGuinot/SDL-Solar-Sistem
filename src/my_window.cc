@@ -1,7 +1,6 @@
 /// @author F.c.o Javier Guinot Almenar
 
 #include "my_window.h"
-#include <cfloat>
 
 #ifndef DESTROY
 #define DESTROY(x)  \
@@ -29,7 +28,6 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL |
                                                    SDL_WINDOW_RESIZABLE |
                                                    SDL_WINDOW_ALLOW_HIGHDPI);
-
   window = SDL_CreateWindow("SLD test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, win_x, win_y, window_flags);
 
   render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -38,18 +36,42 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
   background_color = background_color_;
 
   std::cout << "My_Window creada" << std::endl;
+
+  #ifdef IMGUI_API
+  std::cout << "Iniciando Dear ImGui desde constructor de My_Window" << std::endl;
+  // Setup Dear ImGui context
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO &io = ImGui::GetIO();
+  (void)io;
+
+  // Setup Platform/Renderer backends
+  ImGui_ImplSDL2_InitForSDLRenderer(window, render);
+  ImGui_ImplSDLRenderer_Init(render);
+  std::cout << "Dear ImGui iniciado" << std::endl;
+  #endif
 }
 
-void My_Window::whileInit(Keys *keys)
+void My_Window::whileInit(Keys *keys
+  #ifdef IMGUI_API
+  , bool imguiState_, char *imgui
+  #endif
+  )
 {
   // Limpia la pantalla dejandola en negro
-  SDL_SetRenderDrawColor(render, background_color.r, background_color.g, background_color.b, background_color.a);
+  SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
   SDL_RenderClear(render);
   TakeKeyboard(keys);
-  ticks=SDL_GetTicks();
-  int w, h;
-  SDL_GetRendererOutputSize(render, &w, &h);
 
+  #ifdef IMGUI_API
+  if(imguiState_){
+    // Imgui loop initialice
+    ImGui_ImplSDLRenderer_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+  }
+  imguiState=imguiState_;
+  #endif
 }
 
 void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
@@ -77,6 +99,14 @@ void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
     text(texto, 1, columns - 1 - strlen(texto), {255, 255, 255, SDL_ALPHA_OPAQUE});
   }
 
+  #ifdef IMGUI_API
+  if(imguiState){
+    ImGui::Render();
+    // Send ImGui commands to GPU
+    ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+  }
+  #endif
+
   SDL_RenderPresent(render);
   if (EVENT_DOWN(EXIT_WINDOW, keys))
   {
@@ -87,6 +117,11 @@ void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
   {
     runing = false;
   }
+
+  do
+  { // control fps por segundo.
+    current_time = SDL_GetTicks();
+  } while (((current_time - last_time) <= (1000.0 * 100.0) / fps) && runing);
 }
 
 bool My_Window::setTextFont(char *font_path)
@@ -156,10 +191,9 @@ void My_Window::setGameTitle(char *completeTitle)
   std::cout << "Titulo de juego establecido" << std::endl;
 }
 
-void My_Window::changeResolution(int filas_, int columnas_)
-{
-  rows = filas_;
-  columns = columnas_;
+void My_Window::changeResolution(int filas_, int columnas_){
+  rows=filas_;
+  columns=columnas_;
 
   win_x = columns * textWidth;
   win_y = rows * textHeight;
@@ -167,8 +201,8 @@ void My_Window::changeResolution(int filas_, int columnas_)
   SDL_DestroyWindow(window);
 
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL |
-                                                   SDL_WINDOW_RESIZABLE |
-                                                   SDL_WINDOW_ALLOW_HIGHDPI);
+      SDL_WINDOW_RESIZABLE |
+      SDL_WINDOW_ALLOW_HIGHDPI );
   window = SDL_CreateWindow("SLD test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, win_x, win_y, window_flags);
 
   render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -202,7 +236,7 @@ void My_Window::text(char *frase, int fila, int columna, SDL_Color color)
 
   char *str = (char *)calloc(columns * rows, sizeof(char));
 
-  SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
+  SDL_SetRenderDrawColor(render, color.r, color.g,color.b,color.a);
   sprintf(str, "%s", frase);
   textSurface = TTF_RenderUTF8_Blended(font, str, textColor);
   // Si no se consigue la surface:
@@ -245,7 +279,7 @@ void My_Window::drawCursor(int fila, int columna, SDL_Color color, SDL_Color fil
   SDL_Rect rect = {px, py, (int)textWidth, (int)textHeight};
   SDL_SetRenderDrawColor(render, fill.r, fill.g, fill.b, fill.a);
   SDL_RenderFillRect(render, &rect);
-  SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
+  SDL_SetRenderDrawColor(render, color.r, color.g,color.b,color.a);
   SDL_RenderDrawRect(render, &rect);
 }
 
@@ -258,23 +292,22 @@ void My_Window::drawRect(int fila, int columna, int height, int width, SDL_Color
   SDL_Rect rect = {px, py, width + 6, height + 6};
   SDL_SetRenderDrawColor(render, fill.r, fill.g, fill.b, fill.a);
   SDL_RenderFillRect(render, &rect);
-  SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
+  SDL_SetRenderDrawColor(render, color.r, color.g,color.b,color.a);
   SDL_RenderDrawRect(render, &rect);
-}
-
-void My_Window::drawLine(int x1, int y1, int x2, int y2, SDL_Color color){
-  SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
-  SDL_RenderDrawLine(render, x1, y1, x2, y2);
 }
 
 void My_Window::Destroy()
 {
-  std::cout << "Destruyendo My_Window..." << std::endl;
+  std::cout << "Destruyendo My_Window, SDL, SDL_ttf & Dear ImGui..." << std::endl;
 
   SDL_DestroyRenderer(render);
   SDL_DestroyWindow(window);
   TTF_CloseFont(font);
 
-  std::cout << "My_Window destruida" << std::endl
+  ImGui_ImplSDLRenderer_Shutdown();
+  ImGui_ImplSDL2_Shutdown();
+  ImGui::DestroyContext();
+
+  std::cout << "My_Window, SDL, SDL_ttf & Dear ImGui destruidos" << std::endl
             << std::endl;
 }

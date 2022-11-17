@@ -64,7 +64,7 @@ int main(int argc, char **argv)
   }
 
   // Inicializacion ventana de juego
-  My_Window win = *new My_Window(k_TextHeight, k_TextWitdh, g_Filas, g_Columnas);
+  My_Window win = *new My_Window(k_TextHeight, k_TextWitdh, g_Filas, g_Columnas, colores[NEGRO]);
   if (!win.setTextFont((char *)FONT_PATH))
   {
     std::cout << "Failed at TTF_Font_Init(): " << SDL_GetError() << std::endl;
@@ -97,7 +97,11 @@ int main(int argc, char **argv)
 
   while (win.runing)
   {
-    win.whileInit(keys);
+    win.whileInit(keys
+      #ifdef IMGUI_API
+      , true
+      #endif
+      );
 
     (planet + 0)->rotar({fRand(0.0075f,0),fRand(0.0075f,0), fRand(0.0075f,0)});
     for (int i = 1; i < max_planets; i++)

@@ -1,25 +1,30 @@
 /// @author F.c.o Javier Guinot Almenar
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-
-#include <iostream>
-#include <cstring>
-
-#include "SDL_event_control.h"
-#include "SDL_colors.h"
-
-#ifdef _WIN32
-#define FONT_PATH_R "C:/Windows/Fonts/Arial.ttf"
-#elif __linux__
-#define FONT_PATH_R "/usr/share/fonts/truetype/lao/Phetsarath_OT.ttf"
-#endif
 
 ////////////////////////////////
 // Guardas, NO TOCAR
 #ifndef my_window_h
 #define my_window_h
 ////////////////////////////////
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+
+#include <IMGUI/imgui.h>
+#include <IMGUI/imgui_impl_sdl.h>
+#include <IMGUI/imgui_impl_sdlrenderer.h>
+
+#include <iostream>
+#include <cstring>
+
+#include <SDL_event_control.h>
+#include <SDL_colors.h>
+
+#ifdef _WIN32
+#define FONT_PATH_R "C:/Windows/Fonts/Arial.ttf"
+#elif __linux__
+#define FONT_PATH_R "/usr/share/fonts/truetype/lao/Phetsarath_OT.ttf"
+#endif
 
 /** \class
  * Defines the display viewport
@@ -31,6 +36,10 @@ private:
   int columns;
   int textHeight;
   int textWidth;
+
+  #ifdef IMGUI_API
+  bool imguiState;
+  #endif
 
   const double fps = 60.0;
   double current_time = 0.0;
@@ -58,19 +67,24 @@ public:
   /**
    * Class constructor
    */
-  My_Window(int height_, int width_, int rows_, int columns_, SDL_Color p_background_color = {0, 0, 0, SDL_ALPHA_OPAQUE});
+  My_Window(int height_, int width_, int rows_, int columns_, SDL_Color background_color);
 
   /**
    * This is necesary at start in any displayport loop
    * ¡¡¡¡ BE SURE THAT IS CLOSED !!!!
    */
-  void whileInit(Keys *keys);
+  void whileInit(Keys *keys
+    #ifdef IMGUI_API
+    , bool imguiState_
+    , char *imgui = (char *)"IMGUI"
+    #endif
+    );
 
   /**
    * This is necesary at end in any displayport loop
    * ¡¡¡¡ BE SURE THAT IS STARTED !!!!
    */
-  void whileEnd(Keys *keys, bool frame_rat = true);
+  void whileEnd(Keys *keys, bool frame_rate = false);
 
   /**
    * Defines THE PATH to the font.ttf
@@ -105,8 +119,6 @@ public:
    * Draw a rectangle
    */
   void drawRect(int row, int column, int height, int width, SDL_Color color = {255, 255, 255, SDL_ALPHA_OPAQUE}, SDL_Color fill = {255, 255, 255, SDL_ALPHA_OPAQUE});
-
-  void drawLine(int x1, int y1, int x2, int y2, SDL_Color color = {255,255,255,SDL_ALPHA_OPAQUE});
 
   /**
    * Destroyer of the window. Use it before you close your window
