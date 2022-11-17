@@ -1,6 +1,5 @@
 /// @author F.c.o Javier Guinot Almenar
 
-
 ////////////////////////////////
 // Guardas, NO TOCAR
 #ifndef my_window_h
@@ -41,14 +40,14 @@ private:
   bool imguiState;
   #endif
 
-  const double fps = 60.0;
   double current_time = 0.0;
   double last_time = 0.0;
 
   float frame_rate = 0;
-  int ticks;
+  int ticks = 0;
 
 public:
+  double fps = 60.0;
   float win_x;
   float win_y;
   bool runing;

@@ -30,7 +30,8 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
                                                    SDL_WINDOW_ALLOW_HIGHDPI);
   window = SDL_CreateWindow("SLD test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, win_x, win_y, window_flags);
 
-  render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  SDL_RendererFlags render_flags = (SDL_RendererFlags)(SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+  render = SDL_CreateRenderer(window, -1, render_flags);
 
   SDL_ShowCursor(1);
   background_color = background_color_;
@@ -58,6 +59,7 @@ void My_Window::whileInit(Keys *keys
   #endif
   )
 {
+  ticks = SDL_GetTicks();
   // Limpia la pantalla dejandola en negro
   SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
   SDL_RenderClear(render);
@@ -76,19 +78,29 @@ void My_Window::whileInit(Keys *keys
 
 void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
 {
-  // do
-  // { // control fps por segundo.
-  //   current_time = SDL_GetTicks();
-  // } while (((current_time - last_time) <= (1000) / fps) && runing);
-  // last_time=SDL_GetTicks();
+  #ifdef IMGUI_API
+  if(imguiState){
+    ImGui::Render();
+    // Send ImGui commands to GPU
+    ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+  }
+  #endif
+
+  if(fps>0){
+    do
+    { // control fps por segundo.
+      current_time = SDL_GetTicks();
+    } while (((current_time - last_time) <= (1000) / fps) && runing);
+    last_time=SDL_GetTicks();
+  }
 
   if (b_frame_rate)
   {
     static int cont = 0;
     ticks = SDL_GetTicks() - ticks;
-    if (cont >= 100)
+    if (cont >= 100 || cont == 0)
     {
-      if (ticks != 0)frame_rate = 1000 / ticks;
+      if(ticks!=0)  frame_rate = 1000.0f / (float)ticks;
       else frame_rate = FLT_MAX;
       cont -= 100;
     }
@@ -98,14 +110,6 @@ void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
     snprintf(texto, 15, "%d", (int)frame_rate);
     text(texto, 1, columns - 1 - strlen(texto), {255, 255, 255, SDL_ALPHA_OPAQUE});
   }
-
-  #ifdef IMGUI_API
-  if(imguiState){
-    ImGui::Render();
-    // Send ImGui commands to GPU
-    ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
-  }
-  #endif
 
   SDL_RenderPresent(render);
   if (EVENT_DOWN(EXIT_WINDOW, keys))
@@ -118,10 +122,6 @@ void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
     runing = false;
   }
 
-  do
-  { // control fps por segundo.
-    current_time = SDL_GetTicks();
-  } while (((current_time - last_time) <= (1000.0 * 100.0) / fps) && runing);
 }
 
 bool My_Window::setTextFont(char *font_path)
@@ -203,7 +203,7 @@ void My_Window::changeResolution(int filas_, int columnas_){
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL |
       SDL_WINDOW_RESIZABLE |
       SDL_WINDOW_ALLOW_HIGHDPI );
-  window = SDL_CreateWindow("SLD test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, win_x, win_y, window_flags);
+  window = SDL_CreateWindow("SDL test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, win_x, win_y, window_flags);
 
   render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 }
@@ -298,16 +298,20 @@ void My_Window::drawRect(int fila, int columna, int height, int width, SDL_Color
 
 void My_Window::Destroy()
 {
-  std::cout << "Destruyendo My_Window, SDL, SDL_ttf & Dear ImGui..." << std::endl;
+  std::cout << "Destruyendo My_Window, SDL & SDL_ttf..." << std::endl;
 
   SDL_DestroyRenderer(render);
   SDL_DestroyWindow(window);
   TTF_CloseFont(font);
 
+  #ifdef IMGUI_API
+  std::cout << "Destuyendo  Dear ImGui..." << std::endl;
   ImGui_ImplSDLRenderer_Shutdown();
   ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();
+  std::cout << "Dear ImGui destruido" << std::endl;
+  #endif
 
-  std::cout << "My_Window, SDL, SDL_ttf & Dear ImGui destruidos" << std::endl
+  std::cout << "My_Window, SDL & SDL_ttf destruidos" << std::endl
             << std::endl;
 }

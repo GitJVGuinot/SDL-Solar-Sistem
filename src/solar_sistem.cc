@@ -1,5 +1,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+
+#include <IMGUI/imgui.h>
+#include <IMGUI/imgui_impl_sdl.h>
+#include <IMGUI/imgui_impl_sdlrenderer.h>
+
 #include <iostream>
 #include <cstring>
 #include <cfloat>
@@ -14,7 +19,7 @@
 int k_TextHeight = 28;
 int k_TextWitdh = ((float)(k_TextHeight*4/7)-1);
 int g_Filas = 30;
-int g_Columnas = 85;
+int g_Columnas = 80;
 
 #ifndef RGBA
 #define RGBA(x) x.r,x.g,x.b,x.a
@@ -124,9 +129,9 @@ int main(int argc, char **argv)
       (planet + order[i])->draw(keys, win.render, drawRender, light, false);
     }
 
-    drawRender.cameraDraw(keys, win.render, max_win);
+    drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
 
-    win.whileEnd(keys);
+    win.whileEnd(keys, true);
   }
 
   win.Destroy();
