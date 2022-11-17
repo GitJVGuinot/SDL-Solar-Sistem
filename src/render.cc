@@ -305,13 +305,12 @@ Render_Vert Render::renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, S
   return Render_Vert{ret, active(point)};
 }
 
-void Render::cameraDraw(Keys *keys, SDL_Renderer *render)
+void Render::cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win)
 {
   // Transformacion de puntos 2D
   MV::Mat3 model = MV::Mat3Identity();
-  MV::Mat3 scala = MV::Mat3Scale({200, 200});
-  MV::Mat3 desp;
-  desp = MV::Mat3Translate(MV::Vec3_Tr_Vec2(centro_render_));
+  MV::Mat3 scala = MV::Mat3Scale({500, 500});
+  MV::Mat3 desp =  MV::Mat3Translate(MV::Vec3_Tr_Vec2(camara_));
   model = MV::Mat3Multiply(desp, scala);
   Render_Vert draw[6];
 
@@ -323,7 +322,23 @@ void Render::cameraDraw(Keys *keys, SDL_Renderer *render)
 
   SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
   SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
+
+  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[2].point.position.x,draw[4].point.position.y);
+  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[4].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
+
+  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[2].point.position.x,draw[5].point.position.y);
+  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[5].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
+
+  SDL_SetRenderDrawColor(render, 255, 0, 255, SDL_ALPHA_OPAQUE);
+
   SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
   SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
+
+  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[3].point.position.x,draw[4].point.position.y);
+  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[4].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
+
+  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[3].point.position.x,draw[5].point.position.y);
+  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[5].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
+
 
 }

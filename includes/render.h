@@ -28,7 +28,7 @@ public:
 
   Render_Vert renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model);
 
-  void cameraDraw(Keys *keys, SDL_Renderer *render);
+  void cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win);
 
 private:
   int *draw_order_;

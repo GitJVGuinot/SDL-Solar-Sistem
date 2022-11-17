@@ -77,11 +77,11 @@ int main(int argc, char **argv)
 
   // 0 -> planet[0], 1 - 4 -> Planets
   std::cout << "Generando planetas..." << std::endl;
-  planet[0].init(colores[BLANCO], 10, {30,30,30}, {middle_win.x, middle_win.y, 0.0f});
-  planet[1].init(colores[0], 10, {5, 5, 5}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
-  planet[2].init(colores[1], 10, {5, 5, 5}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
-  planet[3].init(colores[2], 10, {5, 5, 5}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
-  planet[4].init(colores[3], 10, {5, 5, 5}, {(planet + 0)->desp_.x + 60, (planet + 0)->desp_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, (planet + 0)->desp_);
+  planet[0].init(colores[BLANCO], 10, {12,12,12}, {middle_win.x, middle_win.y, 0.0f});
+  planet[1].init(colores[0], 10, {2, 2, 2}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
+  planet[2].init(colores[1], 10, {2, 2, 2}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
+  planet[3].init(colores[2], 10, {2, 2, 2}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
+  planet[4].init(colores[3], 10, {2, 2, 2}, {(planet + 0)->desp_.x + 60, (planet + 0)->desp_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, (planet + 0)->desp_);
   std::cout << "Planetas generados" << std::endl;
 
   // Imprimir en pantalla los datos de la ventana
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
       (planet + order[i])->draw(keys, win.render, drawRender, light, false);
     }
 
-    drawRender.cameraDraw(keys, win.render);
+    drawRender.cameraDraw(keys, win.render, max_win);
 
     win.whileEnd(keys);
   }
