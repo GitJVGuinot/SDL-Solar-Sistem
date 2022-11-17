@@ -1,5 +1,9 @@
 #include <render.h>
 
+MV::Pnt2 Render::getRenderScale(){
+  return render_scale_;
+};
+
 Render::Render()
 {
   camara_ = {0, 0, 0};

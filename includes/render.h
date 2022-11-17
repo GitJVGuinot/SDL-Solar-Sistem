@@ -30,9 +30,7 @@ public:
 
   void cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win);
 
-  MV::Pnt2 getRenderScale(){
-    return render_scale_;
-  };
+  MV::Pnt2 getRenderScale();
 
 private:
   int *draw_order_;
