@@ -90,7 +90,8 @@ int main(int argc, char **argv)
 
   MV::Pnt3 light = (planet + 0)->desp_;
 
-  float far = 1000, near = 5;
+  // The best config is  far = 1000 & near = 1
+  float far = 1000, near = 1;
   Render drawRender(max_win, {middle_win.x,middle_win.y,100}, near, far, max_planets);
   MV::Pnt3 *object_desp=(MV::Pnt3*)calloc(max_planets,sizeof(MV::Pnt3));
 

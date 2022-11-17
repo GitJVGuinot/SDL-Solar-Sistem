@@ -17,7 +17,9 @@ Render::Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max
   draw_order_ = (int *)realloc(draw_order_, max_objects * sizeof(int));
   max_order_ = max_objects;
 
-  // Change
+  float newScale = (500*far_)/1000;
+  render_scale_ = {newScale, newScale};
+
   // Max_win se establecera cuando colisione con el centro
   MV::Pnt3 vector_mira = MV::Normalizar_Vec(MV::Vec_Resta(camara_,{camara.x,camara.y,camara.z+100}));
   centro_render_ = MV::Vec_Sum(camara_, MV::Vec_Escalado(vector_mira, ( (far-near) /2 ) + near ));
@@ -309,7 +311,7 @@ void Render::cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win)
 {
   // Transformacion de puntos 2D
   MV::Mat3 model = MV::Mat3Identity();
-  MV::Mat3 scala = MV::Mat3Scale({500, 500});
+  MV::Mat3 scala = MV::Mat3Scale(render_scale_);
   MV::Mat3 desp =  MV::Mat3Translate(MV::Vec3_Tr_Vec2(camara_));
   model = MV::Mat3Multiply(desp, scala);
   Render_Vert draw[6];

@@ -243,7 +243,7 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
 
     // Transformacion de puntos 2D
     MV::Mat3 model = MV::Mat3Identity();
-    MV::Mat3 scala = MV::Mat3Scale({500, 500});
+    MV::Mat3 scala = MV::Mat3Scale(drawRender.getRenderScale());
     MV::Mat3 desp;
 
     if ((centro_orbita_.x + centro_orbita_.y + centro_orbita_.z) == 0)
