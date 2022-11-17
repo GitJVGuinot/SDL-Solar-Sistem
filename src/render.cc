@@ -304,3 +304,26 @@ Render_Vert Render::renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, S
 
   return Render_Vert{ret, active(point)};
 }
+
+void Render::cameraDraw(Keys *keys, SDL_Renderer *render)
+{
+  // Transformacion de puntos 2D
+  MV::Mat3 model = MV::Mat3Identity();
+  MV::Mat3 scala = MV::Mat3Scale({200, 200});
+  MV::Mat3 desp;
+  desp = MV::Mat3Translate(MV::Vec3_Tr_Vec2(centro_render_));
+  model = MV::Mat3Multiply(desp, scala);
+  Render_Vert draw[6];
+
+  for(int i=0; i<6; i++){
+    draw[i] = renderPoint(centros_caras_[i], {0}, {0}, {0}, model);
+  }
+
+  SDL_SetRenderDrawColor(render, 255, 255, 255, SDL_ALPHA_OPAQUE);
+
+  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
+  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
+  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
+  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
+
+}

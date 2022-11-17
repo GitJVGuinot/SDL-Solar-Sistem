@@ -119,6 +119,8 @@ int main(int argc, char **argv)
       (planet + order[i])->draw(keys, win.render, drawRender, light, false);
     }
 
+    drawRender.cameraDraw(keys, win.render);
+
     win.whileEnd(keys);
   }
 

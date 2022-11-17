@@ -28,6 +28,8 @@ public:
 
   Render_Vert renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model);
 
+  void cameraDraw(Keys *keys, SDL_Renderer *render);
+
 private:
   int *draw_order_;
   MV::Pnt3 mira_;
@@ -38,7 +40,7 @@ private:
   MV::Pnt3 vector_caras_[6];
   MV::Pnt3 centros_caras_[6];
   MV::Pnt3 centro_render_;
-  
+
   bool active(MV::Pnt3 point);
 
 };
