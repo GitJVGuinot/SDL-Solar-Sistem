@@ -312,7 +312,7 @@ void Render::cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win)
   // Transformacion de puntos 2D
   MV::Mat3 model = MV::Mat3Identity();
   MV::Mat3 scala = MV::Mat3Scale(render_scale_);
-  MV::Mat3 desp =  MV::Mat3Translate(MV::Vec3_Tr_Vec2(camara_));
+  MV::Mat3 desp =  MV::Mat3Translate(MV::Vec3_Tr_Vec2(centro_render_));
   model = MV::Mat3Multiply(desp, scala);
   Render_Vert draw[6];
 

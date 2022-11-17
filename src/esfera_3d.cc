@@ -311,11 +311,15 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
           square[3] = draw_sdl_[caras[order[i]].points[3]];
           SDL_RenderGeometry(render, NULL, square, 4, NULL, 0);
           */
+          bool draw = false;
+          for(int j = 0; j < 4; j++){
+            draw = (draw || draw_sdl_[caras[order[i]].points[j]].active);
+          }
 
-          if(draw_sdl_[caras[order[i]].points[0]].active || draw_sdl_[caras[order[i]].points[1]].active || draw_sdl_[caras[order[i]].points[2]].active)
+          if(draw){
             SDL_RenderGeometry(render, NULL, triangle, 3, NULL, 0);
-          if(draw_sdl_[caras[order[i]].points[3]].active || draw_sdl_[caras[order[i]].points[2]].active || draw_sdl_[caras[order[i]].points[0]].active)
             SDL_RenderGeometry(render, NULL, triangle1, 3, NULL, 0);
+          }
         }
     }
     else

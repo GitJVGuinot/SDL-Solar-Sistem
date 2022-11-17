@@ -2,9 +2,11 @@
 
 *.vscode
 
+
 #VS
 
 *.vs
+
 
 # Objects
 
@@ -12,3 +14,4 @@
 *.ilk
 *.pdb
 *.exe
+*.elf
