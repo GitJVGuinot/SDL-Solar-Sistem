@@ -35,6 +35,7 @@ public:
 private:
   int *draw_order_;
   MV::Pnt3 mira_;
+  MV::Vec3 up_;
   int max_order_;
   int far_;
   int near_;
