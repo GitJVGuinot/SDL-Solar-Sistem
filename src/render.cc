@@ -335,20 +335,22 @@ bool Render::active(MV::Pnt3 point)
 
 Render_Vert Render::renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model)
 {
-  // Proyeccion de puntos 3D a 2D teniendo en cuenta la camara
-  MV::Mat4 vMatrix = MV::Mat4View(camara_, mira_, up_);
-  MV::Mat4 pro = MV::Mat4Projection();
-  vMatrix = MV::Mat4Multiply(pro, vMatrix);
+  if(active(point)){
+    // Proyeccion de puntos 3D a 2D teniendo en cuenta la camara
+    MV::Mat4 vMatrix = MV::Mat4View(camara_, mira_, up_);
+    MV::Mat4 pro = MV::Mat4Projection();
+    vMatrix = MV::Mat4Multiply(pro, vMatrix);
 
-  MV::Vec3 new_point = MV::Mat4TransformVec3(vMatrix, point);
+    MV::Vec3 new_point = MV::Mat4TransformVec3(vMatrix, point);
 
-  new_point = MV::Vec2_Tr_Vec3(MV::Vec3_Tr_Vec2(new_point), 1);
+    new_point = MV::Vec2_Tr_Vec3(MV::Vec3_Tr_Vec2(new_point), 1);
 
-  new_point = MV::Mat3TransformVec3(model, new_point);
+    new_point = MV::Mat3TransformVec3(model, new_point);
 
-  SDL_Vertex ret = renderSDLVertex(light, MV::Vec3_Tr_Vec2(new_point), point, desp, color);
+    SDL_Vertex ret = renderSDLVertex(light, MV::Vec3_Tr_Vec2(new_point), point, desp, color);
 
-  return Render_Vert{ret, active(point)};
+    return Render_Vert{ret, true};
+  } else return Render_Vert{{0,0,0}, false};
 }
 
 void Render::cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win)
@@ -366,16 +368,6 @@ void Render::cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win)
     if(i<4) square[i] = renderPoint(paint_square_[i], {0}, {0}, {0}, model);
     draw[i] = renderPoint(centros_caras_[i], {0}, {0}, {0}, model);
   }
-
-  SDL_SetRenderDrawColor(render, 255, 255, 255, SDL_ALPHA_OPAQUE);
-
-  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
-  SDL_RenderDrawLine(render, draw[2].point.position.x,draw[2].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
-
-  SDL_SetRenderDrawColor(render, 255, 0, 255, SDL_ALPHA_OPAQUE);
-
-  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[4].point.position.x,draw[4].point.position.y);
-  SDL_RenderDrawLine(render, draw[3].point.position.x,draw[3].point.position.y, draw[5].point.position.x,draw[5].point.position.y);
 
   SDL_SetRenderDrawColor(render, 127, 127, 127, SDL_ALPHA_OPAQUE);
   SDL_RenderDrawLine(render, square[0].point.position.x,square[0].point.position.y, square[1].point.position.x,square[1].point.position.y);

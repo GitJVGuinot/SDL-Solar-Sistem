@@ -302,17 +302,9 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
           triangle1[1] = draw_sdl_[caras[order[i]].points[2]].point;
           triangle1[2] = draw_sdl_[caras[order[i]].points[0]].point;
 
-          /*
-          static SDL_Vertex square[4];
-          square[0] = draw_sdl_[caras[order[i]].points[0]];
-          square[1] = draw_sdl_[caras[order[i]].points[1]];
-          square[2] = draw_sdl_[caras[order[i]].points[2]];
-          square[3] = draw_sdl_[caras[order[i]].points[3]];
-          SDL_RenderGeometry(render, NULL, square, 4, NULL, 0);
-          */
-          bool draw = false;
+          bool draw = true;
           for(int j = 0; j < 4; j++){
-            draw = (draw || draw_sdl_[caras[order[i]].points[j]].active);
+            draw = (draw && draw_sdl_[caras[order[i]].points[j]].active);
           }
 
           if(draw){
