@@ -40,13 +40,13 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
 
 }
 
-SDL_Event My_Window::whileInit(Keys *keys)
+void My_Window::whileInit(Keys *keys)
 {
   ticks = SDL_GetTicks();
   // Limpia la pantalla dejandola en negro
   SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
   SDL_RenderClear(render);
-  return TakeKeyboard(keys);
+  TakeKeyboard(keys);
 
 }
 

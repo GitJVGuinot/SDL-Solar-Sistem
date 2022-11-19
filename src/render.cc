@@ -12,7 +12,7 @@ Render::Render()
   max_order_ = 0;
 };
 
-Render::Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max_objects)
+void Render::init(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far)
 {
   std::cout << "Creando camara..." << std::endl;
   up_ = {0, 1, 0};
@@ -24,9 +24,7 @@ Render::Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max
   camara_ = camara;
   near_ = near;
   far_ = far;
-  draw_order_ = nullptr;
-  draw_order_ = (int *)realloc(draw_order_, max_objects * sizeof(int));
-  max_order_ = max_objects;
+  max_order_ = 0;
 
   float newScale = (500*far_)/1000;
   render_scale_ = {newScale, newScale};
@@ -75,25 +73,18 @@ Render::Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max
   paint_square_[2] = {centros_caras_[2].x, centros_caras_[5].y, centros_caras_[2].z};
   paint_square_[3] = {centros_caras_[3].x, centros_caras_[5].y, centros_caras_[2].z};
 
-  for(int i=0; i<6; i++)
-  {
-    char str[100];
-    sprintf(str, "i: %d, centros: ", i);
-    MV::Vec_Print(centros_caras_[i], str);
-
-    char str2[100];
-    sprintf(str2, "i: %d, vectores: ", i);
-    MV::Vec_Print(vector_caras_[i], str2);
-  }
-
   MV::Vec_Print(camara_, "Camara: ");
   MV::Vec_Print(mira_, "Mira: ");
-  MV::Vec_Print(centro_render_, "Centro: ");
+  MV::Vec_Print(up_, "Up: ");
 
   std::cout << "Camara creada" << std::endl;
 };
 
-void Render::rotar(MV::Pnt3 rot){
+void Render::reset(MV::Pnt2 max_win){
+  init(max_win, {max_win.x/2,max_win.y/2,100});
+}
+
+void Render::rotation(MV::Pnt3 rot){
   MV::Orbitar_Punto(camara_, rot, mira_);
   up_ = MV::Rotate_Point_3D(rot, up_);
   down_ = MV::Rotate_Point_3D(rot, down_);
@@ -108,7 +99,7 @@ void Render::rotar(MV::Pnt3 rot){
   }
 }
 
-void Render::mover(MV::Pnt3 desp){
+void Render::translation(MV::Pnt3 desp){
   camara_ = MV::Vec_Sum(camara_, desp);
   mira_ = MV::Vec_Sum(mira_, desp);
   for(int i=0; i<6; i++){
@@ -120,23 +111,23 @@ void Render::mover(MV::Pnt3 desp){
 void Render::inputs(Keys *keys)
 {
 
-  if (EVENT_DOWN(UP, keys)) rotar(right_);
-  if (EVENT_DOWN(DOWN, keys)) rotar(left_);
+  if (EVENT_DOWN(UP, keys)) rotation(right_);
+  if (EVENT_DOWN(DOWN, keys)) rotation(left_);
 
-  if (EVENT_DOWN(RIGHT, keys)) rotar(up_);
-  if (EVENT_DOWN(LEFT, keys)) rotar(down_);
+  if (EVENT_DOWN(RIGHT, keys)) rotation(up_);
+  if (EVENT_DOWN(LEFT, keys)) rotation(down_);
 
-  if (EVENT_DOWN(K_n, keys)) rotar(front_);
-  if (EVENT_DOWN(K_m, keys)) rotar(back_);
+  if (EVENT_DOWN(K_n, keys)) rotation(front_);
+  if (EVENT_DOWN(K_m, keys)) rotation(back_);
 
-  if (EVENT_DOWN(K_w, keys)) mover(back_);
-  if (EVENT_DOWN(K_s, keys)) mover(front_);
+  if (EVENT_DOWN(K_w, keys)) translation(back_);
+  if (EVENT_DOWN(K_s, keys)) translation(front_);
 
-  if (EVENT_DOWN(K_a, keys)) mover(right_);
-  if (EVENT_DOWN(K_d, keys)) mover(left_);
+  if (EVENT_DOWN(K_a, keys)) translation(right_);
+  if (EVENT_DOWN(K_d, keys)) translation(left_);
 
-  if (EVENT_DOWN(K_q, keys)) mover(down_);
-  if (EVENT_DOWN(K_e, keys)) mover(up_);
+  if (EVENT_DOWN(K_q, keys)) translation(down_);
+  if (EVENT_DOWN(K_e, keys)) translation(up_);
 
 }
 
@@ -277,4 +268,9 @@ void Render::cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win)
   SDL_RenderDrawLine(render, square[1].point.position.x,square[1].point.position.y, square[2].point.position.x,square[2].point.position.y);
   SDL_RenderDrawLine(render, square[2].point.position.x,square[2].point.position.y, square[3].point.position.x,square[3].point.position.y);
   SDL_RenderDrawLine(render, square[3].point.position.x,square[3].point.position.y, square[0].point.position.x,square[0].point.position.y);
+}
+
+MV::Pnt3 Render::getUp()
+{
+  return up_;
 }

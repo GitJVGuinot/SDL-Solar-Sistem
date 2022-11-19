@@ -52,10 +52,10 @@ public:
   SDL_Renderer *render = NULL;
   SDL_Window *window = NULL;
 
-  TTF_Font *font = NULL;
-
   SDL_Texture *texture = NULL;
   SDL_Surface *textSurface = NULL;
+
+  TTF_Font *font = NULL;
 
   SDL_Color background_color;
 
@@ -68,7 +68,7 @@ public:
    * This is necesary at start in any displayport loop
    * ¡¡¡¡ BE SURE THAT IS CLOSED !!!!
    */
-  SDL_Event whileInit(Keys *keys);
+  void whileInit(Keys *keys);
 
   /**
    * This is necesary at end in any displayport loop

@@ -20,10 +20,12 @@ public:
 
   Render();
 
-  Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max_objects);
+  void init(MV::Pnt2 max_win, MV::Pnt3 camara, float near = 1, float far=1000);
 
-  void rotar(MV::Pnt3 rot);
-  void mover(MV::Pnt3 desp);
+  void reset(MV::Pnt2 max_win);
+
+  void rotation(MV::Pnt3 rot);
+  void translation(MV::Pnt3 desp);
 
   void inputs(Keys *keys);
 
@@ -34,6 +36,8 @@ public:
   void cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win);
 
   MV::Pnt2 getRenderScale();
+
+  MV::Pnt3 getUp();
 
 private:
   int *draw_order_;

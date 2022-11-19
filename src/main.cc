@@ -95,16 +95,17 @@ int main(int argc, char **argv)
 
   MV::Pnt3 light = (planet + 0)->desp_;
 
-  // The best config is  far = 1000 & near = 1
-  float far = 1000, near = 1;
-  Render drawRender(max_win, {middle_win.x,middle_win.y,100}, near, far, max_planets);
+  Render drawRender;
+  drawRender.init(max_win, {middle_win.x,middle_win.y,100});
   MV::Pnt3 *object_desp=(MV::Pnt3*)calloc(max_planets,sizeof(MV::Pnt3));
 
   while (win.runing)
   {
-    SDL_Event event = win.whileInit(keys);
+    win.whileInit(keys);
     Debug_Window::Update();
-    Debug_Window::Input(&event);
+
+    Camera_Control("Camera controls", drawRender, {win.win_x, win.win_y});
+    Planets_Control("Planets controls", &planet);
 
     (planet + 0)->rotar({fRand(0.0075f,0),fRand(0.0075f,0), fRand(0.0075f,0)});
     for (int i = 1; i < max_planets; i++)
