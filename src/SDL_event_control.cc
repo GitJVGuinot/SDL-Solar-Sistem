@@ -103,7 +103,7 @@ void InitKeyboard(Keys *keys)
   keys[DOT].may_letter = ':';
 }
 
-void TakeKeyboard(Keys *keys)
+SDL_Event TakeKeyboard(Keys *keys)
 {
   // Limpia los inputs del frame anterior
   for (unsigned int i = 0; i < MAX_INPUTS - 1; i++)
@@ -116,10 +116,6 @@ void TakeKeyboard(Keys *keys)
   SDL_Event event;
   while (SDL_PollEvent(&event))
   {
-    #ifdef IMGUI_API
-    ImGui_ImplSDL2_ProcessEvent(&event);
-    #endif
-    
     if (event.type == SDL_QUIT)
     {
       keys[FULL_EXIT_WINDOW].down = true;
@@ -565,6 +561,7 @@ void TakeKeyboard(Keys *keys)
       }
     }
   }
+  return event;
 }
 
 bool EVENT_DOWN(int input, Keys *keys)

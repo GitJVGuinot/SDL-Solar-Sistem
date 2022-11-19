@@ -8,10 +8,6 @@
 
 #include <SDL2/SDL.h>
 
-#include <IMGUI/imgui.h>
-#include <IMGUI/imgui_impl_sdl.h>
-#include <IMGUI/imgui_impl_sdlrenderer.h>
-
 // Numbers
 const int K_0 = 0;
 const int K_1 = 1;
@@ -108,7 +104,7 @@ void InitKeyboard(Keys *keys);
   * Use in the while Start
   * You can found it in My_Window::whileInit
 */
-void TakeKeyboard(Keys *keys);
+SDL_Event TakeKeyboard(Keys *keys);
 
 /**
   * @return the input down of the Keys array

@@ -9,10 +9,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include <IMGUI/imgui.h>
-#include <IMGUI/imgui_impl_sdl.h>
-#include <IMGUI/imgui_impl_sdlrenderer.h>
-
 #include <iostream>
 #include <cstring>
 
@@ -72,12 +68,7 @@ public:
    * This is necesary at start in any displayport loop
    * ¡¡¡¡ BE SURE THAT IS CLOSED !!!!
    */
-  void whileInit(Keys *keys
-    #ifdef IMGUI_API
-    , bool imguiState_
-    , char *imgui = (char *)"IMGUI"
-    #endif
-    );
+  SDL_Event whileInit(Keys *keys);
 
   /**
    * This is necesary at end in any displayport loop

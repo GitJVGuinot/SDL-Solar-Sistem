@@ -111,7 +111,7 @@ void Render::inputs(Keys *keys)
       vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{-1, 0, 0}, vector_caras_[i]);
     }
   }
-  
+
   if (EVENT_DOWN(RIGHT, keys))
   {
     MV::Orbitar_Punto(camara_, MV::Vec3{0, 1, 0}, mira_);
@@ -234,6 +234,7 @@ void Render::inputs(Keys *keys)
       centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], up);
     }
   }
+
 }
 
 int* Render::getOrder(MV::Pnt3 *object, int max_order)

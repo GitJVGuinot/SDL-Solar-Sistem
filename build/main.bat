@@ -12,8 +12,8 @@ REM Compilación y Enlace con librería gráfica.
 @echo  Proceso por lotes iniciado.
 @echo -----------------------------------------------------------------------
 @echo  Eliminando objetos....
-del *.obj *.pdb *.ilk *.exe
-del ..\bin\*.obj ..\bin\*.pdb ..\bin\*.ilk ..\bin\*.exe
+del *.obj *.pdb *.ilk
+del ..\bin\*.obj ..\bin\*.pdb ..\bin\*.ilk
 @echo  Objetos eliminados
 @echo -----------------------------------------------------------------------
 

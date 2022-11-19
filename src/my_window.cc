@@ -38,54 +38,20 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
 
   std::cout << "My_Window creada" << std::endl;
 
-  #ifdef IMGUI_API
-  std::cout << "Iniciando Dear ImGui desde constructor de My_Window" << std::endl;
-  // Setup Dear ImGui context
-  IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-  ImGuiIO &io = ImGui::GetIO();
-  (void)io;
-
-  // Setup Platform/Renderer backends
-  ImGui_ImplSDL2_InitForSDLRenderer(window, render);
-  ImGui_ImplSDLRenderer_Init(render);
-  std::cout << "Dear ImGui iniciado" << std::endl;
-  #endif
 }
 
-void My_Window::whileInit(Keys *keys
-  #ifdef IMGUI_API
-  , bool imguiState_, char *imgui
-  #endif
-  )
+SDL_Event My_Window::whileInit(Keys *keys)
 {
   ticks = SDL_GetTicks();
   // Limpia la pantalla dejandola en negro
   SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
   SDL_RenderClear(render);
-  TakeKeyboard(keys);
+  return TakeKeyboard(keys);
 
-  #ifdef IMGUI_API
-  if(imguiState_){
-    // Imgui loop initialice
-    ImGui_ImplSDLRenderer_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
-    ImGui::NewFrame();
-  }
-  imguiState=imguiState_;
-  #endif
 }
 
 void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
 {
-  #ifdef IMGUI_API
-  if(imguiState){
-    ImGui::Render();
-    // Send ImGui commands to GPU
-    ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
-  }
-  #endif
-
   if(fps>0){
     do
     { // control fps por segundo.
@@ -303,14 +269,6 @@ void My_Window::Destroy()
   SDL_DestroyRenderer(render);
   SDL_DestroyWindow(window);
   TTF_CloseFont(font);
-
-  #ifdef IMGUI_API
-  std::cout << "Destuyendo  Dear ImGui..." << std::endl;
-  ImGui_ImplSDLRenderer_Shutdown();
-  ImGui_ImplSDL2_Shutdown();
-  ImGui::DestroyContext();
-  std::cout << "Dear ImGui destruido" << std::endl;
-  #endif
 
   std::cout << "My_Window, SDL & SDL_ttf destruidos" << std::endl
             << std::endl;

@@ -1,10 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include <IMGUI/imgui.h>
-#include <IMGUI/imgui_impl_sdl.h>
-#include <IMGUI/imgui_impl_sdlrenderer.h>
-
 #include <iostream>
 #include <cstring>
 #include <cfloat>
@@ -15,6 +11,7 @@
 #include <render.h>
 #include <esfera_3d.h>
 #include <my_window.h>
+#include <debug_window.h>
 
 int k_TextHeight = 28;
 int k_TextWitdh = ((float)(k_TextHeight*4/7)-1);
@@ -77,6 +74,9 @@ int main(int argc, char **argv)
   }
   win.setGameTitle(*argv);
 
+  // Inicializacion de ImGui
+  Debug_Window::Init(win.window, win.render);
+
   const int max_planets = 5;
   Esfera *planet=(Esfera*)calloc(max_planets, sizeof(Esfera));
 
@@ -102,11 +102,9 @@ int main(int argc, char **argv)
 
   while (win.runing)
   {
-    win.whileInit(keys
-      #ifdef IMGUI_API
-      , true
-      #endif
-      );
+    SDL_Event event = win.whileInit(keys);
+    Debug_Window::Update();
+    Debug_Window::Input(&event);
 
     (planet + 0)->rotar({fRand(0.0075f,0),fRand(0.0075f,0), fRand(0.0075f,0)});
     for (int i = 1; i < max_planets; i++)
@@ -131,12 +129,14 @@ int main(int argc, char **argv)
 
     drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
 
+    Debug_Window::Render();
     win.whileEnd(keys, true);
   }
 
   win.Destroy();
   TTF_Quit();
   SDL_Quit();
+  Debug_Window::Quit();
 
   return 0;
 }
