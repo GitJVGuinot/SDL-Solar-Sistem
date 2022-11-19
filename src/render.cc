@@ -120,14 +120,14 @@ void Render::mover(MV::Pnt3 desp){
 void Render::inputs(Keys *keys)
 {
 
-  if (EVENT_DOWN(DOWN, keys)) rotar(MV::Pnt3{1,0,0});
-  if (EVENT_DOWN(UP, keys)) rotar(MV::Pnt3{-1,0,0});
+  if (EVENT_DOWN(UP, keys)) rotar(right_);
+  if (EVENT_DOWN(DOWN, keys)) rotar(left_);
 
-  if (EVENT_DOWN(RIGHT, keys)) rotar(MV::Pnt3{0,1,0});
-  if (EVENT_DOWN(LEFT, keys)) rotar(MV::Pnt3{0,-1,0});
+  if (EVENT_DOWN(RIGHT, keys)) rotar(up_);
+  if (EVENT_DOWN(LEFT, keys)) rotar(down_);
 
-  if (EVENT_DOWN(K_n, keys)) rotar(MV::Pnt3{0,0,1});
-  if (EVENT_DOWN(K_m, keys)) rotar(MV::Pnt3{0,0,-1});
+  if (EVENT_DOWN(K_n, keys)) rotar(front_);
+  if (EVENT_DOWN(K_m, keys)) rotar(back_);
 
   if (EVENT_DOWN(K_w, keys)) mover(back_);
   if (EVENT_DOWN(K_s, keys)) mover(front_);
