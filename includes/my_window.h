@@ -44,6 +44,8 @@ private:
 
 public:
   double fps = 60.0;
+  bool fps_control;
+  bool show_fps;
   float win_x;
   float win_y;
   bool runing;
@@ -74,7 +76,7 @@ public:
    * This is necesary at end in any displayport loop
    * ¡¡¡¡ BE SURE THAT IS STARTED !!!!
    */
-  void whileEnd(Keys *keys, bool frame_rate = false);
+  void whileEnd(Keys *keys);
 
   /**
    * Defines THE PATH to the font.ttf

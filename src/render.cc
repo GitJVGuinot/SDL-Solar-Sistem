@@ -4,6 +4,13 @@ MV::Pnt2 Render::getRenderScale(){
   return render_scale_;
 };
 
+float Render::getFar(){
+  return far_;
+}
+float Render::getNear(){
+  return near_;
+}
+
 Render::Render()
 {
   camara_ = {0, 0, 0};
@@ -25,7 +32,7 @@ void Render::init(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far)
   near_ = near;
   far_ = far;
   max_order_ = 0;
-  draw_order_=nullptr;
+  draw_order_ = nullptr;
 
   float newScale = (500*far_)/1000;
   render_scale_ = {newScale, newScale};
@@ -82,6 +89,7 @@ void Render::init(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far)
 };
 
 void Render::reset(MV::Pnt2 max_win){
+  DESTROY(draw_order_);
   init(max_win, {max_win.x/2,max_win.y/2,100});
 }
 
@@ -141,7 +149,7 @@ int* Render::getOrder(MV::Pnt3 *object, int max_order)
   if (max_order != max_order_)
   {
     max_order_ = max_order;
-    draw_order_ = (int *)realloc(draw_order_, max_order_);
+    draw_order_ = (int *)realloc(draw_order_, max_order_*sizeof(int));
   }
   for (int i = 0; i < max_order_; i++)
   {
@@ -190,7 +198,7 @@ SDL_Color renderColorLight(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Co
   if (angulo < 0)
     angulo *= -1;
 
-  Uint8 angleRest = (Uint8)((float)255 / 180 * angulo);
+  Uint8 angleRest = (Uint8)((float)(255 / 180) * angulo);
 
   if (ret.r > 0)
     ret.r -= (Uint8)angleRest;

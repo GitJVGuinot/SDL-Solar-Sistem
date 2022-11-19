@@ -36,6 +36,8 @@ public:
   void cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win);
 
   MV::Pnt2 getRenderScale();
+  float getFar();
+  float getNear();
 
   MV::Pnt3 getUp();
 
@@ -49,8 +51,8 @@ private:
   MV::Vec3 front_;
   MV::Vec3 back_;
   int max_order_;
-  int far_;
-  int near_;
+  float far_;
+  float near_;
   MV::Pnt2 render_scale_;
 
   MV::Pnt3 vector_caras_[6];

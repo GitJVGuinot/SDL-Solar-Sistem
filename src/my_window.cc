@@ -17,6 +17,8 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
   runing = true;
   state = 0;
 
+  fps_control=true;
+  show_fps=true;
   rows = rows_;
   columns = columns_;
   textHeight = height_;
@@ -50,9 +52,9 @@ void My_Window::whileInit(Keys *keys)
 
 }
 
-void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
+void My_Window::whileEnd(Keys *keys)
 {
-  if(fps>0){
+  if(fps_control){
     do
     { // control fps por segundo.
       current_time = SDL_GetTicks();
@@ -60,7 +62,7 @@ void My_Window::whileEnd(Keys *keys, bool b_frame_rate)
     last_time=SDL_GetTicks();
   }
 
-  if (b_frame_rate)
+  if (show_fps)
   {
     static int cont = 0;
     ticks = SDL_GetTicks() - ticks;

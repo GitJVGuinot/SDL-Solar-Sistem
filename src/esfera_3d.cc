@@ -72,12 +72,14 @@ Esfera::Esfera()
     color_ = {0, 0, 0};
 };
 
-void Esfera::init(SDL_Color color, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
+void Esfera::init(SDL_Color color, bool fill, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
 {
     color_ = color;
+    fill_ = fill;
     res_ = res;
     orbita_ = orbita;
     centro_orbita_ = centro_orbita;
+    orbit_vel_=0.0f;
     rotado_ = {0, 0, 0};
     escala_ = {1, 1, 1};
     dim_ = 1;
@@ -86,13 +88,13 @@ void Esfera::init(SDL_Color color, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::
     obtenerEsfera();
 
     if ((escala.x + escala.y + escala.z) != 3)
-        escalar(escala);
+        scale(escala);
 
     if ((desp.x + desp.y + desp.z) != 0)
-        desplazar(desp);
+        translation(desp);
 
     if ((rot.x + rot.y + rot.z) != 0)
-        rotar(rot);
+        rotation(rot);
 }
 
 MV::Pnt3 Esfera::point(int i)
@@ -100,7 +102,7 @@ MV::Pnt3 Esfera::point(int i)
     return *(points_ + i);
 }
 
-void Esfera::rotar(MV::Pnt3 p_rot)
+void Esfera::rotation(MV::Pnt3 p_rot)
 {
     rotado_ = MV::Vec_Sum(rotado_, p_rot);
     if (rotado_.x >= 360)
@@ -131,18 +133,19 @@ void Esfera::rotar(MV::Pnt3 p_rot)
         model = MV::Mat4Multiply(model, rot_z);
 
     MV::Pnt3 desp__ = desp_;
-    desplazar({-desp_.x, -desp_.y, -desp_.z});
+    translation({-desp_.x, -desp_.y, -desp_.z});
     for (int i = 0; i < vertices_; i++)
     {
         *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
         *(centros_ + i) = MV::Mat4TransformVec3(model, *(centros_ + i));
     }
-    desplazar(desp__);
+    translation(desp__);
 }
 
-void Esfera::orbitar(float vel)
+void Esfera::orbitar()
 {
-    MV::Pnt3 p_orbita_ = MV::Vec_Escalado(orbita_, vel);
+  if ((centro_orbita_.x + centro_orbita_.y + centro_orbita_.z) != 0){
+    MV::Pnt3 p_orbita_ = MV::Vec_Escalado(orbita_, orbit_vel_);
 
     MV::Mat4 rot_x;
     MV::Mat4 rot_y;
@@ -163,17 +166,18 @@ void Esfera::orbitar(float vel)
     if (p_orbita_.z != 0)
         model = MV::Mat4Multiply(model, rot_z);
 
-    desplazar(MV::Vec3{-centro_orbita_.x, -centro_orbita_.y, -centro_orbita_.z});
+    translation(MV::Vec3{-centro_orbita_.x, -centro_orbita_.y, -centro_orbita_.z});
     desp_ = MV::Mat4TransformVec3(model, desp_);
     for (int i = 0; i < vertices_; i++)
     {
         *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
         *(centros_ + i) = MV::Mat4TransformVec3(model, *(centros_ + i));
     }
-    desplazar(centro_orbita_);
+    translation(centro_orbita_);
+  }
 }
 
-void Esfera::desplazar(MV::Pnt3 p_desp_)
+void Esfera::translation(MV::Pnt3 p_desp_)
 {
     desp_ = MV::Vec_Sum(desp_, p_desp_);
     for (int i = 0; i < vertices_; i++)
@@ -183,7 +187,7 @@ void Esfera::desplazar(MV::Pnt3 p_desp_)
     }
 }
 
-void Esfera::escalar(MV::Pnt3 p_escala_)
+void Esfera::scale(MV::Pnt3 p_escala_)
 {
     escala_ = MV::Vec_Escalado(escala_, p_escala_);
     dim_ = p_escala_.x * dim_;
@@ -194,50 +198,50 @@ void Esfera::escalar(MV::Pnt3 p_escala_)
     model = MV::Mat4Multiply(model, m_escala_);
 
     MV::Pnt3 desp__ = desp_;
-    desplazar({-desp_.x, -desp_.y, -desp_.z});
+    translation({-desp_.x, -desp_.y, -desp_.z});
     for (int i = 0; i < vertices_; i++)
     {
         *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
         *(centros_ + i) = MV::Mat4TransformVec3(model, *(centros_ + i));
     }
-    desplazar(desp__);
+    translation(desp__);
 }
 
 void Esfera::inputs(Keys *keys)
 {
     if (EVENT_DOWN(DOWN, keys))
-        rotar({1.0f, 0.0f, 0.0f});
+        rotation({1.0f, 0.0f, 0.0f});
     if (EVENT_DOWN(UP, keys))
-        rotar({-1.0f, 0.0f, 0.0f});
+        rotation({-1.0f, 0.0f, 0.0f});
     if (EVENT_DOWN(RIGHT, keys))
-        rotar({0.0f, 1.0f, 0.0f});
+        rotation({0.0f, 1.0f, 0.0f});
     if (EVENT_DOWN(LEFT, keys))
-        rotar({0.0f, -1.0f, 0.0f});
+        rotation({0.0f, -1.0f, 0.0f});
     if (EVENT_DOWN(K_z, keys))
-        rotar({0.0f, 0.0f, -1.0f});
+        rotation({0.0f, 0.0f, -1.0f});
     if (EVENT_DOWN(K_x, keys))
-        rotar({0.0f, 0.0f, 1.0f});
+        rotation({0.0f, 0.0f, 1.0f});
 
     if (EVENT_DOWN(K_a, keys))
-        desplazar({-0.1f, 0.0f, 0.0f});
+        translation({-0.1f, 0.0f, 0.0f});
     if (EVENT_DOWN(K_d, keys))
-        desplazar({0.1f, 0.0f, 0.0f});
+        translation({0.1f, 0.0f, 0.0f});
     if (EVENT_DOWN(K_w, keys))
-        desplazar({0.0f, -0.1f, 0.0f});
+        translation({0.0f, -0.1f, 0.0f});
     if (EVENT_DOWN(K_s, keys))
-        desplazar({0.0f, 0.1f, 0.0f});
+        translation({0.0f, 0.1f, 0.0f});
     if (EVENT_DOWN(K_q, keys))
-        desplazar({0.0f, 0.0f, 0.1f});
+        translation({0.0f, 0.0f, 0.1f});
     if (EVENT_DOWN(K_e, keys))
-        desplazar({0.0f, 0.0f, -0.1f});
+        translation({0.0f, 0.0f, -0.1f});
 
     if (EVENT_DOWN(SHIFT, keys))
-        escalar({0.9f, 0.9f, 0.9f});
+        scale({0.9f, 0.9f, 0.9f});
     if (EVENT_DOWN(SPACE, keys))
-        escalar({1.1f, 1.1f, 1.1f});
+        scale({1.1f, 1.1f, 1.1f});
 }
 
-void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 light, bool puntos)
+void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 light)
 {
 
     // Transformacion de puntos 2D
@@ -261,7 +265,7 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
     }
 
     // This is to draw with texture | light
-    if (!puntos)
+    if (fill_)
     {
         // Ordenado de puntos
         static int *order = (int *)calloc(vertices_, sizeof(int));

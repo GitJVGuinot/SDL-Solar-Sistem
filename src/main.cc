@@ -77,16 +77,16 @@ int main(int argc, char **argv)
   // Inicializacion de ImGui
   Debug_Window::Init(win.window, win.render);
 
-  const int max_planets = 5;
-  Esfera *planet=(Esfera*)calloc(max_planets, sizeof(Esfera));
+  int max_planets = 5;
+  Esfera *planet = (Esfera*)calloc(max_planets, sizeof(Esfera));
 
   // 0 -> planet[0], 1 - 4 -> Planets
   std::cout << "Generando planetas..." << std::endl;
-  planet[0].init(colores[BLANCO], 10, {12,12,12}, {middle_win.x, middle_win.y, 0.0f});
-  planet[1].init(colores[0], 10, {2, 2, 2}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
-  planet[2].init(colores[1], 10, {2, 2, 2}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
-  planet[3].init(colores[2], 10, {2, 2, 2}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
-  planet[4].init(colores[3], 10, {2, 2, 2}, {(planet + 0)->desp_.x + 60, (planet + 0)->desp_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, (planet + 0)->desp_);
+  planet[0].init(colores[BLANCO], true, 10, {12,12,12}, {middle_win.x, middle_win.y, 0.0f});
+  planet[1].init(colores[0], true, 10, {2, 2, 2}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
+  planet[2].init(colores[1], true, 10, {2, 2, 2}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
+  planet[3].init(colores[2], true, 10, {2, 2, 2}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
+  planet[4].init(colores[3], true, 10, {2, 2, 2}, {(planet + 0)->desp_.x + 60, (planet + 0)->desp_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, (planet + 0)->desp_);
   std::cout << "Planetas generados" << std::endl;
 
   // Imprimir en pantalla los datos de la ventana
@@ -104,13 +104,8 @@ int main(int argc, char **argv)
     win.whileInit(keys);
     Debug_Window::Update();
 
-    Camera_Control("Camera controls", drawRender, {win.win_x, win.win_y});
-    Planets_Control("Planets controls", &planet);
-
-    (planet + 0)->rotar({fRand(0.0075f,0),fRand(0.0075f,0), fRand(0.0075f,0)});
-    for (int i = 1; i < max_planets; i++)
-    {
-      (planet + i)->orbitar(10.0f);
+    for (int i = 0; i < max_planets; i++){
+      (planet + i)->orbitar();
     }
 
     drawRender.inputs(keys);
@@ -125,13 +120,16 @@ int main(int argc, char **argv)
       if(EVENT_DOWN(K_p, keys)){
         std::cout << std::endl << "Drawing planet " << order[i] << std::endl;
       }
-      (planet + order[i])->draw(keys, win.render, drawRender, light, false);
+      (planet + order[i])->draw(keys, win.render, drawRender, light);
     }
 
     drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
 
+    Camera_Control("Camera controls", drawRender, win, {win.win_x, win.win_y});
+    Planets_Control("Planets controls", &planet, max_planets);
+
     Debug_Window::Render();
-    win.whileEnd(keys, true);
+    win.whileEnd(keys);
   }
 
   win.Destroy();

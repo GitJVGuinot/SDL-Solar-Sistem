@@ -47,20 +47,22 @@ public:
     MV::Pnt3 orbita_;
     MV::Pnt3 centro_orbita_;
     SDL_Color color_;
+    bool fill_;
+    float orbit_vel_;
 
     // Inicializa la esfera
     Esfera();
-    void init(SDL_Color color, int p_res_ = 10, MV::Pnt3 p_escala_ = {1, 1, 1}, MV::Pnt3 p_desp_ = {0, 0, 0}, MV::Pnt3 p_rot = {0, 0, 0}, MV::Pnt3 p_orbita_ = {0, 0, 0}, MV::Pnt3 centro_orbita = {0, 0, 0});
+    void init(SDL_Color color, bool fill = false, int p_res_ = 10, MV::Pnt3 p_escala_ = {1, 1, 1}, MV::Pnt3 p_desp_ = {0, 0, 0}, MV::Pnt3 p_rot = {0, 0, 0}, MV::Pnt3 p_orbita_ = {0, 0, 0}, MV::Pnt3 centro_orbita = {0, 0, 0});
 
     MV::Pnt3 point(int i);
 
-    void rotar(MV::Pnt3 p_rot);
+    void rotation(MV::Pnt3 p_rot);
 
-    void orbitar(float vel);
+    void orbitar();
 
-    void desplazar(MV::Pnt3 p_desp_);
+    void translation(MV::Pnt3 p_desp_);
 
-    void escalar(MV::Pnt3 p_escala_);
+    void scale(MV::Pnt3 p_escala_);
 
     void inputs(Keys *keys);
 
@@ -68,7 +70,7 @@ public:
 
     SDL_Vertex renderSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point);
 
-    void draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 light = {0, 0, 0}, bool puntos = true);
+    void draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 light = {0, 0, 0});
 
     void imprime();
 

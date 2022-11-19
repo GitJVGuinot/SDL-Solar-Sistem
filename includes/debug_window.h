@@ -5,6 +5,7 @@
 #include <iostream>
 #include <render.h>
 #include <esfera_3d.h>
+#include <my_window.h>
 
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
@@ -24,7 +25,7 @@ public:
   static void Quit();
 };
 
-void Camera_Control(const char* str, Render &drawRender, MV::Pnt2 max_win);
-void Planets_Control(const char* str, Esfera **planets);
+void Camera_Control(const char* str, Render &drawRender, My_Window &win, MV::Pnt2 max_win);
+void Planets_Control(const char* str, Esfera **planets, int &max_planets);
 
 #endif
