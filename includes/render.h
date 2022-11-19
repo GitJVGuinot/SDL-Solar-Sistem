@@ -22,11 +22,14 @@ public:
 
   Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max_objects);
 
+  void rotar(MV::Pnt3 rot);
+  void mover(MV::Pnt3 desp);
+
   void inputs(Keys *keys);
 
   int* getOrder(MV::Pnt3 *object_desp, int max_objects);
 
-  Render_Vert renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model);
+  Render_Vert renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model, bool forceRender = false);
 
   void cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win);
 
@@ -36,6 +39,11 @@ private:
   int *draw_order_;
   MV::Pnt3 mira_;
   MV::Vec3 up_;
+  MV::Vec3 down_;
+  MV::Vec3 right_;
+  MV::Vec3 left_;
+  MV::Vec3 front_;
+  MV::Vec3 back_;
   int max_order_;
   int far_;
   int near_;

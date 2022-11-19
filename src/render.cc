@@ -16,6 +16,11 @@ Render::Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max
 {
   std::cout << "Creando camara..." << std::endl;
   up_ = {0, 1, 0};
+  down_ = {0,-1,0};
+  right_ = {1,0,0};
+  left_ = {-1,0,0};
+  front_ = {0,0,1};
+  back_ = {0,0,-1};
   camara_ = camara;
   near_ = near;
   far_ = far;
@@ -88,152 +93,50 @@ Render::Render(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far, int max
   std::cout << "Camara creada" << std::endl;
 };
 
+void Render::rotar(MV::Pnt3 rot){
+  MV::Orbitar_Punto(camara_, rot, mira_);
+  up_ = MV::Rotate_Point_3D(rot, up_);
+  down_ = MV::Rotate_Point_3D(rot, down_);
+  right_ = MV::Rotate_Point_3D(rot, right_);
+  left_ = MV::Rotate_Point_3D(rot, left_);
+  front_ = MV::Rotate_Point_3D(rot, front_);
+  back_ = MV::Rotate_Point_3D(rot, back_);
+  for(int i=0; i<6; i++){
+    if(i<4)MV::Orbitar_Punto(camara_, rot, paint_square_[i]);
+    MV::Orbitar_Punto(camara_, rot, centros_caras_[i]);
+    vector_caras_[i] = MV::Rotate_Point_3D(rot, vector_caras_[i]);
+  }
+}
+
+void Render::mover(MV::Pnt3 desp){
+  camara_ = MV::Vec_Sum(camara_, desp);
+  mira_ = MV::Vec_Sum(mira_, desp);
+  for(int i=0; i<6; i++){
+    if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], desp);
+    centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], desp);
+  }
+}
+
 void Render::inputs(Keys *keys)
 {
 
-  if (EVENT_DOWN(DOWN, keys))
-  {
-    MV::Orbitar_Punto(camara_, MV::Vec3{1, 0, 0}, mira_);
-    up_ = MV::Rotate_Point_3D(MV::Vec3{1, 0, 0}, up_);
-    for(int i=0; i<6; i++){
-      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{1, 0, 0}, paint_square_[i]);
-      MV::Orbitar_Punto(camara_, MV::Vec3{1, 0, 0}, centros_caras_[i]);
-      vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{1, 0, 0}, vector_caras_[i]);
-    }
-  }
-  if (EVENT_DOWN(UP, keys))
-  {
-    MV::Orbitar_Punto(camara_, MV::Vec3{-1, 0, 0}, mira_);
-    up_ = MV::Rotate_Point_3D(MV::Vec3{-1, 0, 0}, up_);
-    for(int i=0; i<6; i++){
-      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{-1, 0, 0}, paint_square_[i]);
-      MV::Orbitar_Punto(camara_, MV::Vec3{-1, 0, 0}, centros_caras_[i]);
-      vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{-1, 0, 0}, vector_caras_[i]);
-    }
-  }
+  if (EVENT_DOWN(DOWN, keys)) rotar(MV::Pnt3{1,0,0});
+  if (EVENT_DOWN(UP, keys)) rotar(MV::Pnt3{-1,0,0});
 
-  if (EVENT_DOWN(RIGHT, keys))
-  {
-    MV::Orbitar_Punto(camara_, MV::Vec3{0, 1, 0}, mira_);
-    up_ = MV::Rotate_Point_3D(MV::Vec3{0, 1, 0}, up_);
-    for(int i=0; i<6; i++){
-      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{0, 1, 0}, paint_square_[i]);
-      MV::Orbitar_Punto(camara_, MV::Vec3{0, 1, 0}, centros_caras_[i]);
-      vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{0, 1, 0}, vector_caras_[i]);
-    }
-  }
-  if (EVENT_DOWN(LEFT, keys))
-  {
-    MV::Orbitar_Punto(camara_, MV::Vec3{0, -1, 0}, mira_);
-    up_ = MV::Rotate_Point_3D(MV::Vec3{0, -1, 0}, up_);
-    for(int i=0; i<6; i++){
-      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{0, -1, 0}, paint_square_[i]);
-      MV::Orbitar_Punto(camara_, MV::Vec3{0, -1, 0}, centros_caras_[i]);
-      vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{0, -1, 0}, vector_caras_[i]);
-    }
-  }
+  if (EVENT_DOWN(RIGHT, keys)) rotar(MV::Pnt3{0,1,0});
+  if (EVENT_DOWN(LEFT, keys)) rotar(MV::Pnt3{0,-1,0});
 
-  if (EVENT_DOWN(K_n, keys))
-  {
-    MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, 1}, mira_);
-    up_ = MV::Rotate_Point_3D(MV::Vec3{0, 0, 1}, up_);
-    for(int i=0; i<6; i++){
-      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, 1}, paint_square_[i]);
-      MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, 1}, centros_caras_[i]);
-      vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{0, 0, 1}, vector_caras_[i]);
-    }
-  }
-  if (EVENT_DOWN(K_m, keys))
-  {
-    MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, -1}, mira_);
-    up_ = MV::Rotate_Point_3D(MV::Vec3{0, 0, -1}, up_);
-    for(int i=0; i<6; i++){
-      if(i<4)MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, -1}, paint_square_[i]);
-      MV::Orbitar_Punto(camara_, MV::Vec3{0, 0, -1}, centros_caras_[i]);
-      vector_caras_[i] = MV::Rotate_Point_3D(MV::Vec3{0, 0, -1}, vector_caras_[i]);
-    }
-  }
+  if (EVENT_DOWN(K_n, keys)) rotar(MV::Pnt3{0,0,1});
+  if (EVENT_DOWN(K_m, keys)) rotar(MV::Pnt3{0,0,-1});
 
-  if (EVENT_DOWN(K_w, keys))
-  {
-    MV::Vec3 front = MV::Vec_Resta(mira_, camara_);
-    front = MV::Normalizar_Vec(front);
+  if (EVENT_DOWN(K_w, keys)) mover(back_);
+  if (EVENT_DOWN(K_s, keys)) mover(front_);
 
-    camara_ = MV::Vec_Sum(camara_, front);
-    mira_ = MV::Vec_Sum(mira_, front);
+  if (EVENT_DOWN(K_a, keys)) mover(right_);
+  if (EVENT_DOWN(K_d, keys)) mover(left_);
 
-    for(int i=0; i<6; i++){
-      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], front);
-      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], front);
-    }
-  }
-  if (EVENT_DOWN(K_s, keys))
-  {
-    MV::Vec3 back = MV::Vec_Resta(mira_, camara_);
-    back = MV::Normalizar_Vec(back);
-    back = MV::Vec_Escalado(back, -1);
-
-    camara_ = MV::Vec_Sum(camara_, back);
-    mira_ = MV::Vec_Sum(mira_, back);
-    for(int i=0; i<6; i++){
-      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], back);
-      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], back);
-    }
-  }
-
-  if (EVENT_DOWN(K_a, keys))
-  {
-    MV::Vec3 left = MV::Vec_Resta(mira_, camara_);
-    left = MV::Normalizar_Vec(left);
-    left = Rotate_Point_3D({0,-90,0}, left);
-
-    camara_ = MV::Vec_Sum(camara_, left);
-    mira_ = MV::Vec_Sum(mira_, left);
-    for(int i=0; i<6; i++){
-      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], left);
-      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], left);
-    }
-  }
-  if (EVENT_DOWN(K_d, keys))
-  {
-    MV::Vec3 right = MV::Vec_Resta(mira_, camara_);
-    right = MV::Normalizar_Vec(right);
-    right = Rotate_Point_3D({0,90,0}, right);
-
-    camara_ = MV::Vec_Sum(camara_, right);
-    mira_ = MV::Vec_Sum(mira_, right);
-    for(int i=0; i<6; i++){
-      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], right);
-      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], right);
-    }
-  }
-
-  if (EVENT_DOWN(K_q, keys))
-  {
-    MV::Vec3 down = MV::Vec_Resta(mira_, camara_);
-    down = MV::Normalizar_Vec(down);
-    down = Rotate_Point_3D({-90,0,0}, down);
-
-    camara_ = MV::Vec_Sum(camara_, down);
-    mira_ = MV::Vec_Sum(mira_, down);
-    for(int i=0; i<6; i++){
-      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], down);
-      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], down);
-    }
-  }
-  if (EVENT_DOWN(K_e, keys))
-  {
-    MV::Vec3 up = MV::Vec_Resta(mira_, camara_);
-    up = MV::Normalizar_Vec(up);
-    up = Rotate_Point_3D({90,0,0}, up);
-
-    camara_ = MV::Vec_Sum(camara_, up);
-    mira_ = MV::Vec_Sum(mira_, up);
-    for(int i=0; i<6; i++){
-      if(i<4) paint_square_[i] = MV::Vec_Sum(paint_square_[i], up);
-      centros_caras_[i] = MV::Vec_Sum(centros_caras_[i], up);
-    }
-  }
+  if (EVENT_DOWN(K_q, keys)) mover(down_);
+  if (EVENT_DOWN(K_e, keys)) mover(up_);
 
 }
 
@@ -333,9 +236,9 @@ bool Render::active(MV::Pnt3 point)
   return ret;
 }
 
-Render_Vert Render::renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model)
+Render_Vert Render::renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model, bool forceRender)
 {
-  if(active(point)){
+  if(active(point) || forceRender){
     // Proyeccion de puntos 3D a 2D teniendo en cuenta la camara
     MV::Mat4 vMatrix = MV::Mat4View(camara_, mira_, up_);
     MV::Mat4 pro = MV::Mat4Projection();
@@ -360,16 +263,16 @@ void Render::cameraDraw(Keys *keys, SDL_Renderer *render, MV::Pnt2 max_win)
   MV::Mat3 scala = MV::Mat3Scale(render_scale_);
   MV::Mat3 desp =  MV::Mat3Translate(MV::Vec3_Tr_Vec2(centro_render_));
   model = MV::Mat3Multiply(desp, scala);
-  Render_Vert draw[6];
 
+  Render_Vert draw[6];
   Render_Vert square[4];
 
   for(int i=0; i<6; i++){
-    if(i<4) square[i] = renderPoint(paint_square_[i], {0}, {0}, {0}, model);
-    draw[i] = renderPoint(centros_caras_[i], {0}, {0}, {0}, model);
+    if(i<4) square[i] = renderPoint(paint_square_[i], {0}, {0}, {0}, model, true);
+    draw[i] = renderPoint(centros_caras_[i], {0}, {0}, {0}, model, true);
   }
 
-  SDL_SetRenderDrawColor(render, 127, 127, 127, SDL_ALPHA_OPAQUE);
+  SDL_SetRenderDrawColor(render, 255, 0, 255, 128);
   SDL_RenderDrawLine(render, square[0].point.position.x,square[0].point.position.y, square[1].point.position.x,square[1].point.position.y);
   SDL_RenderDrawLine(render, square[1].point.position.x,square[1].point.position.y, square[2].point.position.x,square[2].point.position.y);
   SDL_RenderDrawLine(render, square[2].point.position.x,square[2].point.position.y, square[3].point.position.x,square[3].point.position.y);
