@@ -25,6 +25,7 @@ void Render::init(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far)
   near_ = near;
   far_ = far;
   max_order_ = 0;
+  draw_order_=nullptr;
 
   float newScale = (500*far_)/1000;
   render_scale_ = {newScale, newScale};
@@ -85,15 +86,18 @@ void Render::reset(MV::Pnt2 max_win){
 }
 
 void Render::rotation(MV::Pnt3 rot){
+
   MV::Orbitar_Punto(camara_, rot, mira_);
+
   up_ = MV::Rotate_Point_3D(rot, up_);
   down_ = MV::Rotate_Point_3D(rot, down_);
   right_ = MV::Rotate_Point_3D(rot, right_);
   left_ = MV::Rotate_Point_3D(rot, left_);
   front_ = MV::Rotate_Point_3D(rot, front_);
   back_ = MV::Rotate_Point_3D(rot, back_);
+
   for(int i=0; i<6; i++){
-    if(i<4)MV::Orbitar_Punto(camara_, rot, paint_square_[i]);
+    if(i<4) MV::Orbitar_Punto(camara_, rot, paint_square_[i]);
     MV::Orbitar_Punto(camara_, rot, centros_caras_[i]);
     vector_caras_[i] = MV::Rotate_Point_3D(rot, vector_caras_[i]);
   }

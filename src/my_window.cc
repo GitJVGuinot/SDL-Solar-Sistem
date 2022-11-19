@@ -266,8 +266,8 @@ void My_Window::Destroy()
 {
   std::cout << "Destruyendo My_Window, SDL & SDL_ttf..." << std::endl;
 
-  SDL_DestroyRenderer(render);
-  SDL_DestroyWindow(window);
+  if(render!=nullptr && render!=NULL) SDL_DestroyRenderer(render);
+  if(window!=nullptr && window!=NULL) SDL_DestroyWindow(window);
   TTF_CloseFont(font);
 
   std::cout << "My_Window, SDL & SDL_ttf destruidos" << std::endl
