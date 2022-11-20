@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 
   Render drawRender;
   drawRender.init(max_win, {middle_win.x,middle_win.y,100});
-  MV::Pnt3 *object_desp=(MV::Pnt3*)calloc(max_planets,sizeof(MV::Pnt3));
+  MV::Pnt3 object_desp[100];
 
   while (win.runing)
   {
