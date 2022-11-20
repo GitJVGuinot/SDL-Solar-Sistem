@@ -72,8 +72,9 @@ Esfera::Esfera()
     color_ = {0, 0, 0};
 };
 
-void Esfera::init(SDL_Color color, bool fill, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
+int Esfera::init(SDL_Color color, bool fill, int res, MV::Pnt3 escala, MV::Pnt3 desp, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
 {
+  if(res>50) return 1;
     color_ = color;
     fill_ = fill;
     res_ = res;
@@ -95,6 +96,8 @@ void Esfera::init(SDL_Color color, bool fill, int res, MV::Pnt3 escala, MV::Pnt3
 
     if ((rot.x + rot.y + rot.z) != 0)
         rotation(rot);
+
+  return 0;
 }
 
 MV::Pnt3 Esfera::point(int i)
@@ -268,47 +271,46 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
     if (fill_)
     {
         // Ordenado de puntos
-        static int *order = (int *)calloc(vertices_, sizeof(int));
 
         for (int i = 0; i < vertices_; i++)
-            order[i] = i;
+            order_[i] = i;
 
         for (int i = 0; i < vertices_; i++)
         {
             for (int j = 1; j < vertices_; j++)
             {
-                if (MV::Vec_Magn(MV::Vec_Resta(centros_[order[i]], drawRender.camara_)) >= MV::Vec_Magn(MV::Vec_Resta(centros_[order[j]], drawRender.camara_)))
+                if (MV::Vec_Magn(MV::Vec_Resta(centros_[order_[i]], drawRender.camara_)) >= MV::Vec_Magn(MV::Vec_Resta(centros_[order_[j]], drawRender.camara_)))
                 {
-                    int aux = order[i];
-                    order[i] = order[j];
-                    order[j] = aux;
+                    int aux = order_[i];
+                    order_[i] = order_[j];
+                    order_[j] = aux;
                 }
             }
         }
 
         for (int i = 0; i < vertices_ - 1; i++)
         {
-            int aux = order[i];
-            order[i] = order[i + 1];
-            order[i + 1] = aux;
+            int aux = order_[i];
+            order_[i] = order_[i + 1];
+            order_[i + 1] = aux;
         }
 
         // Draw Triangles
         for (int i = 0; i < vertices_; i++)
         {
           static SDL_Vertex triangle[3];
-          triangle[0] = draw_sdl_[caras[order[i]].points[0]].point;
-          triangle[1] = draw_sdl_[caras[order[i]].points[1]].point;
-          triangle[2] = draw_sdl_[caras[order[i]].points[2]].point;
+          triangle[0] = draw_sdl_[caras[order_[i]].points[0]].point;
+          triangle[1] = draw_sdl_[caras[order_[i]].points[1]].point;
+          triangle[2] = draw_sdl_[caras[order_[i]].points[2]].point;
 
           static SDL_Vertex triangle1[3];
-          triangle1[0] = draw_sdl_[caras[order[i]].points[3]].point;
-          triangle1[1] = draw_sdl_[caras[order[i]].points[2]].point;
-          triangle1[2] = draw_sdl_[caras[order[i]].points[0]].point;
+          triangle1[0] = draw_sdl_[caras[order_[i]].points[3]].point;
+          triangle1[1] = draw_sdl_[caras[order_[i]].points[2]].point;
+          triangle1[2] = draw_sdl_[caras[order_[i]].points[0]].point;
 
           bool draw = true;
           for(int j = 0; j < 4; j++){
-            draw = (draw && draw_sdl_[caras[order[i]].points[j]].active);
+            draw = (draw && draw_sdl_[caras[order_[i]].points[j]].active);
           }
 
           if(draw){
@@ -326,28 +328,6 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
             SDL_RenderDrawPoint(render, draw_sdl_[i].point.position.x, draw_sdl_[i].point.position.y);
         }
     }
-}
-
-void Esfera::imprime()
-{
-
-    std::cout << "Points: " << std::endl;
-    for (int i = 0; i < vertices_; i++)
-    {
-        char *c = (char *)calloc(25, sizeof(char));
-        sprintf(c, "point:%d", i);
-        MV::Vec_Print(*(points_ + i), c);
-
-        DESTROY(c);
-    }
-
-    std::cout << std::endl;
-    MV::Vec_Print(desp_, "Desp");
-    std::cout << std::endl;
-    MV::Vec_Print(rotado_, "Rotado");
-    std::cout << std::endl;
-    MV::Vec_Print(escala_, "Escala");
-    std::cout << std::endl;
 }
 
 Esfera::~Esfera(){}

@@ -26,6 +26,6 @@ public:
 };
 
 void Camera_Control(const char* str, Render &drawRender, My_Window &win, MV::Pnt2 max_win);
-void Planets_Control(const char* str, Esfera **planets, int &max_planets, MV::Pnt2 max_win);
+void Planets_Control(const char* str, Esfera **planets, MV::Pnt3 **object_desp, int &max_planets, MV::Pnt2 max_win);
 
 #endif

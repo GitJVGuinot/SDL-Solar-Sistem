@@ -85,13 +85,15 @@ void Camera_Control(const char* str, Render &render, My_Window &win, MV::Pnt2 ma
   } else ImGui::End();
 }
 
-void Planets_Control(const char* str, Esfera **planets, int &max_planets, MV::Pnt2 max_win){
+void Planets_Control(const char* str, Esfera **planets, MV::Pnt3 **object_desp, int &max_planets, MV::Pnt2 max_win){
   Esfera *localPlanets = *planets;
+  MV::Pnt3 *obj=*object_desp;
   if (ImGui::Begin(str)){
     if(max_planets<100){
       if(ImGui::Button("Add a planet (The last one is going to duplicate)")){
         max_planets++;
         Esfera *newPlanets = (Esfera*)calloc(max_planets, sizeof(Esfera));
+        MV::Pnt3 *newObj = (MV::Pnt3*)calloc(max_planets, sizeof(MV::Pnt3));
         if(max_planets>1){
           for(int i=0; i<max_planets-1; i++){
             newPlanets[i]=localPlanets[i];
@@ -100,6 +102,8 @@ void Planets_Control(const char* str, Esfera **planets, int &max_planets, MV::Pn
         } else newPlanets[0].init({255,255,255,SDL_ALPHA_OPAQUE}, true, 10, {12,12,12}, {max_win.x/2, max_win.y/2, 0.0f});
         DESTROY(localPlanets);
         *planets = newPlanets;
+        DESTROY(obj);
+        *object_desp = newObj;
         ImGui::End();
         return;
       }
