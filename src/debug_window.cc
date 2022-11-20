@@ -85,34 +85,41 @@ void Camera_Control(const char* str, Render &render, My_Window &win, MV::Pnt2 ma
   }
 }
 
-void Planets_Control(const char* str, Esfera **planets, int &max_planets){
+void Planets_Control(const char* str, Esfera **planets, int &max_planets, MV::Pnt2 max_win){
   Esfera *localPlanets = *planets;
   if (ImGui::Begin(str)){
-    if(ImGui::Button("Add a planet (The last one is going to duplicate)")){
-      max_planets++;
-      Esfera *newPlanets = (Esfera*)calloc(max_planets, sizeof(Esfera));
-      for(int i=0; i<max_planets-1; i++){
-        newPlanets[i]=localPlanets[i];
+    if(max_planets<100){
+      if(ImGui::Button("Add a planet (The last one is going to duplicate)")){
+        max_planets++;
+        Esfera *newPlanets = (Esfera*)calloc(max_planets, sizeof(Esfera));
+        if(max_planets>1){
+          for(int i=0; i<max_planets-1; i++){
+            newPlanets[i]=localPlanets[i];
+          }
+          newPlanets[max_planets-1]=newPlanets[max_planets-2];
+        } else newPlanets[0].init({255,255,255,SDL_ALPHA_OPAQUE}, true, 10, {12,12,12}, {max_win.x/2, max_win.y/2, 0.0f});
+        DESTROY(localPlanets);
+        *planets = newPlanets;
+        ImGui::End();
+        return;
       }
-      newPlanets[max_planets-1]=newPlanets[max_planets-2];
-      DESTROY(localPlanets);
-      *planets = newPlanets;
-      ImGui::End();
-      return;
-    }
-
-    if(ImGui::Button("Destroy the last planet")){
-      max_planets--;
-      Esfera *newPlanets = (Esfera*)calloc(max_planets, sizeof(Esfera));
-      for(int i=0; i<max_planets; i++){
-        newPlanets[i]=localPlanets[i];
+    } else ImGui::Button("You can't create more planets");
+    if(max_planets>0){
+      if(ImGui::Button("Destroy the last planet")){
+        max_planets--;
+        Esfera *newPlanets = (Esfera*)calloc(max_planets, sizeof(Esfera));
+        for(int i=0; i<max_planets; i++){
+          newPlanets[i]=localPlanets[i];
+        }
+        DESTROY(localPlanets);
+        *planets = newPlanets;
+        ImGui::End();
+        return;
       }
-      DESTROY(localPlanets);
-      *planets = newPlanets;
-      ImGui::End();
-      return;
-    }
+    } else ImGui::Button("You can't destroy planets");
 
+    ImGui::Text("Planets in orbit: %d", max_planets);
+    ImGui::Text("Sizeof planet: %d, total planets size: %d", sizeof(localPlanets[0]), max_planets*sizeof(localPlanets[0]));
     for(int i = 0; i<max_planets; i++){
       ImGui::Separator();
       ImGui::Text("Planet: %d", i);

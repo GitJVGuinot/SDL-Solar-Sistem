@@ -270,7 +270,7 @@ void My_Window::Destroy()
 
   if(render!=nullptr && render!=NULL) SDL_DestroyRenderer(render);
   if(window!=nullptr && window!=NULL) SDL_DestroyWindow(window);
-  TTF_CloseFont(font);
+  if(font!=nullptr && font!=NULL) TTF_CloseFont(font);
 
   std::cout << "My_Window, SDL & SDL_ttf destruidos" << std::endl
             << std::endl;

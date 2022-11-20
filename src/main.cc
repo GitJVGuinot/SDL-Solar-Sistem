@@ -81,6 +81,7 @@ int main(int argc, char **argv)
   Esfera *planet = (Esfera*)calloc(max_planets, sizeof(Esfera));
 
   // 0 -> planet[0], 1 - 4 -> Planets
+  std::cout << "Sizeof Esfera: " << sizeof(Esfera) << std::endl;;
   std::cout << "Generando planetas..." << std::endl;
   planet[0].init(colores[BLANCO], true, 10, {12,12,12}, {middle_win.x, middle_win.y, 0.0f});
   planet[1].init(colores[0], true, 10, {2, 2, 2}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
@@ -126,7 +127,7 @@ int main(int argc, char **argv)
     drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
 
     Camera_Control("Camera controls", drawRender, win, {win.win_x, win.win_y});
-    Planets_Control("Planets controls", &planet, max_planets);
+    Planets_Control("Planets controls", &planet, max_planets, {win.win_x,win.win_y});
 
     Debug_Window::Render();
     win.whileEnd(keys);
