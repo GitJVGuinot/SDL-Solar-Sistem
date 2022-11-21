@@ -32,9 +32,9 @@ private:
   int textHeight;
   int textWidth;
 
-  #ifdef IMGUI_API
+#ifdef IMGUI_API
   bool imguiState;
-  #endif
+#endif
 
   double current_time = 0.0;
   double last_time = 0.0;

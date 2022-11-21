@@ -6,7 +6,7 @@
 #define SDL_colors_h
 /////////////////////////
 
-#define RGBA(x) x.r,x.g,x.b,x.a
+#define RGBA(x) x.r, x.g, x.b, x.a
 
 const int ROJO = 0;
 const int VERDE = 1;

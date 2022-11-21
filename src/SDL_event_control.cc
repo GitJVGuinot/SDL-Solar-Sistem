@@ -116,9 +116,9 @@ void TakeKeyboard(Keys *keys)
   // Copia los inputs del frame anterior
   while (SDL_PollEvent(&event))
   {
-    #ifdef IMGUI_API
+#ifdef IMGUI_API
     ImGui_ImplSDL2_ProcessEvent(&event);
-    #endif
+#endif
     if (event.type == SDL_QUIT)
     {
       keys[FULL_EXIT_WINDOW].down = true;

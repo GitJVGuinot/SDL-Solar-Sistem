@@ -7,9 +7,9 @@
 ////////////////////////////////
 
 #include <SDL2/SDL.h>
-#include <imgui.h>
-#include <imgui_impl_sdl.h>
-#include <imgui_impl_sdlrenderer.h>
+#include <IMGUI/imgui.h>
+#include <IMGUI/imgui_impl_sdl.h>
+#include <IMGUI/imgui_impl_sdlrenderer.h>
 
 // Numbers
 const int K_0 = 0;
@@ -99,24 +99,24 @@ struct Keys
 };
 
 /**
-  * Init a Keys array use after SDL_Inits
-*/
+ * Init a Keys array use after SDL_Inits
+ */
 void InitKeyboard(Keys *keys);
 
 /**
-  * Use in the while Start
-  * You can found it in My_Window::whileInit
-*/
+ * Use in the while Start
+ * You can found it in My_Window::whileInit
+ */
 void TakeKeyboard(Keys *keys);
 
 /**
-  * @return the input down of the Keys array
-*/
+ * @return the input down of the Keys array
+ */
 bool EVENT_DOWN(int input, Keys *keys);
 
 /**
-  * @return the input up of the Keys array
-*/
+ * @return the input up of the Keys array
+ */
 bool EVENT_UP(int input, Keys *keys);
 
 ////////////////////////////////

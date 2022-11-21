@@ -7,9 +7,9 @@
 #include <esfera_3d.h>
 #include <my_window.h>
 
-#include <imgui.h>
-#include <imgui_impl_sdl.h>
-#include <imgui_impl_sdlrenderer.h>
+#include <IMGUI/imgui.h>
+#include <IMGUI/imgui_impl_sdl.h>
+#include <IMGUI/imgui_impl_sdlrenderer.h>
 
 class Debug_Window
 {
@@ -25,7 +25,7 @@ public:
   static void Quit();
 };
 
-void Camera_Control(const char* str, Render &drawRender, My_Window &win, MV::Pnt2 max_win);
-void Planets_Control(const char* str, Esfera **planets, MV::Pnt3 **object_desp, int &max_planets, MV::Pnt2 max_win);
+void Camera_Control(const char *str, Render &drawRender, My_Window &win, MV::Pnt2 max_win);
+void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, int &max_planets, MV::Pnt2 max_win);
 
 #endif

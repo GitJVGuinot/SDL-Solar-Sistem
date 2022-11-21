@@ -14,12 +14,12 @@
 #include <debug_window.h>
 
 int k_TextHeight = 28;
-int k_TextWitdh = ((float)(k_TextHeight*4/7)-1);
+int k_TextWitdh = ((float)(k_TextHeight * 4 / 7) - 1);
 int g_Filas = 30;
 int g_Columnas = 80;
 
 #ifndef RGBA
-#define RGBA(x) x.r,x.g,x.b,x.a
+#define RGBA(x) x.r, x.g, x.b, x.a
 #endif
 
 #define FONT_PATH "../data/fonts/anonymous_pro.ttf"
@@ -30,23 +30,22 @@ MV::Pnt2 middle_win = {max_win.x / 2, max_win.y / 2};
 MV::Pnt2 min_win = {0, 0};
 
 SDL_Color colores[MAX_COLORS] = {
-  SDL_Color{255, 000, 000, SDL_ALPHA_OPAQUE},    // ROJO
+    SDL_Color{255, 000, 000, SDL_ALPHA_OPAQUE}, // ROJO
 
-  SDL_Color{000, 255, 000, SDL_ALPHA_OPAQUE},    // VERDE
+    SDL_Color{000, 255, 000, SDL_ALPHA_OPAQUE}, // VERDE
 
-  SDL_Color{000, 000, 255, SDL_ALPHA_OPAQUE},    // AZUL
+    SDL_Color{000, 000, 255, SDL_ALPHA_OPAQUE}, // AZUL
 
-  SDL_Color{000, 255, 255, SDL_ALPHA_TRANSPARENT},    // CYAN
+    SDL_Color{000, 255, 255, SDL_ALPHA_TRANSPARENT}, // CYAN
 
-  SDL_Color{255, 000, 255, SDL_ALPHA_OPAQUE},    // MAGENTA
+    SDL_Color{255, 000, 255, SDL_ALPHA_OPAQUE}, // MAGENTA
 
-  SDL_Color{255, 255, 000, SDL_ALPHA_OPAQUE},    // AMARILLO
+    SDL_Color{255, 255, 000, SDL_ALPHA_OPAQUE}, // AMARILLO
 
-  SDL_Color{255, 255, 255, SDL_ALPHA_OPAQUE},    // BLANCO
-  SDL_Color{127, 127, 127, SDL_ALPHA_OPAQUE},    // GRIS
-  SDL_Color{000, 000, 000, SDL_ALPHA_OPAQUE},    // NEGRO
+    SDL_Color{255, 255, 255, SDL_ALPHA_OPAQUE}, // BLANCO
+    SDL_Color{127, 127, 127, SDL_ALPHA_OPAQUE}, // GRIS
+    SDL_Color{000, 000, 000, SDL_ALPHA_OPAQUE}, // NEGRO
 };
-
 
 int main(int argc, char **argv)
 {
@@ -78,12 +77,13 @@ int main(int argc, char **argv)
   Debug_Window::Init(win.window, win.render);
 
   int max_planets = 5;
-  Esfera *planet = (Esfera*)calloc(max_planets, sizeof(Esfera));
+  Esfera *planet = (Esfera *)calloc(max_planets, sizeof(Esfera));
 
   // 0 -> planet[0], 1 - 4 -> Planets
-  std::cout << "Sizeof Esfera: " << sizeof(Esfera) << std::endl;;
+  std::cout << "Sizeof Esfera: " << sizeof(Esfera) << std::endl;
+  ;
   std::cout << "Generando planetas..." << std::endl;
-  planet[0].init(colores[BLANCO], false, 50, {12,12,12}, {middle_win.x, middle_win.y, 0.0f});
+  planet[0].init(colores[BLANCO], false, 50, {12, 12, 12}, {middle_win.x, middle_win.y, 0.0f});
   planet[1].init(colores[0], false, 10, {2, 2, 2}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
   planet[2].init(colores[1], false, 10, {2, 2, 2}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
   planet[3].init(colores[2], false, 10, {2, 2, 2}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
@@ -97,28 +97,35 @@ int main(int argc, char **argv)
   MV::Pnt3 light = (planet + 0)->desp_;
 
   Render drawRender;
-  drawRender.init(max_win, {middle_win.x,middle_win.y,100});
-  MV::Pnt3 *object_desp=nullptr;
-  object_desp=(MV::Pnt3*)realloc(object_desp, max_planets*sizeof(MV::Pnt3));
+  drawRender.init(max_win, {middle_win.x, middle_win.y, 100});
+  MV::Pnt3 *object_desp = nullptr;
+  object_desp = (MV::Pnt3 *)realloc(object_desp, max_planets * sizeof(MV::Pnt3));
 
   while (win.runing)
   {
     win.whileInit(keys);
     Debug_Window::Update();
 
-    for (int i = 0; i < max_planets; i++){
+    for (int i = 0; i < max_planets; i++)
+    {
       (planet + i)->orbitar();
-    }false, drawRender.inputs(keys);
+    }
 
-    for(int i = 0; i<max_planets; i++){
-      object_desp[i]=planet[i].desp_;
+    drawRender.inputs(keys);
+
+    for (int i = 0; i < max_planets; i++)
+    {
+      object_desp[i] = planet[i].desp_;
     }
 
     int *order = drawRender.getOrder(object_desp, max_planets);
 
-    for(int i=0; i<max_planets; i++){
-      if(EVENT_DOWN(K_p, keys)){
-        std::cout << std::endl << "Drawing planet " << order[i] << std::endl;
+    for (int i = 0; i < max_planets; i++)
+    {
+      if (EVENT_DOWN(K_p, keys))
+      {
+        std::cout << std::endl
+                  << "Drawing planet " << order[i] << std::endl;
       }
       (planet + order[i])->draw(keys, win.render, drawRender, light);
     }
@@ -126,7 +133,7 @@ int main(int argc, char **argv)
     drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
 
     Camera_Control("Camera controls", drawRender, win, {win.win_x, win.win_y});
-    Planets_Control("Planets controls", &planet, &object_desp, max_planets, {win.win_x,win.win_y});
+    Planets_Control("Planets controls", &planet, &object_desp, max_planets, {win.win_x, win.win_y});
 
     Debug_Window::Render();
     win.whileEnd(keys);

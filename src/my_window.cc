@@ -17,8 +17,8 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
   runing = true;
   state = 0;
 
-  fps_control=true;
-  show_fps=true;
+  fps_control = true;
+  show_fps = true;
   rows = rows_;
   columns = columns_;
   textHeight = height_;
@@ -39,7 +39,6 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
   background_color = background_color_;
 
   std::cout << "My_Window creada" << std::endl;
-
 }
 
 void My_Window::whileInit(Keys *keys)
@@ -49,17 +48,17 @@ void My_Window::whileInit(Keys *keys)
   SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
   SDL_RenderClear(render);
   TakeKeyboard(keys);
-
 }
 
 void My_Window::whileEnd(Keys *keys)
 {
-  if(fps_control){
+  if (fps_control)
+  {
     do
     { // control fps por segundo.
       current_time = SDL_GetTicks();
     } while (((current_time - last_time) <= (1000) / fps) && runing);
-    last_time=SDL_GetTicks();
+    last_time = SDL_GetTicks();
   }
 
   if (show_fps)
@@ -68,8 +67,10 @@ void My_Window::whileEnd(Keys *keys)
     ticks = SDL_GetTicks() - ticks;
     if (cont >= 100 || cont == 0)
     {
-      if(ticks!=0)  frame_rate = 1000.0f / (float)ticks;
-      else frame_rate = FLT_MAX;
+      if (ticks != 0)
+        frame_rate = 1000.0f / (float)ticks;
+      else
+        frame_rate = FLT_MAX;
       cont -= 100;
     }
     cont++;
@@ -89,7 +90,6 @@ void My_Window::whileEnd(Keys *keys)
   {
     runing = false;
   }
-
 }
 
 bool My_Window::setTextFont(char *font_path)
@@ -159,9 +159,10 @@ void My_Window::setGameTitle(char *completeTitle)
   std::cout << "Titulo de juego establecido" << std::endl;
 }
 
-void My_Window::changeResolution(int filas_, int columnas_){
-  rows=filas_;
-  columns=columnas_;
+void My_Window::changeResolution(int filas_, int columnas_)
+{
+  rows = filas_;
+  columns = columnas_;
 
   win_x = columns * textWidth;
   win_y = rows * textHeight;
@@ -169,8 +170,8 @@ void My_Window::changeResolution(int filas_, int columnas_){
   SDL_DestroyWindow(window);
 
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL |
-      SDL_WINDOW_RESIZABLE |
-      SDL_WINDOW_ALLOW_HIGHDPI );
+                                                   SDL_WINDOW_RESIZABLE |
+                                                   SDL_WINDOW_ALLOW_HIGHDPI);
   window = SDL_CreateWindow("SDL test", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, win_x, win_y, window_flags);
 
   render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -204,7 +205,7 @@ void My_Window::text(char *frase, int fila, int columna, SDL_Color color)
 
   char *str = (char *)calloc(columns * rows, sizeof(char));
 
-  SDL_SetRenderDrawColor(render, color.r, color.g,color.b,color.a);
+  SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
   sprintf(str, "%s", frase);
   textSurface = TTF_RenderUTF8_Blended(font, str, textColor);
   // Si no se consigue la surface:
@@ -247,7 +248,7 @@ void My_Window::drawCursor(int fila, int columna, SDL_Color color, SDL_Color fil
   SDL_Rect rect = {px, py, (int)textWidth, (int)textHeight};
   SDL_SetRenderDrawColor(render, fill.r, fill.g, fill.b, fill.a);
   SDL_RenderFillRect(render, &rect);
-  SDL_SetRenderDrawColor(render, color.r, color.g,color.b,color.a);
+  SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
   SDL_RenderDrawRect(render, &rect);
 }
 
@@ -260,7 +261,7 @@ void My_Window::drawRect(int fila, int columna, int height, int width, SDL_Color
   SDL_Rect rect = {px, py, width + 6, height + 6};
   SDL_SetRenderDrawColor(render, fill.r, fill.g, fill.b, fill.a);
   SDL_RenderFillRect(render, &rect);
-  SDL_SetRenderDrawColor(render, color.r, color.g,color.b,color.a);
+  SDL_SetRenderDrawColor(render, color.r, color.g, color.b, color.a);
   SDL_RenderDrawRect(render, &rect);
 }
 
@@ -268,9 +269,12 @@ void My_Window::Destroy()
 {
   std::cout << "Destruyendo My_Window, SDL & SDL_ttf..." << std::endl;
 
-  if(render!=nullptr && render!=NULL) SDL_DestroyRenderer(render);
-  if(window!=nullptr && window!=NULL) SDL_DestroyWindow(window);
-  if(font!=nullptr && font!=NULL) TTF_CloseFont(font);
+  if (render != nullptr && render != NULL)
+    SDL_DestroyRenderer(render);
+  if (window != nullptr && window != NULL)
+    SDL_DestroyWindow(window);
+  if (font != nullptr && font != NULL)
+    TTF_CloseFont(font);
 
   std::cout << "My_Window, SDL & SDL_ttf destruidos" << std::endl
             << std::endl;
