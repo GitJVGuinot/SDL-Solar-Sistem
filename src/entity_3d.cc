@@ -234,12 +234,12 @@ void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
   if (fill_)
   {
     // Ordenado de puntos
-    for (int i = 0; i < vertex_; i++)
+    for (int i = 0; i < nFaces_; i++)
       order_[i] = i;
 
-    for (int i = 0; i < vertex_; i++)
+    for (int i = 0; i < nFaces_; i++)
     {
-      for (int j = 1; j < vertex_; j++)
+      for (int j = 1; j < nFaces_; j++)
       {
         if (MV::Vec_Magn(MV::Vec_Resta(centers_[order_[i]], drawRender.camera_)) >= MV::Vec_Magn(MV::Vec_Resta(centers_[order_[j]], drawRender.camera_)))
         {
@@ -250,7 +250,7 @@ void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
       }
     }
 
-    for (int i = 0; i < vertex_ - 1; i++)
+    for (int i = 0; i < nFaces_ - 1; i++)
     {
       int aux = order_[i];
       order_[i] = order_[i + 1];
@@ -258,7 +258,7 @@ void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
     }
 
     // Draw Triangles
-    for (int i = 0; i < vertex_; i++)
+    for (int i = 0; i < nFaces_; i++)
     {
 
       static SDL_Vertex square[4];
@@ -272,13 +272,6 @@ void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
         draw = (draw && draw_sdl_[faces_[order_[i]].points[j]].active);
         if(!draw) break;
       }
-
-      /*
-      int indices[5]={0,1,2,3,0};
-      if(draw){
-        int ret = SDL_RenderGeometry(render, NULL, square, 4, indices, 5);
-      }
-      */
 
       if (draw)
       {

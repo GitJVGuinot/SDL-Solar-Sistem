@@ -30,6 +30,7 @@ protected:
   Render_Vert *draw_sdl_;
 
   Faces *faces_;
+  int nFaces_;
 
   int *order_;
 

@@ -12,7 +12,8 @@
 
 #include <render.h>
 #include <entity_3d.h>
-#include <Sphere_3d.h>
+#include <sphere_3d.h>
+#include <cube_3d.h>
 #include <my_window.h>
 #include <debug_window.h>
 
@@ -98,6 +99,10 @@ int main(int argc, char **argv)
   MV::Pnt3 *object_mov = nullptr;
   object_mov = (MV::Pnt3 *)realloc(object_mov, max_planets * sizeof(MV::Pnt3));
 
+  // Cube cube;
+  // cube.init(colores[WHITE], true, {5,5,5}, {(planet + 0)->mov_.x - 40, (planet + 0)->mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->mov_);
+  // cube.orbit_vel_=10.0f;
+
   while (win.runing)
   {
     win.whileInit(keys);
@@ -105,6 +110,8 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < max_planets; i++)
       (planet + i)->orbitar();
+
+    // cube.orbitar();
 
     drawRender.inputs(keys);
 
@@ -123,6 +130,7 @@ int main(int argc, char **argv)
       (planet + order[i])->draw(keys, win.render, drawRender, light, nullptr);
     }
 
+    // cube.draw(keys, win.render, drawRender, light, nullptr);
     drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
 
     Camera_Control("Camera controls", drawRender, win, {win.win_x, win.win_y});

@@ -10,9 +10,10 @@ void Sphere::obtenerSphere()
 
   draw_sdl_ = (Render_Vert*) calloc(vertex_, sizeof(Render_Vert));
 
-  faces_ = (Faces*) calloc(vertex_, sizeof(Faces));
+  nFaces_ = vertex_;
+  faces_ = (Faces*) calloc(nFaces_, sizeof(Faces));
 
-  order_ = (int*) calloc(vertex_, sizeof(int));
+  order_ = (int*) calloc(nFaces_, sizeof(int));
 
   float incremento = (PI / res_);
 
@@ -67,7 +68,7 @@ void Sphere::obtenerSphere()
   }
 }
 
-int Sphere::init(SDL_Color color, bool fill, int res, MV::Pnt3 escala, MV::Pnt3 mov, MV::Pnt3 rot, MV::Pnt3 orbita, MV::Pnt3 centro_orbita)
+int Sphere::init(SDL_Color color, bool fill, int res, MV::Pnt3 p_scale, MV::Pnt3 mov, MV::Pnt3 rot, MV::Pnt3 orbit, MV::Pnt3 orbit_center)
 {
   if (res > 50)
     return 1;
@@ -75,8 +76,8 @@ int Sphere::init(SDL_Color color, bool fill, int res, MV::Pnt3 escala, MV::Pnt3 
   color_ = color;
   fill_ = fill;
   res_ = res;
-  orbit_ = orbita;
-  orbit_center_ = centro_orbita;
+  orbit_ = orbit;
+  orbit_center_ = orbit_center;
   orbit_vel_ = 0.0f;
   rotate_ = {0, 0, 0};
   scale_ = {1, 1, 1};
@@ -86,8 +87,8 @@ int Sphere::init(SDL_Color color, bool fill, int res, MV::Pnt3 escala, MV::Pnt3 
   // Sphere basica
   obtenerSphere();
 
-  if ((escala.x + escala.y + escala.z) != 3)
-    scale(escala);
+  if ((p_scale.x + p_scale.y + p_scale.z) != 3)
+    scale(p_scale);
 
   if ((mov.x + mov.y + mov.z) != 0)
     translation(mov);
