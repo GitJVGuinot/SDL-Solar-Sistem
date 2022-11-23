@@ -16,22 +16,22 @@ float Render::getNear()
 
 Render::Render()
 {
-  camara_ = {0, 0, 0};
+  camera_ = {0, 0, 0};
   mira_ = {0, 0, 0};
   draw_order_ = nullptr;
   max_order_ = 0;
 };
 
-void Render::init(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far)
+void Render::init(MV::Pnt2 max_win, MV::Pnt3 camera, float near, float far)
 {
-  std::cout << "Creando camara..." << std::endl;
+  std::cout << "Creando camera..." << std::endl;
   up_ = {0, 1, 0};
   down_ = {0, -1, 0};
   right_ = {1, 0, 0};
   left_ = {-1, 0, 0};
   front_ = {0, 0, 1};
   back_ = {0, 0, -1};
-  camara_ = camara;
+  camera_ = camera;
   near_ = near;
   far_ = far;
   max_order_ = 0;
@@ -41,41 +41,41 @@ void Render::init(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far)
   render_scale_ = {newScale, newScale};
 
   // Max_win se establecera cuando colisione con el centro
-  MV::Pnt3 vector_mira = MV::Normalizar_Vec(MV::Vec_Resta(camara_, {camara.x, camara.y, camara.z + 100}));
-  centro_render_ = MV::Vec_Sum(camara_, MV::Vec_Escalado(vector_mira, ((far - near) / 2) + near));
+  MV::Pnt3 vector_mira = MV::Normalizar_Vec(MV::Vec_Resta(camera_, {camera.x, camera.y, camera.z + 100}));
+  centro_render_ = MV::Vec_Sum(camera_, MV::Vec_Escalado(vector_mira, ((far - near) / 2) + near));
   mira_ = centro_render_;
 
   // Near face
-  centros_caras_[0] = {max_win.x / 2, max_win.y / 2, camara_.z - near};
+  centros_caras_[0] = {max_win.x / 2, max_win.y / 2, camera_.z - near};
   vector_caras_[0] = MV::Normalizar_Vec(MV::Vec_Resta(centro_render_, centros_caras_[0]));
   // Far face
-  centros_caras_[1] = {max_win.x / 2, max_win.y / 2, camara_.z - far};
+  centros_caras_[1] = {max_win.x / 2, max_win.y / 2, camera_.z - far};
   vector_caras_[1] = MV::Normalizar_Vec(MV::Vec_Resta(centro_render_, centros_caras_[1]));
 
   // Right face
   centros_caras_[2] = centro_render_;
   centros_caras_[2].x += max_win.x / 2;
   // Giro 90 en y
-  vector_caras_[2] = MV::Vec_Resta(camara_, centros_caras_[2]);
+  vector_caras_[2] = MV::Vec_Resta(camera_, centros_caras_[2]);
   vector_caras_[2] = MV::Rotate_Point_3D({0, -90, 0}, vector_caras_[2]);
   // Left face
   centros_caras_[3] = centro_render_;
   centros_caras_[3].x -= max_win.x / 2;
   // Giro -90 en y
-  vector_caras_[3] = MV::Vec_Resta(camara_, centros_caras_[3]);
+  vector_caras_[3] = MV::Vec_Resta(camera_, centros_caras_[3]);
   vector_caras_[3] = MV::Rotate_Point_3D({0, 90, 0}, vector_caras_[3]);
 
   // Up face
   centros_caras_[4] = centro_render_;
   centros_caras_[4].y += max_win.y / 2;
   // Giro 90 en x
-  vector_caras_[4] = MV::Vec_Resta(camara_, centros_caras_[4]);
+  vector_caras_[4] = MV::Vec_Resta(camera_, centros_caras_[4]);
   vector_caras_[4] = MV::Rotate_Point_3D({90, 0, 0}, vector_caras_[4]);
   // down face
   centros_caras_[5] = centro_render_;
   centros_caras_[5].y -= max_win.y / 2;
   // Giro -90 en x
-  vector_caras_[5] = MV::Vec_Resta(camara_, centros_caras_[5]);
+  vector_caras_[5] = MV::Vec_Resta(camera_, centros_caras_[5]);
   vector_caras_[5] = MV::Rotate_Point_3D({-90, 0, 0}, vector_caras_[5]);
 
   // Need to change
@@ -84,7 +84,7 @@ void Render::init(MV::Pnt2 max_win, MV::Pnt3 camara, float near, float far)
   paint_square_[2] = {centros_caras_[2].x, centros_caras_[5].y, centros_caras_[2].z};
   paint_square_[3] = {centros_caras_[3].x, centros_caras_[5].y, centros_caras_[2].z};
 
-  MV::Vec_Print(camara_, "Camara: ");
+  MV::Vec_Print(camera_, "Camara: ");
   MV::Vec_Print(mira_, "Mira: ");
   MV::Vec_Print(up_, "Up: ");
 
@@ -100,7 +100,7 @@ void Render::reset(MV::Pnt2 max_win)
 void Render::rotation(MV::Pnt3 rot)
 {
 
-  MV::Orbitar_Punto(camara_, rot, mira_);
+  MV::Orbitar_Punto(camera_, rot, mira_);
 
   up_ = MV::Rotate_Point_3D(rot, up_);
   down_ = MV::Rotate_Point_3D(rot, down_);
@@ -112,15 +112,15 @@ void Render::rotation(MV::Pnt3 rot)
   for (int i = 0; i < 6; i++)
   {
     if (i < 4)
-      MV::Orbitar_Punto(camara_, rot, paint_square_[i]);
-    MV::Orbitar_Punto(camara_, rot, centros_caras_[i]);
+      MV::Orbitar_Punto(camera_, rot, paint_square_[i]);
+    MV::Orbitar_Punto(camera_, rot, centros_caras_[i]);
     vector_caras_[i] = MV::Rotate_Point_3D(rot, vector_caras_[i]);
   }
 }
 
 void Render::translation(MV::Pnt3 desp)
 {
-  camara_ = MV::Vec_Sum(camara_, desp);
+  camera_ = MV::Vec_Sum(camera_, desp);
   mira_ = MV::Vec_Sum(mira_, desp);
   for (int i = 0; i < 6; i++)
   {
@@ -181,7 +181,7 @@ int *Render::getOrder(MV::Pnt3 *object, int max_order)
   {
     for (int j = 1; j < max_order_; j++)
     {
-      if (MV::Vec_Magn(MV::Vec_Resta(object[draw_order_[i]], camara_)) >= MV::Vec_Magn(MV::Vec_Resta(object[draw_order_[j]], camara_)))
+      if (MV::Vec_Magn(MV::Vec_Resta(object[draw_order_[i]], camera_)) >= MV::Vec_Magn(MV::Vec_Resta(object[draw_order_[j]], camera_)))
       {
         int aux = draw_order_[i];
         draw_order_[i] = draw_order_[j];
@@ -265,8 +265,8 @@ Render_Vert Render::renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, S
 {
   if (active(point) || forceRender)
   {
-    // Proyeccion de puntos 3D a 2D teniendo en cuenta la camara
-    MV::Mat4 vMatrix = MV::Mat4View(camara_, mira_, up_);
+    // Proyeccion de puntos 3D a 2D teniendo en cuenta la camera
+    MV::Mat4 vMatrix = MV::Mat4View(camera_, mira_, up_);
     MV::Mat4 pro = MV::Mat4Projection();
     vMatrix = MV::Mat4Multiply(pro, vMatrix);
 

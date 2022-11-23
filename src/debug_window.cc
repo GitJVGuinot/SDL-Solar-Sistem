@@ -54,15 +54,15 @@ void Camera_Control(const char *str, Render &render, My_Window &win, MV::Pnt2 ma
     ImGui::Checkbox("FPS Control?", &win.fps_control);
     ImGui::Checkbox("Show FPS?", &win.show_fps);
 
-    MV::Vec3 desp = {0, 0, 0};
-    ImGui::Text("Desp-> X: %0.0f, Y: %0.0f, Z: %0.0f", render.camara_.x, render.camara_.y, render.camara_.z);
-    ImGui::SliderFloat("Add X", &desp.x, -1, 1);
-    ImGui::SliderFloat("Add Y", &desp.y, -1, 1);
-    ImGui::SliderFloat("Add Z", &desp.z, -1, 1);
-    desp.x *= -1;
-    desp.z *= -1;
-    if (desp.x != 0 || desp.y != 0 || desp.z != 0)
-      render.translation(desp);
+    MV::Vec3 mov = {0, 0, 0};
+    ImGui::Text("Desp-> X: %0.0f, Y: %0.0f, Z: %0.0f", render.camera_.x, render.camera_.y, render.camera_.z);
+    ImGui::SliderFloat("Add X", &mov.x, -1, 1);
+    ImGui::SliderFloat("Add Y", &mov.y, -1, 1);
+    ImGui::SliderFloat("Add Z", &mov.z, -1, 1);
+    mov.x *= -1;
+    mov.z *= -1;
+    if (mov.x != 0 || mov.y != 0 || mov.z != 0)
+      render.translation(mov);
 
     MV::Vec3 rot = {0, 0, 0};
     ImGui::Text("Up-> X: %f, Y: %f, Z: %f", render.getUp().x, render.getUp().y, render.getUp().z);
@@ -79,7 +79,7 @@ void Camera_Control(const char *str, Render &render, My_Window &win, MV::Pnt2 ma
     ImGui::SliderFloat("Far", &far, 2, 10000);
     ImGui::SliderFloat("Near", &near, 0, 100);
     if (far != render.getFar() || near != render.getNear())
-      render.init(max_win, render.camara_, near, far);
+      render.init(max_win, render.camera_, near, far);
 
     if (ImGui::Button("Reset camera values"))
     {
@@ -92,10 +92,10 @@ void Camera_Control(const char *str, Render &render, My_Window &win, MV::Pnt2 ma
     ImGui::End();
 }
 
-void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, int &max_planets, MV::Pnt2 max_win)
+void Planets_Control(const char *str, Sphere **planets, MV::Pnt3 **object_mov, int &max_planets, MV::Pnt2 max_win)
 {
-  Esfera *localPlanets = *planets;
-  MV::Pnt3 *obj = *object_desp;
+  Sphere *localPlanets = *planets;
+  MV::Pnt3 *obj = *object_mov;
   if (ImGui::Begin(str))
   {
     if (max_planets < 100)
@@ -103,7 +103,7 @@ void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, 
       if (ImGui::Button("Add a planet (The last one is going to duplicate)"))
       {
         max_planets++;
-        Esfera *newPlanets = (Esfera *)calloc(max_planets, sizeof(Esfera));
+        Sphere *newPlanets = (Sphere *)calloc(max_planets, sizeof(Sphere));
         MV::Pnt3 *newObj = (MV::Pnt3 *)calloc(max_planets, sizeof(MV::Pnt3));
         if (max_planets > 1)
         {
@@ -118,7 +118,7 @@ void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, 
         DESTROY(localPlanets);
         *planets = newPlanets;
         DESTROY(obj);
-        *object_desp = newObj;
+        *object_mov = newObj;
         ImGui::End();
         return;
       }
@@ -131,7 +131,7 @@ void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, 
       if (ImGui::Button("Destroy the last planet"))
       {
         max_planets--;
-        Esfera *newPlanets = (Esfera *)calloc(max_planets, sizeof(Esfera));
+        Sphere *newPlanets = (Sphere *)calloc(max_planets, sizeof(Sphere));
         for (int i = 0; i < max_planets; i++)
         {
           newPlanets[i] = localPlanets[i];
@@ -156,7 +156,7 @@ void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, 
 
     char str[50];
     memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Translation %f, %f, %f", localPlanets[nPlanet].desp_.x, localPlanets[nPlanet].desp_.y, localPlanets[nPlanet].desp_.z);
+    snprintf(str, 50, "Translation %f, %f, %f", localPlanets[nPlanet].mov_.x, localPlanets[nPlanet].mov_.y, localPlanets[nPlanet].mov_.z);
     ImGui::Text("%s",str);
 
     // Dots draw change
@@ -181,14 +181,14 @@ void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, 
     // Orbit center
     memset(str, 0, sizeof(str));
     snprintf(str, 50, "Orbit center %d", nPlanet);
-    ImGui::SliderFloat3(str, &localPlanets[nPlanet].centro_orbita_.x, -10000, 10000);
+    ImGui::SliderFloat3(str, &localPlanets[nPlanet].orbit_center_.x, -10000, 10000);
 
-    // Orbit desp
+    // Orbit mov
     memset(str, 0, sizeof(str));
     snprintf(str, 50, "Orbit angle %d", nPlanet);
-    ImGui::SliderFloat3(str, &localPlanets[nPlanet].orbita_.x, -0.5, 0.5);
+    ImGui::SliderFloat3(str, &localPlanets[nPlanet].orbit_.x, -0.5, 0.5);
 
-    // Orbit vel if have orbit desp
+    // Orbit vel if have orbit mov
     memset(str, 0, sizeof(str));
     snprintf(str, 50, "Orbit vel %d", nPlanet);
     ImGui::SliderFloat(str, &localPlanets[nPlanet].orbit_vel_, -100, 100);
@@ -200,14 +200,14 @@ void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, 
     }
 
     // Translate Planets
-    MV::Vec3 desp = {0, 0, 0};
+    MV::Vec3 mov = {0, 0, 0};
     memset(str, 0, sizeof(str));
     snprintf(str, 50, "Translate %d", nPlanet);
-    ImGui::SliderFloat3(str, &desp.x, -1, 1);
-    desp.x *= -1;
-    desp.z *= -1;
-    if (desp.x != 0 || desp.y != 0 || desp.z != 0)
-      localPlanets[nPlanet].translation(desp);
+    ImGui::SliderFloat3(str, &mov.x, -1, 1);
+    mov.x *= -1;
+    mov.z *= -1;
+    if (mov.x != 0 || mov.y != 0 || mov.z != 0)
+      localPlanets[nPlanet].translation(mov);
 
     // Rotate Planets
     MV::Vec3 rot = {0, 0, 0};

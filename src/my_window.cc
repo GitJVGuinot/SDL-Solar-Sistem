@@ -2,15 +2,6 @@
 
 #include "my_window.h"
 
-#ifndef DESTROY
-#define DESTROY(x)  \
-  if (x != nullptr) \
-  {                 \
-    free(x);        \
-    x = nullptr;    \
-  }
-#endif
-
 My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color background_color_)
 {
   std::cout << "Creando My_Window..." << std::endl;

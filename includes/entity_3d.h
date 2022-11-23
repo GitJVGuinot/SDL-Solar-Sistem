@@ -2,7 +2,7 @@
 #include <iostream>
 #include <mv_math.h>
 #include <SDL_event_control.h>
-#include <SDL_colors.h>
+#include <common_defs.h>
 #include <render.h>
 
 ////////////////////////
@@ -11,11 +11,7 @@
 #define entity_3d_h
 ////////////////////////
 
-#ifndef RGBA
-#define RGBA(x) x.r, x.g, x.b, x.a
-#endif
-
-struct Caras
+struct Faces
 {
   int n_points;
   int points[4];
@@ -24,25 +20,25 @@ struct Caras
 class Entity
 {
 protected:
-  MV::Pnt3 escala_;
-  MV::Pnt3 rotado_;
+  MV::Pnt3 scale_;
+  MV::Pnt3 rotate_;
 
   int res_;
   MV::Pnt3 *points_;
-  MV::Pnt3 *centros_;
+  MV::Pnt3 *centers_;
 
   Render_Vert *draw_sdl_;
 
-  Caras *caras_;
+  Faces *faces_;
 
   int *order_;
 
 public:
   float dim_;
-  int vertices_;
-  MV::Pnt3 desp_;
-  MV::Pnt3 orbita_;
-  MV::Pnt3 centro_orbita_;
+  int vertex_;
+  MV::Pnt3 mov_;
+  MV::Pnt3 orbit_;
+  MV::Pnt3 orbit_center_;
   SDL_Color color_;
   bool fill_;
   float orbit_vel_;
@@ -50,15 +46,15 @@ public:
   // Inicializa la entity
   Entity();
 
-  MV::Pnt3 point(int i);
+  MV::Pnt3 point(int position);
 
-  void rotation(MV::Pnt3 p_rot);
+  void rotation(MV::Pnt3 rot);
 
   void orbitar();
 
-  void translation(MV::Pnt3 p_desp_);
+  void translation(MV::Pnt3 mov);
 
-  void scale(MV::Pnt3 p_escala_);
+  void scale(MV::Pnt3 scale);
 
   void inputs(Keys *keys);
 

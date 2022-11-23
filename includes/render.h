@@ -18,11 +18,11 @@ struct Render_Vert
 class Render
 {
 public:
-  MV::Pnt3 camara_;
+  MV::Pnt3 camera_;
 
   Render();
 
-  void init(MV::Pnt2 max_win, MV::Pnt3 camara, float near = 1, float far = 1000);
+  void init(MV::Pnt2 max_win, MV::Pnt3 camera, float near = 1, float far = 1000);
 
   void reset(MV::Pnt2 max_win);
 
