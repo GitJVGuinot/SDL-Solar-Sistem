@@ -98,9 +98,15 @@ public:
   int getTextWidth();
 
   /**
-   * Print thext in the window
+   * Print text in the window
    */
   void text(char *literal, int row, int column, SDL_Color color);
+
+  /**
+   * Draw a poligonal shape with SDL_Vertex
+   * Taking the color from it
+  */
+  static int drawPoligon(SDL_Renderer *render, SDL_Vertex *vertex, const int n_vertex);
 
   /**
    * Draw a rect in the position you are going to write
