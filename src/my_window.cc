@@ -241,6 +241,25 @@ void My_Window::text(char *frase, int fila, int columna, SDL_Color color)
   DESTROY(str);
 }
 
+int My_Window::drawPoligon(SDL_Renderer *render, SDL_Vertex *vertex, const int n_vertex)
+{
+  if (n_vertex < 3)
+    return 1;
+
+  SDL_Vertex triangle[3];
+  triangle[0] = vertex[0];
+
+  int maxTriangles = 2 + n_vertex - 4;
+  for (int i = 0; i < maxTriangles; i++)
+  {
+    triangle[1] = vertex[1 + i];
+    triangle[2] = vertex[2 + i];
+    SDL_RenderGeometry(render, NULL, triangle, 3, NULL, 0);
+  }
+
+  return 0;
+}
+
 void My_Window::drawCursor(int fila, int columna, SDL_Color color, SDL_Color fill)
 {
   int px = columna * (win_x / columns);
