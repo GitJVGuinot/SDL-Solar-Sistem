@@ -76,6 +76,7 @@ int Esfera::init(SDL_Color color, bool fill, int res, MV::Pnt3 escala, MV::Pnt3 
 {
   if (res > 50)
     return 1;
+
   color_ = color;
   fill_ = fill;
   res_ = res;
@@ -87,6 +88,7 @@ int Esfera::init(SDL_Color color, bool fill, int res, MV::Pnt3 escala, MV::Pnt3 
   dim_ = 1;
   desp_ = {0, 0, 0};
 
+  // Esfera basica
   obtenerEsfera();
 
   if ((escala.x + escala.y + escala.z) != 3)
@@ -136,14 +138,14 @@ void Esfera::rotation(MV::Pnt3 p_rot)
   if (p_rot.z != 0)
     model = MV::Mat4Multiply(model, rot_z);
 
-  MV::Pnt3 desp__ = desp_;
+  MV::Pnt3 desp = desp_;
   translation({-desp_.x, -desp_.y, -desp_.z});
   for (int i = 0; i < vertices_; i++)
   {
     *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
     *(centros_ + i) = MV::Mat4TransformVec3(model, *(centros_ + i));
   }
-  translation(desp__);
+  translation(desp);
 }
 
 void Esfera::orbitar()
@@ -202,14 +204,14 @@ void Esfera::scale(MV::Pnt3 p_escala_)
   MV::Mat4 model = MV::Mat4Identity();
   model = MV::Mat4Multiply(model, m_escala_);
 
-  MV::Pnt3 desp__ = desp_;
+  MV::Pnt3 desp = desp_;
   translation({-desp_.x, -desp_.y, -desp_.z});
   for (int i = 0; i < vertices_; i++)
   {
     *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
     *(centros_ + i) = MV::Mat4TransformVec3(model, *(centros_ + i));
   }
-  translation(desp__);
+  translation(desp);
 }
 
 void Esfera::inputs(Keys *keys)
@@ -246,21 +248,7 @@ void Esfera::inputs(Keys *keys)
     scale({1.1f, 1.1f, 1.1f});
 }
 
-void SDL_DrawGeometry(SDL_Renderer *render, SDL_Vertex *vertex, const int n_vertex)
-{
-
-  int maxTriangles = 2 + n_vertex - 4;
-  for(int i=0; i<maxTriangles; i++){
-    SDL_Vertex triangle[3];
-    triangle[0] = vertex[0];
-    triangle[1] = vertex[1+i];
-    triangle[2] = vertex[2+i];
-    SDL_RenderGeometry(render, NULL, triangle, 3, NULL, 0);
-  }
-
-}
-
-void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 light)
+void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 light, int drawCallback(SDL_Renderer *, SDL_Vertex *, const int))
 {
 
   // Transformacion de puntos 2D
@@ -276,6 +264,7 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
   {
     desp = MV::Mat3Translate(MV::Vec3_Tr_Vec2(centro_orbita_));
   }
+
   model = MV::Mat3Multiply(desp, scala);
 
   for (int i = 0; i < vertices_; i++)
@@ -287,7 +276,6 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
   if (fill_)
   {
     // Ordenado de puntos
-
     for (int i = 0; i < vertices_; i++)
       order_[i] = i;
 
@@ -321,35 +309,41 @@ void Esfera::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
         square[j] = draw_sdl_[caras[order_[i]].points[j]].point;
 
       bool draw = true;
-      for(int j = 0; j < 4; j++){
+      for (int j = 0; j < 4; j++)
+      {
         draw = (draw && draw_sdl_[caras[order_[i]].points[j]].active);
+        if(!draw) break;
       }
 
-      if(draw){
-        SDL_DrawGeometry(render, square, 4);
-      }
-      
       /*
-      static SDL_Vertex triangle[3];
-      triangle[0] = draw_sdl_[caras[order_[i]].points[0]].point;
-      triangle[1] = draw_sdl_[caras[order_[i]].points[1]].point;
-      triangle[2] = draw_sdl_[caras[order_[i]].points[2]].point;
-
-      static SDL_Vertex triangle1[3];
-      triangle1[0] = draw_sdl_[caras[order_[i]].points[3]].point;
-      triangle1[1] = draw_sdl_[caras[order_[i]].points[2]].point;
-      triangle1[2] = draw_sdl_[caras[order_[i]].points[0]].point;
-
-      bool draw = true;
-      for(int j = 0; j < 4; j++){
-        draw = (draw && draw_sdl_[caras[order_[i]].points[j]].active);
-      }
-
+      int indices[5]={0,1,2,3,0};
       if(draw){
-        SDL_RenderGeometry(render, NULL, triangle, 3, NULL, 0);
-        SDL_RenderGeometry(render, NULL, triangle1, 3, NULL, 0);
+        int ret = SDL_RenderGeometry(render, NULL, square, 4, indices, 5);
       }
       */
+
+      if (draw)
+      {
+        if (drawCallback != nullptr)
+        {
+          drawCallback(render, square, 4);
+        }
+        else
+        {
+          static SDL_Vertex triangle[3];
+          triangle[0] = draw_sdl_[caras[order_[i]].points[0]].point;
+          triangle[1] = draw_sdl_[caras[order_[i]].points[1]].point;
+          triangle[2] = draw_sdl_[caras[order_[i]].points[2]].point;
+
+          static SDL_Vertex triangle1[3];
+          triangle1[0] = draw_sdl_[caras[order_[i]].points[3]].point;
+          triangle1[1] = draw_sdl_[caras[order_[i]].points[2]].point;
+          triangle1[2] = draw_sdl_[caras[order_[i]].points[0]].point;
+
+          SDL_RenderGeometry(render, NULL, triangle, 3, NULL, 0);
+          SDL_RenderGeometry(render, NULL, triangle1, 3, NULL, 0);
+        }
+      }
     }
   }
   else

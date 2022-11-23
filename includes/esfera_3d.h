@@ -72,7 +72,7 @@ public:
 
   SDL_Vertex renderSDLVertex(MV::Pnt3 light, MV::Pnt2 draw, MV::Pnt3 point);
 
-  void draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 light = {0, 0, 0});
+  void draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 light, int drawCallback(SDL_Renderer*, SDL_Vertex*, const int));
 
   void imprime();
 
