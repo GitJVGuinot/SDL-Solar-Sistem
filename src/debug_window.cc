@@ -125,6 +125,7 @@ void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, 
     }
     else
       ImGui::Button("You can't create more planets");
+
     if (max_planets > 0)
     {
       if (ImGui::Button("Destroy the last planet"))
@@ -146,78 +147,94 @@ void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, 
 
     ImGui::Text("Planets in orbit: %d", max_planets);
     ImGui::Text("Sizeof planet: %d, total planets size: %d", (int)sizeof(localPlanets[0]), (int)(max_planets * sizeof(localPlanets[0])));
-    for (int i = 0; i < max_planets; i++)
-    {
-      ImGui::Separator();
-      ImGui::Text("Planet: %d", i);
 
-      char str[50];
-      memset(str, 0, sizeof(str));
-      snprintf(str, 50, "Translation %f, %f, %f", localPlanets[i].desp_.x, localPlanets[i].desp_.y, localPlanets[i].desp_.z);
-      ImGui::Text(str);
+    static int nPlanet = 0;
+    ImGui::DragInt("Select planet", &nPlanet, 0.25f, 0, max_planets-1);
 
-      // Dots draw change
-      memset(str, 0, sizeof(str));
-      snprintf(str, 50, "Fill %d?", i);
-      ImGui::Checkbox(str, &localPlanets[i].fill_);
+    ImGui::Separator();
+    ImGui::Text("Planet: %d", nPlanet);
 
-      // Color change
-      memset(str, 0, sizeof(str));
-      snprintf(str, 50, "Color %d", i);
-      float newColor[4];
-      newColor[0] = (float)localPlanets[i].color_.r / 255;
-      newColor[1] = (float)localPlanets[i].color_.g / 255;
-      newColor[2] = (float)localPlanets[i].color_.b / 255;
-      newColor[3] = (float)localPlanets[i].color_.a / 255;
-      ImGui::ColorEdit4(str, newColor);
-      localPlanets[i].color_.r = (Uint8)(newColor[0] * 255);
-      localPlanets[i].color_.g = (Uint8)(newColor[1] * 255);
-      localPlanets[i].color_.b = (Uint8)(newColor[2] * 255);
-      localPlanets[i].color_.a = (Uint8)(newColor[3] * 255);
+    char str[50];
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Translation %f, %f, %f", localPlanets[nPlanet].desp_.x, localPlanets[nPlanet].desp_.y, localPlanets[nPlanet].desp_.z);
+    ImGui::Text("%s",str);
 
-      // Orbit center
-      memset(str, 0, sizeof(str));
-      snprintf(str, 50, "Orbit center %d", i);
-      ImGui::SliderFloat3(str, &localPlanets[i].centro_orbita_.x, -10000, 10000);
+    // Dots draw change
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Fill %d?", nPlanet);
+    ImGui::Checkbox(str, &localPlanets[nPlanet].fill_);
 
-      // Orbit desp
-      memset(str, 0, sizeof(str));
-      snprintf(str, 50, "Orbit angle %d", i);
-      ImGui::SliderFloat3(str, &localPlanets[i].orbita_.x, -0.5, 0.5);
+    // Color change
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Color %d", nPlanet);
+    float newColor[4];
+    newColor[0] = (float)localPlanets[nPlanet].color_.r / 255;
+    newColor[1] = (float)localPlanets[nPlanet].color_.g / 255;
+    newColor[2] = (float)localPlanets[nPlanet].color_.b / 255;
+    newColor[3] = (float)localPlanets[nPlanet].color_.a / 255;
+    ImGui::ColorEdit4(str, newColor);
+    localPlanets[nPlanet].color_.r = (Uint8)(newColor[0] * 255);
+    localPlanets[nPlanet].color_.g = (Uint8)(newColor[1] * 255);
+    localPlanets[nPlanet].color_.b = (Uint8)(newColor[2] * 255);
+    localPlanets[nPlanet].color_.a = (Uint8)(newColor[3] * 255);
 
-      // Orbit vel if have orbit desp
-      memset(str, 0, sizeof(str));
-      snprintf(str, 50, "Orbit vel %d", i);
-      ImGui::SliderFloat(str, &localPlanets[i].orbit_vel_, -100, 100);
+    // Orbit center
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Orbit center %d", nPlanet);
+    ImGui::SliderFloat3(str, &localPlanets[nPlanet].centro_orbita_.x, -10000, 10000);
 
-      // Translate Planets
-      MV::Vec3 desp = {0, 0, 0};
-      memset(str, 0, sizeof(str));
-      snprintf(str, 50, "Translate %d", i);
-      ImGui::SliderFloat3(str, &desp.x, -1, 1);
-      desp.x *= -1;
-      desp.z *= -1;
-      if (desp.x != 0 || desp.y != 0 || desp.z != 0)
-        localPlanets[i].translation(desp);
+    // Orbit desp
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Orbit angle %d", nPlanet);
+    ImGui::SliderFloat3(str, &localPlanets[nPlanet].orbita_.x, -0.5, 0.5);
 
-      // Rotate Planets
-      MV::Vec3 rot = {0, 0, 0};
-      memset(str, 0, sizeof(str));
-      snprintf(str, 50, "Rotate %d", i);
-      ImGui::SliderFloat3(str, &rot.x, -1, 1);
-      rot.x *= -1;
-      rot.y *= -1;
-      if (rot.x != 0 || rot.y != 0 || rot.z != 0)
-        localPlanets[i].rotation(rot);
+    // Orbit vel if have orbit desp
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Orbit vel %d", nPlanet);
+    ImGui::SliderFloat(str, &localPlanets[nPlanet].orbit_vel_, -100, 100);
 
-      // Escale Planets
-      MV::Vec3 scale = {1, 1, 1};
-      memset(str, 0, sizeof(str));
-      snprintf(str, 50, "Scale %d", i);
-      ImGui::SliderFloat3(str, &scale.x, 0, 2);
-      if (scale.x != 1 || scale.y != 1 || scale.z != 1)
-        localPlanets[i].scale(scale);
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Stop planet (orbit vel %d = 0)", nPlanet);
+    if (ImGui::Button(str)){
+      localPlanets[nPlanet].orbit_vel_=0.0f;
     }
+
+    // Translate Planets
+    MV::Vec3 desp = {0, 0, 0};
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Translate %d", nPlanet);
+    ImGui::SliderFloat3(str, &desp.x, -1, 1);
+    desp.x *= -1;
+    desp.z *= -1;
+    if (desp.x != 0 || desp.y != 0 || desp.z != 0)
+      localPlanets[nPlanet].translation(desp);
+
+    // Rotate Planets
+    MV::Vec3 rot = {0, 0, 0};
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Rotate %d", nPlanet);
+    ImGui::SliderFloat3(str, &rot.x, -1, 1);
+    rot.x *= -1;
+    rot.y *= -1;
+    if (rot.x != 0 || rot.y != 0 || rot.z != 0)
+      localPlanets[nPlanet].rotation(rot);
+
+    // Escale Planets
+    MV::Vec3 scale = {1, 1, 1};
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Scale %d", nPlanet);
+    ImGui::SliderFloat3(str, &scale.x, 0, 2);
+    if (scale.x != 1 || scale.y != 1 || scale.z != 1)
+      localPlanets[nPlanet].scale(scale);
+
+    // Escale Planets in the 3 axis
+    float eScale = 1;
+    memset(str, 0, sizeof(str));
+    snprintf(str, 50, "Equal scale %d", nPlanet);
+    ImGui::SliderFloat(str, &eScale, 0, 2);
+    if (eScale!=1)
+      localPlanets[nPlanet].scale({eScale, eScale, eScale});
+
     ImGui::End();
   }
   else
