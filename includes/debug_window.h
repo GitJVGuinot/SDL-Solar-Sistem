@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <render.h>
-#include <entity_3d.h>
+#include <esfera_3d.h>
 #include <my_window.h>
 
 #include <IMGUI/imgui.h>
@@ -26,6 +26,6 @@ public:
 };
 
 void Camera_Control(const char *str, Render &drawRender, My_Window &win, MV::Pnt2 max_win);
-void Planets_Control(const char *str, Entity **planets, MV::Pnt3 **object_desp, int &max_planets, MV::Pnt2 max_win);
+void Planets_Control(const char *str, Esfera **planets, MV::Pnt3 **object_desp, int &max_planets, MV::Pnt2 max_win);
 
 #endif

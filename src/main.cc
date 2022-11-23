@@ -12,6 +12,7 @@
 
 #include <render.h>
 #include <entity_3d.h>
+#include <esfera_3d.h>
 #include <my_window.h>
 #include <debug_window.h>
 
@@ -78,10 +79,10 @@ int main(int argc, char **argv)
   Debug_Window::Init(win.window, win.render);
 
   int max_planets = 5;
-  Entity *planet = (Entity *)calloc(max_planets, sizeof(Entity));
+  Esfera *planet = (Esfera *)calloc(max_planets, sizeof(Entity));
 
   // 0 -> planet[0], 1 - 4 -> Planets
-  std::cout << "Sizeof Entity: " << sizeof(Entity) << std::endl;
+  std::cout << "Sizeof Entity: " << sizeof(Esfera) << std::endl;
 
   std::cout << "Generando planetas..." << std::endl;
   planet[0].init(colores[BLANCO], false, 50, {12, 12, 12}, {middle_win.x, middle_win.y, 0.0f});
