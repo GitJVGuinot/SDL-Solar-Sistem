@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 
 #include <iostream>
 #include <cstring>
@@ -53,7 +55,6 @@ int main(int argc, char **argv)
   srand(time(nullptr));
 
   Keys keys[MAX_INPUTS];
-
   InitKeyboard(keys);
 
   // Inicializacion de los servicios de SDL
@@ -81,13 +82,13 @@ int main(int argc, char **argv)
 
   // 0 -> planet[0], 1 - 4 -> Planets
   std::cout << "Sizeof Esfera: " << sizeof(Esfera) << std::endl;
-  ;
+
   std::cout << "Generando planetas..." << std::endl;
   planet[0].init(colores[BLANCO], false, 50, {12, 12, 12}, {middle_win.x, middle_win.y, 0.0f});
-  planet[1].init(colores[0], false, 10, {2, 2, 2}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
-  planet[2].init(colores[1], false, 10, {2, 2, 2}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
-  planet[3].init(colores[2], false, 10, {2, 2, 2}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
-  planet[4].init(colores[3], false, 10, {2, 2, 2}, {(planet + 0)->desp_.x + 60, (planet + 0)->desp_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, (planet + 0)->desp_);
+  planet[1].init(colores[0], true, 10, {2, 2, 2}, {(planet + 0)->desp_.x - 40, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->desp_);
+  planet[2].init(colores[1], true, 10, {2, 2, 2}, {(planet + 0)->desp_.x, (planet + 0)->desp_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->desp_);
+  planet[3].init(colores[3], true, 10, {2, 2, 2}, {(planet + 0)->desp_.x + 60, (planet + 0)->desp_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, (planet + 0)->desp_);
+  planet[4].init(colores[2], true, 10, {2, 2, 2}, {(planet + 0)->desp_.x - 60, (planet + 0)->desp_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->desp_);
   std::cout << "Planetas generados" << std::endl;
 
   // Imprimir en pantalla los datos de la ventana
@@ -96,8 +97,10 @@ int main(int argc, char **argv)
 
   MV::Pnt3 light = (planet + 0)->desp_;
 
+  // Inicializacion del render 3D
   Render drawRender;
   drawRender.init(max_win, {middle_win.x, middle_win.y, 100});
+
   MV::Pnt3 *object_desp = nullptr;
   object_desp = (MV::Pnt3 *)realloc(object_desp, max_planets * sizeof(MV::Pnt3));
 
@@ -107,16 +110,12 @@ int main(int argc, char **argv)
     Debug_Window::Update();
 
     for (int i = 0; i < max_planets; i++)
-    {
       (planet + i)->orbitar();
-    }
 
     drawRender.inputs(keys);
 
     for (int i = 0; i < max_planets; i++)
-    {
       object_desp[i] = planet[i].desp_;
-    }
 
     int *order = drawRender.getOrder(object_desp, max_planets);
 
@@ -127,7 +126,7 @@ int main(int argc, char **argv)
         std::cout << std::endl
                   << "Drawing planet " << order[i] << std::endl;
       }
-      (planet + order[i])->draw(keys, win.render, drawRender, light);
+      (planet + order[i])->draw(keys, win.render, drawRender, light, nullptr);
     }
 
     drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
