@@ -5,6 +5,15 @@ void Entity::obtenerEntity()
 {
   vertices_ = (2 * res_) * (res_ + 1);
 
+  points_ = (MV::Pnt3*) calloc(vertices_, sizeof(MV::Pnt3));
+  centros_ = (MV::Pnt3*) calloc(vertices_, sizeof(MV::Pnt3));
+
+  draw_sdl_ = (Render_Vert*) calloc(vertices_, sizeof(Render_Vert));
+
+  caras_ = (Caras*) calloc(vertices_, sizeof(Caras));
+
+  order_ = (int*) calloc(vertices_, sizeof(int));
+
   float incremento = (PI / res_);
 
   int i = 0;

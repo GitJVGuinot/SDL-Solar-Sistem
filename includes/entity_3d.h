@@ -21,8 +21,6 @@ struct Caras
   int points[4];
 };
 
-#define MAX_VERTEX 5101
-
 class Entity
 {
 private:
@@ -30,14 +28,14 @@ private:
   MV::Pnt3 rotado_;
 
   int res_;
-  MV::Pnt3 points_[MAX_VERTEX];
-  MV::Pnt3 centros_[MAX_VERTEX];
+  MV::Pnt3 *points_;
+  MV::Pnt3 *centros_;
 
-  Render_Vert draw_sdl_[MAX_VERTEX];
+  Render_Vert *draw_sdl_;
 
-  Caras caras_[MAX_VERTEX];
+  Caras *caras_;
 
-  int order_[MAX_VERTEX];
+  int *order_;
 
   // Obtiene los puntos de la entity
   void obtenerEntity();
