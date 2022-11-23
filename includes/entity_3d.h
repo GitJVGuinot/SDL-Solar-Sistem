@@ -70,6 +70,8 @@ public:
 
   void imprime();
 
+  void operator=(const Entity& other);
+
   ~Entity();
 };
 

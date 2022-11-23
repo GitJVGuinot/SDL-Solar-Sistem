@@ -3,16 +3,63 @@
 // Inicializa la entity
 Entity::Entity()
 {
-  escala_ = {0, 0, 0};
-  rotado_ = {0, 0, 0};
+  escala_ = {0,0,0};
+  rotado_ = {0,0,0};
+
   res_ = 0;
+  points_ = nullptr;
+  centros_ = nullptr;
+
+  draw_sdl_ = nullptr;
+
+  caras_ = nullptr;
+
+  order_ = nullptr;
+
   dim_ = 0;
   vertices_ = 0;
-  desp_ = {0, 0, 0};
-  orbita_ = {0, 0, 0};
-  centro_orbita_ = {0, 0, 0};
-  color_ = {0, 0, 0};
+  desp_ = {0,0,0};
+  orbita_ = {0,0,0};
+  centro_orbita_ = {0,0,0};
+  color_ = {0,0,0,0};
+  fill_ = false;
+  orbit_vel_ = 0;
 };
+
+void Entity::operator=(const Entity& other){
+  escala_ = other.escala_;
+  rotado_ = other.rotado_;
+
+  res_ = other.res_;
+
+  dim_ = other.dim_;
+  vertices_ = other.vertices_;
+  desp_ = other.desp_;
+  orbita_ = other.orbita_;
+  centro_orbita_ = other.centro_orbita_;
+  color_ = other.color_;
+  fill_ = other.fill_;
+  orbit_vel_ = other.orbit_vel_;
+
+  points_ = (MV::Pnt3*) calloc(vertices_, sizeof(MV::Pnt3));
+  centros_ = (MV::Pnt3*) calloc(vertices_, sizeof(MV::Pnt3));
+
+  draw_sdl_ = (Render_Vert*) calloc(vertices_, sizeof(Render_Vert));
+
+  caras_ = (Caras*) calloc(vertices_, sizeof(Caras));
+
+  order_ = (int*) calloc(vertices_, sizeof(int));
+
+  for(int i = 0; i < vertices_; i++){
+    points_[i] = other.points_[i];
+    centros_[i] = other.centros_[i];
+    draw_sdl_[i] = other.draw_sdl_[i];
+    caras_[i] = other.caras_[i];
+    order_[i] = other.order_[i];
+  }
+
+}
+
 
 MV::Pnt3 Entity::point(int i)
 {
@@ -268,4 +315,13 @@ void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
   }
 }
 
-Entity::~Entity() {}
+Entity::~Entity() {
+  DESTROY(points_);
+  DESTROY(centros_);
+
+  DESTROY(draw_sdl_);
+
+  DESTROY(caras_);
+
+  DESTROY(order_);
+}
