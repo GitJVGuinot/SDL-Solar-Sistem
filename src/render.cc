@@ -208,8 +208,8 @@ SDL_Color renderColorLight(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Co
   MV::Vec3 point_vector = MV::Vec_Resta(desp, point); // Vector director  al centro desde el punto
   MV::Vec3 light_vector = MV::Vec_Resta(desp, light); // Vector director apuntando al centro desde la luz
 
-  point_vector = MV::Normalizar_Vec(point_vector);
-  light_vector = MV::Normalizar_Vec(light_vector);
+  if(point_vector.x+point_vector.y+point_vector.z!=0) point_vector = MV::Normalizar_Vec(point_vector);
+  if(light_vector.x+light_vector.y+light_vector.z!=0) light_vector = MV::Normalizar_Vec(light_vector);
 
   float angulo = MV::Obten_Angulo(point_vector, light_vector);
 
