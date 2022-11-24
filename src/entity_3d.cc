@@ -29,12 +29,13 @@ Entity::Entity()
 void Entity::operator=(const Entity& other){
   scale_ = other.scale_;
   rotate_ = other.rotate_;
+  dim_ = other.dim_;
+  mov_ = other.mov_;
 
   res_ = other.res_;
 
-  dim_ = other.dim_;
   vertex_ = other.vertex_;
-  mov_ = other.mov_;
+  nFaces_ = other.nFaces_;
   orbit_ = other.orbit_;
   orbit_center_ = other.orbit_center_;
   color_ = other.color_;
@@ -42,18 +43,21 @@ void Entity::operator=(const Entity& other){
   orbit_vel_ = other.orbit_vel_;
 
   points_ = (MV::Pnt3*) calloc(vertex_, sizeof(MV::Pnt3));
-  centers_ = (MV::Pnt3*) calloc(vertex_, sizeof(MV::Pnt3));
 
   draw_sdl_ = (Render_Vert*) calloc(vertex_, sizeof(Render_Vert));
 
-  faces_ = (Faces*) calloc(vertex_, sizeof(Faces));
+  centers_ = (MV::Pnt3*) calloc(nFaces_, sizeof(MV::Pnt3));
 
-  order_ = (int*) calloc(vertex_, sizeof(int));
+  faces_ = (Faces*) calloc(nFaces_, sizeof(Faces));
+
+  order_ = (int*) calloc(nFaces_, sizeof(int));
 
   for(int i = 0; i < vertex_; i++){
     points_[i] = other.points_[i];
-    centers_[i] = other.centers_[i];
     draw_sdl_[i] = other.draw_sdl_[i];
+  }
+  for(int i = 0; i < nFaces_; i++){
+    centers_[i] = other.centers_[i];
     faces_[i] = other.faces_[i];
     order_[i] = other.order_[i];
   }
@@ -101,6 +105,8 @@ void Entity::rotation(MV::Pnt3 p_rot)
   for (int i = 0; i < vertex_; i++)
   {
     *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
+  }
+  for(int i=0; i<nFaces_; i++){
     *(centers_ + i) = MV::Mat4TransformVec3(model, *(centers_ + i));
   }
   translation(mov);
@@ -136,6 +142,8 @@ void Entity::orbitar()
     for (int i = 0; i < vertex_; i++)
     {
       *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
+    }
+    for(int i=0; i<nFaces_;i++){
       *(centers_ + i) = MV::Mat4TransformVec3(model, *(centers_ + i));
     }
     translation(orbit_center_);
@@ -148,6 +156,8 @@ void Entity::translation(MV::Pnt3 p_mov_)
   for (int i = 0; i < vertex_; i++)
   {
     *(points_ + i) = MV::Vec_Sum(*(points_ + i), p_mov_);
+  }
+  for(int i=0; i<nFaces_; i++){
     *(centers_ + i) = MV::Vec_Sum(*(centers_ + i), p_mov_);
   }
 }
@@ -167,6 +177,8 @@ void Entity::scale(MV::Pnt3 p_scale_)
   for (int i = 0; i < vertex_; i++)
   {
     *(points_ + i) = MV::Mat4TransformVec3(model, *(points_ + i));
+  }
+  for(int i=0; i<nFaces_; i++){
     *(centers_ + i) = MV::Mat4TransformVec3(model, *(centers_ + i));
   }
   translation(mov);
@@ -310,11 +322,12 @@ void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, MV::Pnt3 
 
 Entity::~Entity() {
   DESTROY(points_);
-  DESTROY(centers_);
 
   DESTROY(draw_sdl_);
 
   DESTROY(faces_);
+
+  DESTROY(centers_);
 
   DESTROY(order_);
 }

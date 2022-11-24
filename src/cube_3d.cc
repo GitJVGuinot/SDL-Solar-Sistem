@@ -5,12 +5,13 @@ void Cube::obtenerCube()
   vertex_ = 8;
 
   points_ = (MV::Pnt3*) calloc(vertex_, sizeof(MV::Pnt3));
-  centers_ = (MV::Pnt3*) calloc(vertex_, sizeof(MV::Pnt3));
 
   draw_sdl_ = (Render_Vert*) calloc(vertex_, sizeof(Render_Vert));
 
   nFaces_ = 6;
   faces_ = (Faces*) calloc(nFaces_, sizeof(Faces));
+
+  centers_ = (MV::Pnt3*) calloc(nFaces_, sizeof(MV::Pnt3));
 
   order_ = (int*) calloc(nFaces_, sizeof(int));
 
@@ -52,6 +53,13 @@ void Cube::obtenerCube()
   faces_[5].points[1]=4;
   faces_[5].points[2]=7;
   faces_[5].points[3]=6;
+
+  centers_[0]={0.0f,0.5f,0.0f};
+  centers_[1]={0.0f,0.0f,0.5f};
+  centers_[2]={-0.5f,0.0f,0.0f};
+  centers_[3]={0.0f,0.0f,-0.5f};
+  centers_[4]={0.5f,0.0f,0.0f};
+  centers_[5]={0.0f,-0.5f,0.0f};
 
 }
 

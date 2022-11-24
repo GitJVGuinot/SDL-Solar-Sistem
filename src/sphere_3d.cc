@@ -6,12 +6,13 @@ void Sphere::obtenerSphere()
   vertex_ = (2 * res_) * (res_ + 1);
 
   points_ = (MV::Pnt3*) calloc(vertex_, sizeof(MV::Pnt3));
-  centers_ = (MV::Pnt3*) calloc(vertex_, sizeof(MV::Pnt3));
 
   draw_sdl_ = (Render_Vert*) calloc(vertex_, sizeof(Render_Vert));
 
   nFaces_ = vertex_;
   faces_ = (Faces*) calloc(nFaces_, sizeof(Faces));
+
+  centers_ = (MV::Pnt3*) calloc(nFaces_, sizeof(MV::Pnt3));
 
   order_ = (int*) calloc(nFaces_, sizeof(int));
 
@@ -60,7 +61,7 @@ void Sphere::obtenerSphere()
     }
   }
 
-  for (int i = 0; i < vertex_; i++)
+  for (int i = 0; i < nFaces_; i++)
   {
     centers_[i] = Vec_Resta(points_[faces_[i].points[0]], points_[faces_[i].points[2]]);
     centers_[i] = Vec_Escalado(centers_[i], 0.5f);
