@@ -815,14 +815,25 @@ namespace MV
   float Obten_Angulo(Pnt3 vec, Pnt3 vec1)
   {
 
+    if(Between(vec1.x+0.001, vec.x, vec1.x-0.001))
+      if(Between(vec1.y+0.001, vec.y, vec1.y-0.001))
+        if(Between(vec1.z+0.001, vec.z, vec1.z-0.001)){
+          // std::cout << "Return angle 0" << std::endl;
+          return 0;
+        }
+
+    if(Between(vec1.x+0.001, -vec.x, vec1.x-0.001))
+      if(Between(vec1.y+0.001, -vec.y, vec1.y-0.001))
+        if(Between(vec1.z+0.001, -vec.z, vec1.z-0.001)){
+          // std::cout << "Return angle 180" << std::endl;
+          return 180;
+        }
+
     float dividendo = (vec.x * vec1.x) + (vec.y * vec1.y) + (vec.z * vec1.z);
     float divisor = (sqrt((vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z)));
     float divisor1 = (sqrt((vec1.x * vec1.x) + (vec1.y * vec1.y) + (vec1.z * vec1.z)));
     float radian = acos(dividendo / (divisor * divisor1));
     float angulo = (radian * 180 / PI) * (-1);
-
-    if (!Between(180, angulo, -180))
-      return 180;
 
     return angulo;
   }
