@@ -49,6 +49,8 @@ public:
 
   MV::Pnt3 point(int position);
 
+  MV::Pnt3 getScale();
+
   void rotation(MV::Pnt3 rot);
 
   void orbitar();

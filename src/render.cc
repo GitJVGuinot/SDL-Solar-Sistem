@@ -164,7 +164,7 @@ void Render::inputs(Keys *keys)
     translation(up_);
 }
 
-int *Render::getOrder(MV::Pnt3 *object, int max_order)
+int *Render::getOrder(MV::Pnt3 *objects_mov, MV::Pnt3 *objects_scale, int max_order)
 {
   // Draw Planets ir order
   if (max_order != max_order_)
@@ -181,11 +181,22 @@ int *Render::getOrder(MV::Pnt3 *object, int max_order)
   {
     for (int j = 1; j < max_order_; j++)
     {
-      if (MV::Vec_Magn(MV::Vec_Resta(object[draw_order_[i]], camera_)) >= MV::Vec_Magn(MV::Vec_Resta(object[draw_order_[j]], camera_)))
+      float magn_i = MV::Vec_Magn(MV::Vec_Resta(objects_mov[draw_order_[i]], camera_));
+      float magn_j = MV::Vec_Magn(MV::Vec_Resta(objects_mov[draw_order_[j]], camera_));
+      if (magn_i > magn_j)
       {
         int aux = draw_order_[i];
         draw_order_[i] = draw_order_[j];
         draw_order_[j] = aux;
+      }
+      if (magn_i == magn_j){
+        float scale_i = (objects_scale[draw_order_[i]].x + objects_scale[draw_order_[i]].y + objects_scale[draw_order_[i]].z);
+        float scale_j  = (objects_scale[draw_order_[j]].x + objects_scale[draw_order_[j]].y + objects_scale[draw_order_[j]].z);
+        if(scale_i < scale_j){
+          int aux = draw_order_[i];
+          draw_order_[i] = draw_order_[j];
+          draw_order_[j] = aux;
+        }
       }
     }
   }

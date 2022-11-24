@@ -99,9 +99,10 @@ int main(int argc, char **argv)
   Render drawRender;
   drawRender.init(max_win, {middle_win.x, middle_win.y, 100});
 
-  MV::Pnt3 *object_mov = nullptr;
-  object_mov = (MV::Pnt3 *)realloc(object_mov, objects.size() * sizeof(MV::Pnt3));
-
+  MV::Pnt3 *objects_mov = nullptr;
+  objects_mov = (MV::Pnt3 *)realloc(objects_mov, objects.size() * sizeof(MV::Pnt3));
+  MV::Pnt3 *objects_scale = nullptr;
+  objects_scale = (MV::Pnt3 *)realloc(objects_scale, objects.size() * sizeof(MV::Pnt3));
 
   while (win.runing)
   {
@@ -124,15 +125,17 @@ int main(int argc, char **argv)
     for (int i = 0; i < objects.size(); i++){
       switch (objects.at(i).type) {
         case typeSphere:
-          object_mov[i] = objects.at(i).sphere.mov_;
+          objects_mov[i] = objects.at(i).sphere.mov_;
+          objects_scale[i] = objects.at(i).sphere.getScale();
           break;
         case typeCube:
-          object_mov[i] = objects.at(i).cube.mov_;
+          objects_mov[i] = objects.at(i).cube.mov_;
+          objects_scale[i] = objects.at(i).cube.getScale();
           break;
       }
     }
 
-    int *order = drawRender.getOrder(object_mov, objects.size());
+    int *order = drawRender.getOrder(objects_mov, objects_scale, objects.size());
 
     for (int i = 0; i < objects.size(); i++)
     {
@@ -149,7 +152,7 @@ int main(int argc, char **argv)
     drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
 
     Camera_Control(drawRender, win, {win.win_x, win.win_y});
-    Objects_Control(objects, &object_mov, max_win);
+    Objects_Control(objects, &objects_mov, &objects_scale, max_win);
 
     Debug_Window::Render();
     win.whileEnd(keys);

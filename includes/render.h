@@ -31,7 +31,7 @@ public:
 
   void inputs(Keys *keys);
 
-  int *getOrder(MV::Pnt3 *object_desp, int max_objects);
+  int *getOrder(MV::Pnt3 *objects_mov, MV::Pnt3 *objects_scale, int max_objects);
 
   Render_Vert renderPoint(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color, MV::Mat3 model, bool forceRender = false);
 

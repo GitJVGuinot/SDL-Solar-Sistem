@@ -92,13 +92,16 @@ void Camera_Control(Render &render, My_Window &win, MV::Pnt2 max_win)
     ImGui::End();
 }
 
-void Objects_Control(std::vector <Objects>&objects, MV::Pnt3 **object_mov, MV::Pnt2 max_win)
+void Objects_Control(std::vector <Objects>&objects, MV::Pnt3 **objects_mov, MV::Pnt3 **objects_scale, MV::Pnt2 max_win)
 {
-  MV::Pnt3 *obj = *object_mov;
+
   if (ImGui::Begin("Objects controls"))
   {
     if (objects.size() < 100 ){
       if(ImGui::Button("Create Object")){
+        *objects_mov = (MV::Pnt3*)realloc(*objects_mov, (objects.size()+1) * sizeof(MV::Pnt3));
+        *objects_scale = (MV::Pnt3*)realloc(*objects_scale, (objects.size()+1) * sizeof(MV::Pnt3));
+
         std::vector <Objects>copyObjects(objects.size());
         for(int i=0; i<objects.size(); i++){
           copyObjects.at(i) = objects.at(i);
@@ -115,6 +118,9 @@ void Objects_Control(std::vector <Objects>&objects, MV::Pnt3 **object_mov, MV::P
 
     if (objects.size() > 0){
       if(ImGui::Button("Destroy Object")){
+        *objects_mov = (MV::Pnt3*)realloc(*objects_mov, (objects.size()-1) * sizeof(MV::Pnt3));
+        *objects_scale = (MV::Pnt3*)realloc(*objects_scale, (objects.size()-1) * sizeof(MV::Pnt3));
+
         std::vector <Objects>copyObjects(objects.size());
         for(int i=0; i<objects.size()-1; i++){
           copyObjects.at(i) = objects.at(i);

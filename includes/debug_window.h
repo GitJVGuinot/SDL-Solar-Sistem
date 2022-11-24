@@ -27,6 +27,6 @@ public:
 };
 
 void Camera_Control(Render &drawRender, My_Window &win, MV::Pnt2 max_win);
-void Objects_Control(std::vector <Objects>&objects, MV::Pnt3 **object_mov, MV::Pnt2 max_win);
+void Objects_Control(std::vector <Objects>&objects, MV::Pnt3 **objects_mov, MV::Pnt3 **objects_scale, MV::Pnt2 max_win);
 
 #endif /* debug_window_h */

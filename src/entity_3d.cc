@@ -64,11 +64,16 @@ void Entity::operator=(const Entity& other){
 
 }
 
-
 MV::Pnt3 Entity::point(int i)
 {
   return *(points_ + i);
 }
+
+MV::Pnt3 Entity::getScale()
+{
+  return scale_;
+}
+
 
 void Entity::rotation(MV::Pnt3 p_rot)
 {
