@@ -214,7 +214,11 @@ int *Render::getOrder(MV::Pnt3 *objects_mov, MV::Pnt3 *objects_scale, int max_or
 SDL_Color renderColorLight(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Color color)
 {
 
-  SDL_Color ret = color;
+  float newColor[4];
+  newColor[0] = (float)color.r;
+  newColor[1] = (float)color.g;
+  newColor[2] = (float)color.b;
+  newColor[3] = (float)color.a;
 
   MV::Vec3 point_vector = MV::Vec_Resta(desp, point); // Vector director  al centro desde el punto
   MV::Vec3 light_vector = MV::Vec_Resta(desp, light); // Vector director apuntando al centro desde la luz
@@ -230,21 +234,27 @@ SDL_Color renderColorLight(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Co
   if (angulo < 0)
     angulo *= -1;
 
-  Uint8 angleRest = (Uint8)((float)(255 / 180) * angulo);
+  float angleRest=(angulo*255)/180;
+  float max;
+  if(newColor[0] >= newColor[1] && newColor[0] >= newColor[2]) max = newColor[0];
+  if(newColor[1] >= newColor[0] && newColor[1] >= newColor[2]) max = newColor[1];
+  if(newColor[2] >= newColor[0] && newColor[2] >= newColor[1]) max = newColor[2];
 
-  if (ret.r > 0)
-    ret.r -= (Uint8)angleRest;
-  if (ret.g > 0)
-    ret.g -= (Uint8)angleRest;
-  if (ret.b > 0)
-    ret.b -= (Uint8)angleRest;
+  if(angleRest>0)angleRest=max/angleRest;
+  if(angleRest>0)angleRest=1/angleRest;
 
-  if (ret.r < 0)
-    ret.r = 0;
-  if (ret.g < 0)
-    ret.g = 0;
-  if (ret.b < 0)
-    ret.b = 0;
+  for(int i = 0; i < 4; i++){
+    if (newColor[i] > 0){
+      newColor[i] -= (angleRest*newColor[i]);
+    }
+    if(newColor[i] < 0) newColor[i] = 0;
+  }
+
+  SDL_Color ret;
+  ret.r = (Uint8)(newColor[0]);
+  ret.g = (Uint8)(newColor[1]);
+  ret.b = (Uint8)(newColor[2]);
+  ret.a = (Uint8)(newColor[3]);
 
   return ret;
 }
