@@ -11,9 +11,7 @@
 #include <SDL_event_control.h>
 
 #include <render.h>
-#include <entity_3d.h>
-#include <sphere_3d.h>
-#include <cube_3d.h>
+#include <objects.h>
 #include <my_window.h>
 #include <debug_window.h>
 
@@ -72,69 +70,86 @@ int main(int argc, char **argv)
   // Inicializacion de ImGui
   Debug_Window::Init(win.window, win.render);
 
-  int max_planets = 5;
-  Sphere *planet = (Sphere *)calloc(max_planets, sizeof(Entity));
+  std::vector <struct Objects>objects(6);
+
+  for(int i=0; i<5; i++) objects.at(i).type=typeSphere;
 
   // 0 -> planet[0], 1 - 4 -> Planets
   std::cout << "Sizeof Entity: " << sizeof(Sphere) << std::endl;
 
   std::cout << "Generando planetas..." << std::endl;
-  planet[0].init(colores[WHITE], false, 50, {12, 12, 12}, {middle_win.x, middle_win.y, 0.0f});
-  planet[1].init(colores[0], true, 10, {2, 2, 2}, {(planet + 0)->mov_.x - 40, (planet + 0)->mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->mov_);
-  planet[2].init(colores[1], true, 10, {2, 2, 2}, {(planet + 0)->mov_.x, (planet + 0)->mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, (planet + 0)->mov_);
-  planet[3].init(colores[3], true, 10, {2, 2, 2}, {(planet + 0)->mov_.x + 60, (planet + 0)->mov_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, (planet + 0)->mov_);
-  planet[4].init(colores[2], true, 10, {2, 2, 2}, {(planet + 0)->mov_.x - 60, (planet + 0)->mov_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, (planet + 0)->mov_);
+  objects.at(0).sphere.init(colores[WHITE], false, 50, {12, 12, 12}, {middle_win.x, middle_win.y, 0.0f});
+  objects.at(1).sphere.init(colores[0], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
+  objects.at(2).sphere.init(colores[1], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, objects.at(0).sphere.mov_);
+  objects.at(3).sphere.init(colores[3], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x + 60, objects.at(0).sphere.mov_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, objects.at(0).sphere.mov_);
+  objects.at(4).sphere.init(colores[2], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x - 60, objects.at(0).sphere.mov_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
+  for(int i=1; i<5; i++) objects.at(i).sphere.orbit_vel_=10.0f;
+  objects.at(5).type=typeCube;
+  objects.at(5).cube.init(colores[WHITE], true, {5,5,5}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
+  objects.at(5).cube.orbit_vel_=10.0f;
   std::cout << "Planetas generados" << std::endl;
 
   // Imprimir en pantalla los datos de la ventana
   std::cout << "WIN_X: " << max_win.x << ", WIN_Y: " << max_win.y << std::endl;
   std::cout << "HEIGHT: " << k_TextHeight << ", WIDTH: " << k_TextWitdh << ", g_Filas: " << g_Filas << ", g_Columnas: " << g_Columnas << std::endl;
 
-  MV::Pnt3 light = (planet + 0)->mov_;
+  MV::Pnt3 light = objects.at(0).sphere.mov_;
 
   // Inicializacion del render 3D
   Render drawRender;
   drawRender.init(max_win, {middle_win.x, middle_win.y, 100});
 
   MV::Pnt3 *object_mov = nullptr;
-  object_mov = (MV::Pnt3 *)realloc(object_mov, max_planets * sizeof(MV::Pnt3));
+  object_mov = (MV::Pnt3 *)realloc(object_mov, objects.size() * sizeof(MV::Pnt3));
 
-  Cube cube;
-  cube.init(colores[WHITE], true, {5,5,5}, {(planet + 0)->mov_.x - 40, (planet + 0)->mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, (planet + 0)->mov_);
-  cube.orbit_vel_=10.0f;
 
   while (win.runing)
   {
     win.whileInit(keys);
     Debug_Window::Update();
 
-    for (int i = 0; i < max_planets; i++)
-      (planet + i)->orbitar();
-
-    cube.orbitar();
-
     drawRender.inputs(keys);
 
-    for (int i = 0; i < max_planets; i++)
-      object_mov[i] = planet[i].mov_;
-
-    int *order = drawRender.getOrder(object_mov, max_planets);
-
-    for (int i = 0; i < max_planets; i++)
-    {
-      if (EVENT_DOWN(K_p, keys))
-      {
-        std::cout << std::endl
-                  << "Drawing planet " << order[i] << std::endl;
+    for (int i = 0; i < objects.size(); i++){
+      switch (objects.at(i).type) {
+        case typeSphere:
+          objects.at(i).sphere.orbitar();
+          break;
+        case typeCube:
+          objects.at(i).cube.orbitar();
+          break;
       }
-      (planet + order[i])->draw(keys, win.render, drawRender, light, nullptr);
     }
 
-    cube.draw(keys, win.render, drawRender, light, nullptr);
+    for (int i = 0; i < objects.size(); i++){
+      switch (objects.at(i).type) {
+        case typeSphere:
+          object_mov[i] = objects.at(i).sphere.mov_;
+          break;
+        case typeCube:
+          object_mov[i] = objects.at(i).cube.mov_;
+          break;
+      }
+    }
+
+    int *order = drawRender.getOrder(object_mov, objects.size());
+
+    for (int i = 0; i < objects.size(); i++)
+    {
+      switch (objects.at(order[i]).type) {
+        case typeSphere:
+          objects.at(order[i]).sphere.draw(keys, win.render, drawRender, light, nullptr);
+          break;
+        case typeCube:
+          objects.at(order[i]).cube.draw(keys, win.render, drawRender, light, nullptr);
+          break;
+      }
+    }
+
     drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
 
-    Camera_Control("Camera controls", drawRender, win, {win.win_x, win.win_y});
-    Planets_Control("Planets controls", &planet, &object_mov, max_planets, {win.win_x, win.win_y});
+    Camera_Control(drawRender, win, {win.win_x, win.win_y});
+    Objects_Control(objects, &object_mov, max_win);
 
     Debug_Window::Render();
     win.whileEnd(keys);

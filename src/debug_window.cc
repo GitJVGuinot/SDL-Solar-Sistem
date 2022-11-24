@@ -46,9 +46,9 @@ void Debug_Window::Quit()
   ImGui::DestroyContext();
 }
 
-void Camera_Control(const char *str, Render &render, My_Window &win, MV::Pnt2 max_win)
+void Camera_Control(Render &render, My_Window &win, MV::Pnt2 max_win)
 {
-  if (ImGui::Begin(str))
+  if (ImGui::Begin("Camera controls"))
   {
 
     ImGui::Checkbox("FPS Control?", &win.fps_control);
@@ -92,148 +92,64 @@ void Camera_Control(const char *str, Render &render, My_Window &win, MV::Pnt2 ma
     ImGui::End();
 }
 
-void Planets_Control(const char *str, Sphere **planets, MV::Pnt3 **object_mov, int &max_planets, MV::Pnt2 max_win)
+void Objects_Control(std::vector <Objects>&objects, MV::Pnt3 **object_mov, MV::Pnt2 max_win)
 {
-  Sphere *localPlanets = *planets;
   MV::Pnt3 *obj = *object_mov;
-  if (ImGui::Begin(str))
+  if (ImGui::Begin("Objects controls"))
   {
-    if (max_planets < 100)
-    {
-      if (ImGui::Button("Add a planet (The last one is going to duplicate)"))
-      {
-        max_planets++;
-        Sphere *newPlanets = (Sphere *)calloc(max_planets, sizeof(Sphere));
-        MV::Pnt3 *newObj = (MV::Pnt3 *)calloc(max_planets, sizeof(MV::Pnt3));
-        if (max_planets > 1)
-        {
-          for (int i = 0; i < max_planets - 1; i++)
-          {
-            newPlanets[i] = localPlanets[i];
-          }
-          newPlanets[max_planets - 1] = newPlanets[max_planets - 2];
+    if (objects.size() < 100 ){
+      if(ImGui::Button("Create Object")){
+        std::vector <Objects>copyObjects(objects.size());
+        for(int i=0; i<objects.size(); i++){
+          copyObjects.at(i) = objects.at(i);
         }
-        else
-          newPlanets[0].init({255, 255, 255, SDL_ALPHA_OPAQUE}, true, 10, {12, 12, 12}, {max_win.x / 2, max_win.y / 2, 0.0f});
-        DESTROY(localPlanets);
-        *planets = newPlanets;
-        DESTROY(obj);
-        *object_mov = newObj;
-        ImGui::End();
-        return;
+        objects.resize(objects.size()+1);
+        objects.at(objects.size()-1).type=notSet;
+        for(int i=0; i<objects.size()-1; i++){
+          objects.at(i) = copyObjects.at(i);
+        }
       }
     }
     else
-      ImGui::Button("You can't create more planets");
+      ImGui::Button("You can't create more objects, Max = 100");
 
-    if (max_planets > 0)
-    {
-      if (ImGui::Button("Destroy the last planet"))
-      {
-        max_planets--;
-        Sphere *newPlanets = (Sphere *)calloc(max_planets, sizeof(Sphere));
-        for (int i = 0; i < max_planets; i++)
-        {
-          newPlanets[i] = localPlanets[i];
+    if (objects.size() > 0){
+      if(ImGui::Button("Destroy Object")){
+        std::vector <Objects>copyObjects(objects.size());
+        for(int i=0; i<objects.size()-1; i++){
+          copyObjects.at(i) = objects.at(i);
         }
-        DESTROY(localPlanets);
-        *planets = newPlanets;
-        ImGui::End();
-        return;
+        objects.resize(objects.size()-1);
+        for(int i=0; i<objects.size(); i++){
+          objects.at(i) = copyObjects.at(i);
+        }
       }
     }
     else
-      ImGui::Button("You can't destroy planets");
+      ImGui::Button("You can't destroy objects");
 
-    ImGui::Text("Planets in orbit: %d", max_planets);
-    ImGui::Text("Sizeof planet: %d, total planets size: %d", (int)sizeof(localPlanets[0]), (int)(max_planets * sizeof(localPlanets[0])));
+    ImGui::Text("Total objects: %d", objects.size());
+    ImGui::Text("Size of object: %d, Total objects size: %d", (int)sizeof(objects.at(0)), (int)(objects.size() * sizeof(objects.at(0))));
 
-    static int nPlanet = 0;
-    ImGui::DragInt("Select planet", &nPlanet, 0.25f, 0, max_planets-1);
-
+    static int nObject = 0;
+    ImGui::DragInt("Select object", &nObject, 0.25f, 0, objects.size()-1);
+    if(nObject>=objects.size()) nObject = 0;
     ImGui::Separator();
-    ImGui::Text("Planet: %d", nPlanet);
+    ImGui::Text("Object: %d", nObject);
 
-    char str[50];
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Translation %f, %f, %f", localPlanets[nPlanet].mov_.x, localPlanets[nPlanet].mov_.y, localPlanets[nPlanet].mov_.z);
-    ImGui::Text("%s",str);
-
-    // Dots draw change
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Fill %d?", nPlanet);
-    ImGui::Checkbox(str, &localPlanets[nPlanet].fill_);
-
-    // Color change
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Color %d", nPlanet);
-    float newColor[4];
-    newColor[0] = (float)localPlanets[nPlanet].color_.r / 255;
-    newColor[1] = (float)localPlanets[nPlanet].color_.g / 255;
-    newColor[2] = (float)localPlanets[nPlanet].color_.b / 255;
-    newColor[3] = (float)localPlanets[nPlanet].color_.a / 255;
-    ImGui::ColorEdit4(str, newColor);
-    localPlanets[nPlanet].color_.r = (Uint8)(newColor[0] * 255);
-    localPlanets[nPlanet].color_.g = (Uint8)(newColor[1] * 255);
-    localPlanets[nPlanet].color_.b = (Uint8)(newColor[2] * 255);
-    localPlanets[nPlanet].color_.a = (Uint8)(newColor[3] * 255);
-
-    // Orbit center
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Orbit center %d", nPlanet);
-    ImGui::SliderFloat3(str, &localPlanets[nPlanet].orbit_center_.x, -10000, 10000);
-
-    // Orbit mov
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Orbit angle %d", nPlanet);
-    ImGui::SliderFloat3(str, &localPlanets[nPlanet].orbit_.x, -0.5, 0.5);
-
-    // Orbit vel if have orbit mov
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Orbit vel %d", nPlanet);
-    ImGui::SliderFloat(str, &localPlanets[nPlanet].orbit_vel_, -100, 100);
-
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Stop planet (orbit vel %d = 0)", nPlanet);
-    if (ImGui::Button(str)){
-      localPlanets[nPlanet].orbit_vel_=0.0f;
+    if(objects.size()>0){
+      switch (objects.at(nObject).type) {
+      case notSet:
+        Not_Set_Controls(objects.at(nObject));
+      break;
+      case typeSphere:
+        Spheres_Controls(objects.at(nObject));
+        break;
+      case typeCube:
+        Cubes_Controls(objects.at(nObject));
+        break;
+      }
     }
-
-    // Translate Planets
-    MV::Vec3 mov = {0, 0, 0};
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Translate %d", nPlanet);
-    ImGui::SliderFloat3(str, &mov.x, -1, 1);
-    mov.x *= -1;
-    mov.z *= -1;
-    if (mov.x != 0 || mov.y != 0 || mov.z != 0)
-      localPlanets[nPlanet].translation(mov);
-
-    // Rotate Planets
-    MV::Vec3 rot = {0, 0, 0};
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Rotate %d", nPlanet);
-    ImGui::SliderFloat3(str, &rot.x, -1, 1);
-    rot.x *= -1;
-    rot.y *= -1;
-    if (rot.x != 0 || rot.y != 0 || rot.z != 0)
-      localPlanets[nPlanet].rotation(rot);
-
-    // Escale Planets
-    MV::Vec3 scale = {1, 1, 1};
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Scale %d", nPlanet);
-    ImGui::SliderFloat3(str, &scale.x, 0, 2);
-    if (scale.x != 1 || scale.y != 1 || scale.z != 1)
-      localPlanets[nPlanet].scale(scale);
-
-    // Escale Planets in the 3 axis
-    float eScale = 1;
-    memset(str, 0, sizeof(str));
-    snprintf(str, 50, "Equal scale %d", nPlanet);
-    ImGui::SliderFloat(str, &eScale, 0, 2);
-    if (eScale!=1)
-      localPlanets[nPlanet].scale({eScale, eScale, eScale});
 
     ImGui::End();
   }

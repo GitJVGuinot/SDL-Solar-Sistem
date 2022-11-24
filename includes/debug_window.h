@@ -2,14 +2,15 @@
 #define debug_winfow_h
 
 #include <SDL2/SDL.h>
-#include <iostream>
-#include <render.h>
-#include <sphere_3d.h>
-#include <my_window.h>
 
 #include <IMGUI/imgui.h>
 #include <IMGUI/imgui_impl_sdl.h>
 #include <IMGUI/imgui_impl_sdlrenderer.h>
+
+#include <iostream>
+#include <render.h>
+#include <objects.h>
+#include <my_window.h>
 
 class Debug_Window
 {
@@ -25,7 +26,7 @@ public:
   static void Quit();
 };
 
-void Camera_Control(const char *str, Render &drawRender, My_Window &win, MV::Pnt2 max_win);
-void Planets_Control(const char *str, Sphere **planets, MV::Pnt3 **object_desp, int &max_planets, MV::Pnt2 max_win);
+void Camera_Control(Render &drawRender, My_Window &win, MV::Pnt2 max_win);
+void Objects_Control(std::vector <Objects>&objects, MV::Pnt3 **object_mov, MV::Pnt2 max_win);
 
-#endif
+#endif /* debug_window_h */
