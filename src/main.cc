@@ -25,21 +25,21 @@ MV::Pnt2 middle_win = {max_win.x / 2, max_win.y / 2};
 MV::Pnt2 min_win = {0, 0};
 
 SDL_Color colores[MAX_COLORS] = {
-    SDL_Color{255, 000, 000, SDL_ALPHA_OPAQUE}, // RED
+    SDL_Color{255, 000, 000, 255}, // RED
 
-    SDL_Color{000, 255, 000, SDL_ALPHA_OPAQUE}, // GREEN
+    SDL_Color{000, 255, 000, 255}, // GREEN
 
-    SDL_Color{000, 000, 255, SDL_ALPHA_OPAQUE}, // BLUE
+    SDL_Color{000, 000, 255, 255}, // BLUE
 
-    SDL_Color{000, 255, 255, SDL_ALPHA_TRANSPARENT}, // CYAN
+    SDL_Color{000, 255, 255, 255}, // CYAN
 
-    SDL_Color{255, 000, 255, SDL_ALPHA_OPAQUE}, // MAGENTA
+    SDL_Color{255, 000, 255, 255}, // MAGENTA
 
-    SDL_Color{255, 255, 000, SDL_ALPHA_OPAQUE}, // YELLOW
+    SDL_Color{255, 255, 000, 255}, // YELLOW
 
-    SDL_Color{255, 255, 255, SDL_ALPHA_OPAQUE}, // WHITE
-    SDL_Color{127, 127, 127, SDL_ALPHA_OPAQUE}, // GREY
-    SDL_Color{000, 000, 000, SDL_ALPHA_OPAQUE}, // BLACK
+    SDL_Color{255, 255, 255, 255}, // WHITE
+    SDL_Color{127, 127, 127, 255}, // GREY
+    SDL_Color{000, 000, 000, 255}, // BLACK
 };
 
 int main(int argc, char **argv)
@@ -72,20 +72,19 @@ int main(int argc, char **argv)
 
   std::vector <struct Objects>objects(6);
 
-  for(int i=0; i<5; i++) objects.at(i).type=typeSphere;
-
-  // 0 -> planet[0], 1 - 4 -> Planets
   std::cout << "Sizeof Entity: " << sizeof(Sphere) << std::endl;
 
   std::cout << "Generando planetas..." << std::endl;
+  for(int i=0; i<5; i++) objects.at(i).type=typeSphere;
   objects.at(0).sphere.init(colores[WHITE], false, 50, {12, 12, 12}, {middle_win.x, middle_win.y, 0.0f});
   objects.at(1).sphere.init(colores[0], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
   objects.at(2).sphere.init(colores[1], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, objects.at(0).sphere.mov_);
   objects.at(3).sphere.init(colores[3], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x + 60, objects.at(0).sphere.mov_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, objects.at(0).sphere.mov_);
   objects.at(4).sphere.init(colores[2], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x - 60, objects.at(0).sphere.mov_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
   for(int i=1; i<5; i++) objects.at(i).sphere.orbit_vel_=10.0f;
+
   objects.at(5).type=typeCube;
-  objects.at(5).cube.init(colores[WHITE], true, {5,5,5}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
+  objects.at(5).cube.init({255,255,255,128}, true, {4,4,4}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
   objects.at(5).cube.orbit_vel_=10.0f;
   std::cout << "Planetas generados" << std::endl;
 

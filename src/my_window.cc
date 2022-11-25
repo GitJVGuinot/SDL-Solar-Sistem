@@ -26,6 +26,8 @@ My_Window::My_Window(int height_, int width_, int rows_, int columns_, SDL_Color
   SDL_RendererFlags render_flags = (SDL_RendererFlags)(SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
   render = SDL_CreateRenderer(window, -1, render_flags);
 
+  SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_BLEND);
+
   SDL_ShowCursor(1);
   background_color = background_color_;
 

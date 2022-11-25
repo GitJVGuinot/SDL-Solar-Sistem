@@ -243,7 +243,7 @@ SDL_Color renderColorLight(MV::Pnt3 point, MV::Pnt3 desp, MV::Pnt3 light, SDL_Co
   if(angleRest>0)angleRest=max/angleRest;
   if(angleRest>0)angleRest=1/angleRest;
 
-  for(int i = 0; i < 4; i++){
+  for(int i = 0; i < 3; i++){
     if (newColor[i] > 0){
       newColor[i] -= (angleRest*newColor[i]);
     }
