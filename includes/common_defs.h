@@ -8,17 +8,18 @@
 
 #define RGBA(x) x.r, x.g, x.b, x.a
 
-const int RED = 0;
-const int GREEN = 1;
-const int BLUE = 2;
-const int CYAN = 3;
-const int MAGENTA = 4;
-const int YELLOW = 5;
-const int WHITE = 6;
-const int GREY = 7;
-const int BLACK = 8;
-
-const int MAX_COLORS = 9;
+const enum {
+  RED = 0,
+  GREEN = 1,
+  BLUE = 2,
+  CYAN = 3,
+  MAGENTA = 4,
+  YELLOW = 5,
+  WHITE = 6,
+  GREY = 7,
+  BLACK = 8,
+  MAX_COLORS = 9,
+};
 
 #ifndef PI
 #define PI 3.14159265358979323846

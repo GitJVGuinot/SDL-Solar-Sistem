@@ -1,52 +1,10 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-
-#include <iostream>
-#include <cstring>
-#include <cfloat>
-#include <common_defs.h>
-#include <mv_math.h>
-#include <SDL_event_control.h>
-
-#include <render.h>
-#include <objects.h>
-#include <my_window.h>
-#include <debug_window.h>
-
-int k_TextHeight = 28;
-int k_TextWitdh = ((float)(k_TextHeight * 4 / 7) - 1);
-int g_Filas = 30;
-int g_Columnas = 80;
-
-MV::Pnt2 max_win = {(float)(k_TextWitdh * g_Columnas), (float)(k_TextHeight *g_Filas)};
-MV::Pnt2 middle_win = {max_win.x / 2, max_win.y / 2};
-MV::Pnt2 min_win = {0, 0};
-
-SDL_Color colores[MAX_COLORS] = {
-    SDL_Color{255, 000, 000, 255}, // RED
-
-    SDL_Color{000, 255, 000, 255}, // GREEN
-
-    SDL_Color{000, 000, 255, 255}, // BLUE
-
-    SDL_Color{000, 255, 255, 255}, // CYAN
-
-    SDL_Color{255, 000, 255, 255}, // MAGENTA
-
-    SDL_Color{255, 255, 000, 255}, // YELLOW
-
-    SDL_Color{255, 255, 255, 255}, // WHITE
-    SDL_Color{127, 127, 127, 255}, // GREY
-    SDL_Color{000, 000, 000, 255}, // BLACK
-};
+#include <main.h>
 
 int main(int argc, char **argv)
 {
-
   srand(time(nullptr));
 
+  // Inicializacion de los inputs
   Keys keys[MAX_INPUTS];
   InitKeyboard(keys);
 
@@ -59,7 +17,7 @@ int main(int argc, char **argv)
   }
 
   // Inicializacion ventana de juego
-  My_Window win = *new My_Window(k_TextHeight, k_TextWitdh, g_Filas, g_Columnas, colores[BLACK]);
+  My_Window win = *new My_Window(k_TextHeight, k_TextWitdh, k_Filas, k_Columnas, colores[BLACK]);
   if (!win.setTextFont((char *)FONT_PATH))
   {
     std::cout << "Failed at TTF_Font_Init(): " << SDL_GetError() << std::endl;
@@ -70,46 +28,27 @@ int main(int argc, char **argv)
   // Inicializacion de ImGui
   Debug_Window::Init(win.window, win.render);
 
+  // Inicializacion de variables
   std::vector <struct Objects>objects(6);
-
-  std::cout << "Sizeof Entity: " << sizeof(Sphere) << std::endl;
-
-  std::cout << "Generando planetas..." << std::endl;
-  for(int i=0; i<5; i++) objects.at(i).type=typeSphere;
-  objects.at(0).sphere.init(colores[WHITE], false, 50, {12, 12, 12}, {middle_win.x, middle_win.y, 0.0f});
-  objects.at(1).sphere.init(colores[0], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(2).sphere.init(colores[1], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(3).sphere.init(colores[3], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x + 60, objects.at(0).sphere.mov_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(4).sphere.init(colores[2], true, 10, {2, 2, 2}, {objects.at(0).sphere.mov_.x - 60, objects.at(0).sphere.mov_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  for(int i=1; i<5; i++) objects.at(i).sphere.orbit_vel_=10.0f;
-
-  objects.at(5).type=typeCube;
-  objects.at(5).cube.init({255,255,255,128}, true, {4,4,4}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(5).cube.orbit_vel_=10.0f;
-  std::cout << "Planetas generados" << std::endl;
+  MV::Pnt3 light;
+  Render drawRender;
+  MV::Pnt3 *objects_mov = nullptr;
+  MV::Pnt3 *objects_scale = nullptr;
+  Basic_Objects_Init(objects, light, drawRender, &objects_mov, &objects_scale);
 
   // Imprimir en pantalla los datos de la ventana
-  std::cout << "WIN_X: " << max_win.x << ", WIN_Y: " << max_win.y << std::endl;
-  std::cout << "HEIGHT: " << k_TextHeight << ", WIDTH: " << k_TextWitdh << ", g_Filas: " << g_Filas << ", g_Columnas: " << g_Columnas << std::endl;
-
-  MV::Pnt3 light = objects.at(0).sphere.mov_;
-
-  // Inicializacion del render 3D
-  Render drawRender;
-  drawRender.init(max_win, {middle_win.x, middle_win.y, 100});
-
-  MV::Pnt3 *objects_mov = nullptr;
-  objects_mov = (MV::Pnt3 *)realloc(objects_mov, objects.size() * sizeof(MV::Pnt3));
-  MV::Pnt3 *objects_scale = nullptr;
-  objects_scale = (MV::Pnt3 *)realloc(objects_scale, objects.size() * sizeof(MV::Pnt3));
+  std::cout << "Window Information" << std::endl;
+  std::cout << "Win_x: " << max_win.x << ", Win_y: " << max_win.y << std::endl;
+  std::cout << "Height: " << k_TextHeight << ", Width: " << k_TextWitdh << ", Rows: " << k_Filas << ", Columns: " << k_Columnas << std::endl;
 
   while (win.runing)
   {
+    // Inicio de la ventana grafica
     win.whileInit(keys);
     Debug_Window::Update();
-
     drawRender.inputs(keys);
 
+    // Orbita de los objetos
     for (int i = 0; i < objects.size(); i++){
       switch (objects.at(i).type) {
         case typeSphere:
@@ -121,6 +60,7 @@ int main(int argc, char **argv)
       }
     }
 
+    // Obtener las variables de posicionamiento en pantalla
     for (int i = 0; i < objects.size(); i++){
       switch (objects.at(i).type) {
         case typeSphere:
@@ -134,8 +74,10 @@ int main(int argc, char **argv)
       }
     }
 
+    // Orden de dibujado en pantalla
     int *order = drawRender.getOrder(objects_mov, objects_scale, objects.size());
 
+    // Dibujado de objetos
     for (int i = 0; i < objects.size(); i++)
     {
       switch (objects.at(order[i]).type) {
@@ -148,15 +90,19 @@ int main(int argc, char **argv)
       }
     }
 
-    drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
-
+    // ImGui windows para el control de la camara y/o los bojetos
     Camera_Control(drawRender, win, {win.win_x, win.win_y});
     Objects_Control(objects, &objects_mov, &objects_scale, max_win);
 
+    // Dibujado de limites de la camara
+    drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
+
+    // Fin de la ventana grafica
     Debug_Window::Render();
     win.whileEnd(keys);
   }
 
+  // Liberacion de memory allocs
   win.Destroy();
   TTF_Quit();
   SDL_Quit();

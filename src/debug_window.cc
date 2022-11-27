@@ -2,7 +2,6 @@
 
 void Debug_Window::Init(SDL_Window *window, SDL_Renderer *render)
 {
-
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
