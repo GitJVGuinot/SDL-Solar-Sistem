@@ -1,6 +1,5 @@
 #include <SDL2/SDL.h>
 #include <iostream>
-#include "mv_math.h"
 #include "SDL_event_control.h"
 
 ////////////////////////

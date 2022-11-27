@@ -7,7 +7,6 @@
 #include <cstring>
 #include <cfloat>
 #include <common_defs.h>
-#include <mv_math.h>
 #include <SDL_event_control.h>
 
 #include <render.h>

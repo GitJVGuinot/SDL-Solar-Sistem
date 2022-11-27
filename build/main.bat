@@ -33,7 +33,8 @@ REM COMPILER
   set "SDL2ttf_Lib=..\deps\libs\Win_SDL2\x86\SDL2_ttf.lib"
   set "SDL2image_Lib=..\deps\libs\Win_SDL2\x86\SDL2_image.lib"
   set "SDL2mixer_Lib=..\deps\libs\Win_SDL2\x86\SDL2_mixer.lib"
-  set "Libs=%SDL2_Lib% %SDL2main_Lib% %SDL2ttf_Lib% %SDL2image_lib% %SDL2mixer_lib%"
+  set "my_window_Lib=..\deps\libs\Win_own\my_window.lib"
+  set "Libs=%SDL2_Lib% %SDL2main_Lib% %SDL2ttf_Lib% %SDL2image_lib% %SDL2mixer_lib% %my_window_Lib%"
 
   cl /nologo /Zi /EHs /GR- /MDd /Fe:../bin/%name%.exe *.obj /link /SUBSYSTEM:CONSOLE %Libs% opengl32.lib shell32.lib user32.lib gdi32.lib
 

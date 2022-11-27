@@ -13,7 +13,6 @@
 #include <cstring>
 
 #include <SDL_event_control.h>
-#include <common_defs.h>
 
 #ifdef _WIN32
 #define FONT_PATH_R "C:/Windows/Fonts/Arial.ttf"

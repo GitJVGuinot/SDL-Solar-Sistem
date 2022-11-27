@@ -34,7 +34,8 @@ REM IMGUI
   set "SDL2main_Lib=..\deps\libs\Win_SDL2\x86\SDL2main.lib"
   set "SDL2ttf_Lib=..\deps\libs\Win_SDL2\x86\SDL2_TTF.lib"
   set "OWN_my_window_lib=..\deps\libs\Win_own\my_window_release.lib"
-  set "Libs=%SDL2_Lib% %SDL2main_Lib% %SDL2ttf_Lib% %OWN_my_window_lib%"
+  set "my_window_Lib=..\deps\libs\Win_own\my_window_release.lib"
+  set "Libs=%SDL2_Lib% %SDL2main_Lib% %SDL2ttf_Lib% %SDL2image_lib% %SDL2mixer_lib% %my_window_Lib%"
 
   cl /nologo /Zi /EHs /GR- /MD /Fe:../bin/%name%.exe *.obj /link /SUBSYSTEM:CONSOLE %Libs% opengl32.lib shell32.lib user32.lib gdi32.lib
 
