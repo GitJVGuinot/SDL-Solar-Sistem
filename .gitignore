@@ -1,16 +1,14 @@
 # VSCode
-
 *.vscode
 
 
 #VS
-
 *.vs
 
 
 # Objects
 
-*.obj
+/build/*.obj
 *.ilk
 *.pdb
 bin\*.pdb
