@@ -7,7 +7,7 @@
 *.o
 *.pdb
 *.ilk
-./actual_project/build/*.obj
+actual_project/build/*.obj
 
 # Precompiled Headers
 *.gch
@@ -25,7 +25,7 @@
 *.out
 *.app
 *.exe
-./actual_project/bin/main.elf
+*.elf
 
 # Dear ImGui
 *.ini
