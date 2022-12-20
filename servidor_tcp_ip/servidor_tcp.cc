@@ -15,7 +15,7 @@
 int main()
 {
   system("cls");
-  system("title TCP/IP Server");
+  system("title Solar System Server");
 
   WSADATA ws;
   if(WSAStartup(MAKEWORD(2, 0), &ws) != 0) {

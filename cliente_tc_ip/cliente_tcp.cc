@@ -12,7 +12,7 @@
 int main()
 {
   system("cls");
-  system("title TCP/IP Client");
+  system("title Solar System Client");
 
   WSADATA ws;
   if(WSAStartup(MAKEWORD(2, 0), &ws) != 0)
