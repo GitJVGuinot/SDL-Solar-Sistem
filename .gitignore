@@ -1,0 +1,35 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.pdb
+*.ilk
+./build/*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Fortran module files
+*.mod
+*.smod
+
+# Executables
+*.out
+*.app
+*.exe
+*.elf
+./bin/main.elf
+
+# Dear ImGui
+*.ini
+
+# Visual Studio
+*.vs
