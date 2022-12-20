@@ -10,6 +10,16 @@
 #include <chrono>
 #include <algorithm>
 
+const enum
+{
+  seconds = 0,
+  milliseconds,
+  microseconds,
+  maxprecision,
+  nanoseconds,
+  picoseconds,
+};
+
 class TimeCont
 {
 private:
@@ -17,34 +27,16 @@ private:
   std::chrono::time_point<std::chrono::steady_clock> end_time_;
 
 public:
+  static void Example();
 
   void startTime();
 
-  void endTime();
+  // The next functions are only avaliable for the enums precisions
+  // Each time are called take the new value for end_time_
+  // and calculate the time between start_time_ & end_time_
+  long long getElapsedTime(const int &precision);
+  int printElapsedTime(const int &precision, char *str = nullptr);
 
-  // Use 10l to 0.1, 100l to 0.01 ... to set the precision in the template
-  // Example
-  // TimeCont time;
-  // time.printElapsedTime<1000l>();
-  // that significate a precision of 0.001 -> 1678 units = 1.678 sec
-  /*
-  template <typename precision>
-  void printElapsedTime(char* str = nullptr);
-  */
-  void printElapsedSeconds(char* str = nullptr);
-
-  void printElapsedMilliseconds(char* str = nullptr);
-
-  void printElapsedMicroseconds(char* str = nullptr);
-
-  void printElapsedMaxPrecision(char* str = nullptr);
-
-  void printElapsedNanoseconds(char* str = nullptr);
-
-  void printElapsedPicoseconds(char* str = nullptr);
-
-  // This is going to wait for 100 milliseconds = 0.1 second
-  static void Example();
 };
 
 /////////////////////////
