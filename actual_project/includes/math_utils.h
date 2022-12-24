@@ -16,7 +16,7 @@
 #include "vector_3.h"
 #include "vector_4.h"
 
-#include <algorithm>
+#include <random>
 
 #define PI 3.14159265358979323846f
 #define Between(x, y, z) (x >= y && y >= z)
@@ -50,12 +50,32 @@ public:
   static float Clamp(float value, float minVal, float maxVal);
 
   /**
+   * @brief Generates a random integer between a given minimum and maximum value.
+   *
+   * @param max The maximum value (inclusive).
+   * @param min The minimum value (inclusive).
+   *
+   * @return A random integer between `min` and `max`.
+   */
+  static int iRand(int max, int min);
+
+  /**
+   * @brief Generates a random float between a given minimum and maximum value.
+   *
+   * @param max The maximum value (inclusive).
+   * @param min The minimum value (inclusive).
+   *
+   * @return A random float between `min` and `max`.
+   */
+  static float fRand(float max, float min);
+
+  /**
    * @brief Returns the minimum value in an array of Vec3 values.
    * @param values Array of Vec3 values.
    * @param n_values Number of values in the array.
    * @return Minimum value.
    */
-  static Vec3 TakeMin(Vec3* values, int n_values);
+  static Vec3 TakeMin(Vec3 *values, int n_values);
 
   /**
    * @brief Returns the maximum value in an array of Vec3 values.
@@ -63,7 +83,7 @@ public:
    * @param n_values Number of values in the array.
    * @return Maximum value.
    */
-  static Vec3 TakeMax(Vec3* values, int n_values);
+  static Vec3 TakeMax(Vec3 *values, int n_values);
 
   /**
    * @brief Homogenizes a Vec4 value.
@@ -171,23 +191,42 @@ inline float MathUtils::Clamp(float value, float minVal, float maxVal)
   return value;
 }
 
-inline Vec3 MathUtils::TakeMin(Vec3* values, int n_values){
+inline Vec3 MathUtils::TakeMin(Vec3 *values, int n_values)
+{
   Vec3 min = values[0];
-  for(int i=1; i<n_values; i++){
+  for (int i = 1; i < n_values; i++)
+  {
     min.x = std::min(min.x, values[i].x);
     min.y = std::min(min.y, values[i].y);
     min.z = std::min(min.z, values[i].z);
   }
   return min;
 }
-inline Vec3 MathUtils::TakeMax(Vec3* values, int n_values){
+
+inline Vec3 MathUtils::TakeMax(Vec3 *values, int n_values)
+{
   Vec3 max = values[0];
-  for(int i=1; i<n_values; i++){
+  for (int i = 1; i < n_values; i++)
+  {
     max.x = std::max(max.x, values[i].x);
     max.y = std::max(max.y, values[i].y);
     max.z = std::max(max.z, values[i].z);
   }
   return max;
+}
+
+inline int MathUtils::iRand(int max, int min)
+{
+  return min + rand() % (max + 1);
+}
+
+inline float MathUtils::fRand(float max, float min)
+{
+  std::random_device rd;
+  std::default_random_engine eng(rd());
+  std::uniform_real_distribution<float> distr(min, max);
+
+  return distr(eng);
 }
 
 /////////////////////////

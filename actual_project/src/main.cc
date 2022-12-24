@@ -5,6 +5,7 @@
 int main(int argc, char **argv)
 {
   system(CLEAR_CONSOLE);
+  system("title Solar System");
   srand(time(nullptr));
 
   // Inputs init
@@ -32,7 +33,7 @@ int main(int argc, char **argv)
   Debug_Window::Init(win.window, win.render);
 
   // Variables init
-  std::vector<struct Objects> objects(7);
+  std::vector<struct Objects> objects(5);
   Vec3 light;
   Render drawRender;
   Vec3 *objects_mov = nullptr;
@@ -44,6 +45,7 @@ int main(int argc, char **argv)
   std::cout << "Win_x: " << g_max_win.x << ", Win_y: " << g_max_win.y << std::endl;
   std::cout << "Height: " << k_TextHeight << ", Width: " << k_TextWitdh << ", Rows: " << k_Rows << ", Columns: " << k_Columns << std::endl;
 
+  bool showImgui = true;
   while (win.runing)
   {
     // Start of the graphic window
@@ -51,51 +53,27 @@ int main(int argc, char **argv)
     Debug_Window::Update();
     drawRender.inputs(keys);
 
+    // Limits camera draw & light
+    drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y}, light);
+
     // Objects orbit
-    for (int i = 0; i < (int)objects.size(); i++)
-    {
-      switch (objects.at(i).type)
-      {
-      case typeSphere:
-        objects.at(i).sphere.orbit();
-        break;
-      case typeCube:
-        objects.at(i).cube.orbit();
-        break;
-      case typeFigure:
-        objects.at(i).figure.orbit();
-        break;
-      }
-    }
-
-    if(objects.size()>6){
-      switch (objects.at(6).type){
-        case typeSphere:
-          objects.at(6).sphere.rotation(Vec3(0,0.1f,0));
-          break;
-        case typeCube:
-          objects.at(6).cube.rotation(Vec3(0,0.1f,0));
-          break;
-        case typeFigure:
-          objects.at(6).figure.rotation(Vec3(0,0.1f,0));
-          break;
-      }
-    }
-
     // Get the positioning variables on the screen
     for (int i = 0; i < (int)objects.size(); i++)
     {
       switch (objects.at(i).type)
       {
       case typeSphere:
+        objects.at(i).sphere.orbit();
         objects_mov[i] = objects.at(i).sphere.mov_;
         objects_scale[i] = objects.at(i).sphere.getScale();
         break;
       case typeCube:
+        objects.at(i).cube.orbit();
         objects_mov[i] = objects.at(i).cube.mov_;
         objects_scale[i] = objects.at(i).cube.getScale();
         break;
       case typeFigure:
+        objects.at(i).figure.orbit();
         objects_mov[i] = objects.at(i).figure.mov_;
         objects_scale[i] = objects.at(i).figure.getScale();
         break;
@@ -123,11 +101,15 @@ int main(int argc, char **argv)
     }
 
     // ImGui window for objects control
-    Camera_Control(drawRender, win, {win.win_x, win.win_y});
-    Objects_Control(objects, &objects_mov, &objects_scale, g_max_win);
-
-    // Limits camera draw
-    drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y});
+    if (EVENT_DOWN(F11, keys))
+      objects.at(1).sphere.startDestroy();
+    if (EVENT_DOWN(F12, keys))
+      showImgui = !showImgui;
+    if (showImgui)
+    {
+      Camera_Control(drawRender, win, {win.win_x, win.win_y}, light);
+      Objects_Control(objects, &objects_mov, &objects_scale, g_max_win);
+    }
 
     // End of grafic window
     Debug_Window::Render();
@@ -151,26 +133,13 @@ void Basic_Objects_Init(std::vector<struct Objects> &objects, Vec3 &light, Rende
 
   for (int i = 0; i < 5; i++)
     objects.at(i).type = typeSphere;
-  objects.at(0).sphere.init(g_colors[WHITE], false, 15, {30, 30, 30}, {g_middle_win.x, g_middle_win.y, 0.0f});
-  objects.at(0).sphere.lines_ = true;
-  objects.at(0).sphere.linesColor_ = g_colors[WHITE];
-  objects.at(1).sphere.init({255,0,0,127}, true, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(2).sphere.init(g_colors[GREEN], false, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(3).sphere.init(g_colors[BLUE], false, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x - 60, objects.at(0).sphere.mov_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(4).sphere.init(g_colors[CYAN], false, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x + 60, objects.at(0).sphere.mov_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(4).sphere.lines_ = true;
-  objects.at(4).sphere.linesColor_ = g_colors[CYAN];
+  objects.at(0).sphere.init(SDL_Color{255, 255, 255, 100}, true, 20, {30, 30, 30}, {g_middle_win.x, g_middle_win.y, 0.0f});
+  objects.at(1).sphere.init(g_colors[RED], true, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
+  objects.at(2).sphere.init(g_colors[GREEN], true, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, objects.at(0).sphere.mov_);
+  objects.at(3).sphere.init(g_colors[BLUE], true, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x - 60, objects.at(0).sphere.mov_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
+  objects.at(4).sphere.init(g_colors[CYAN], true, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x + 60, objects.at(0).sphere.mov_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, objects.at(0).sphere.mov_);
   for (int i = 1; i < 5; i++)
-    objects.at(i).sphere.orbit_vel_ = 10.0f;
-
-  objects.at(5).type = typeCube;
-  objects.at(5).cube.init({255, 255, 255, 128}, true, {5.1f, 5.1f, 5.1f}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(5).cube.orbit_vel_ = 10.0f;
-  objects.at(5).cube.lines_ = true;
-  objects.at(5).cube.linesColor_ = {255, 0, 255, 255};
-
-  objects.at(6).type = typeFigure;
-  objects.at(6).figure.init("../data/3d_obj/keqing.obj", {175,0,255,255}, true, {25, 25, 25}, {objects.at(0).sphere.mov_.x, objects.at(0).sphere.mov_.y, 0.0f});
+    objects.at(i).sphere.orbit_vel_ = 45.0f;
 
   std::cout << "Objects generated" << std::endl;
 

@@ -47,7 +47,7 @@ void Debug_Window::Quit()
   ImGui::DestroyContext();
 }
 
-void Camera_Control(Render &render, My_Window &win, Vec2 max_win)
+void Camera_Control(Render &render, My_Window &win, Vec2 max_win, Vec3 &light)
 {
   if (ImGui::Begin("Camera controls"))
   {
@@ -57,9 +57,7 @@ void Camera_Control(Render &render, My_Window &win, Vec2 max_win)
 
     Vec3 mov = {0, 0, 0};
     ImGui::Text("Desp-> X: %0.0f, Y: %0.0f, Z: %0.0f", render.camera_.x, render.camera_.y, render.camera_.z);
-    ImGui::SliderFloat("Add X", &mov.x, -1, 1);
-    ImGui::SliderFloat("Add Y", &mov.y, -1, 1);
-    ImGui::SliderFloat("Add Z", &mov.z, -1, 1);
+    ImGui::SliderFloat3((const char *)"Mov\0", &mov.x, -1, 1);
     mov.x *= -1;
     mov.z *= -1;
     if (mov.x != 0 || mov.y != 0 || mov.z != 0)
@@ -67,9 +65,7 @@ void Camera_Control(Render &render, My_Window &win, Vec2 max_win)
 
     Vec3 rot = {0, 0, 0};
     ImGui::Text("Up-> X: %f, Y: %f, Z: %f", render.getUp().x, render.getUp().y, render.getUp().z);
-    ImGui::SliderFloat("Rot X", &rot.x, -1, 1);
-    ImGui::SliderFloat("Rot Y", &rot.y, -1, 1);
-    ImGui::SliderFloat("Rot Z", &rot.z, -1, 1);
+    ImGui::SliderFloat3((const char *)"Rot\0", &rot.x, -1, 1);
     rot.z *= -1;
     if (rot.x != 0 || rot.y != 0 || rot.z != 0)
       render.rotation(rot);
@@ -77,8 +73,8 @@ void Camera_Control(Render &render, My_Window &win, Vec2 max_win)
     float far = render.getFar();
     float near = render.getNear();
     ImGui::Text("Best far=1000 & near=1");
-    ImGui::SliderFloat("Far", &far, 2, 10000);
-    ImGui::SliderFloat("Near", &near, 0, 100);
+    ImGui::DragFloat("Far", &far, 2, 10000);
+    ImGui::DragFloat("Near", &near, 0, 100);
     if (far != render.getFar() || near != render.getNear())
       render.init(max_win, render.camera_, near, far);
 
@@ -87,21 +83,72 @@ void Camera_Control(Render &render, My_Window &win, Vec2 max_win)
       render.reset(max_win);
     }
 
+    ImGui::Text("Light point");
+    ImGui::DragFloat3((const char *)"Light", &light.x, 1.0f, 0, max_win.x);
+
     ImGui::End();
   }
   else
     ImGui::End();
 }
 
+void Destroy_Object(std::vector<Objects> &objects, Vec3 **objects_mov, Vec3 **objects_scale, Vec2 max_win, int nObject)
+{
+  *objects_mov = (Vec3 *)realloc(*objects_mov, (objects.size() - 1) * sizeof(Vec3));
+  *objects_scale = (Vec3 *)realloc(*objects_scale, (objects.size() - 1) * sizeof(Vec3));
+  std::vector<Objects> copyObjects(objects.size());
+  for (int i = 0; i < (int)objects.size(); i++)
+  {
+    copyObjects.at(i) = objects.at(i);
+  }
+  objects.resize(objects.size() - 1);
+  for (int i = 0; i < (int)objects.size(); i++)
+  {
+    if (i < nObject)
+      objects.at(i) = copyObjects.at(i);
+    else
+      objects.at(i) = copyObjects.at(i + 1);
+  }
+}
+
 void Objects_Control(std::vector<Objects> &objects, Vec3 **objects_mov, Vec3 **objects_scale, Vec2 max_win)
 {
 
+  static int nObject = 0;
+
+  for (int i = 0; i < objects.size(); i++)
+  {
+    switch (objects.at(i).type)
+    {
+    case typeSphere:
+      if (objects.at(i).sphere.isDestroyed())
+      {
+        Destroy_Object(objects, &*objects_mov, &*objects_scale, max_win, i);
+      }
+      break;
+    case typeCube:
+      if (objects.at(i).cube.isDestroyed())
+      {
+        Destroy_Object(objects, &*objects_mov, &*objects_scale, max_win, i);
+      }
+      break;
+    case typeFigure:
+      if (objects.at(i).figure.isDestroyed())
+      {
+        Destroy_Object(objects, &*objects_mov, &*objects_scale, max_win, i);
+      }
+      break;
+    }
+  }
+
   if (ImGui::Begin("Objects controls"))
   {
+
     if (objects.size() < 100)
     {
       if (ImGui::Button("Create Object"))
       {
+        nObject = objects.size();
         *objects_mov = (Vec3 *)realloc(*objects_mov, (objects.size() + 1) * sizeof(Vec3));
         *objects_scale = (Vec3 *)realloc(*objects_scale, (objects.size() + 1) * sizeof(Vec3));
         std::vector<Objects> copyObjects(objects.size());
@@ -124,17 +171,17 @@ void Objects_Control(std::vector<Objects> &objects, Vec3 **objects_mov, Vec3 **o
     {
       if (ImGui::Button("Destroy Object"))
       {
-        *objects_mov = (Vec3 *)realloc(*objects_mov, (objects.size() - 1) * sizeof(Vec3));
-        *objects_scale = (Vec3 *)realloc(*objects_scale, (objects.size() - 1) * sizeof(Vec3));
-        std::vector<Objects> copyObjects(objects.size());
-        for (int i = 0; i < (int)objects.size() - 1; i++)
+        switch (objects.at(nObject).type)
         {
-          copyObjects.at(i) = objects.at(i);
-        }
-        objects.resize(objects.size() - 1);
-        for (int i = 0; i < (int)objects.size(); i++)
-        {
-          objects.at(i) = copyObjects.at(i);
+        case typeSphere:
+          objects.at(nObject).sphere.startDestroy();
+          break;
+        case typeCube:
+          objects.at(nObject).cube.startDestroy();
+          break;
+        case typeFigure:
+          objects.at(nObject).figure.startDestroy();
+          break;
         }
       }
     }
@@ -143,8 +190,8 @@ void Objects_Control(std::vector<Objects> &objects, Vec3 **objects_mov, Vec3 **o
 
     ImGui::Text("Total objects: %d", (int)objects.size());
 
-    static int nObject = 0;
     ImGui::DragInt("Select object", &nObject, 0.25f, 0, objects.size() - 1);
+
     if (nObject >= (int)objects.size())
       nObject = 0;
     ImGui::Separator();

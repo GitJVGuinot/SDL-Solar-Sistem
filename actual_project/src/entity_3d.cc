@@ -4,6 +4,9 @@
 #include <vector>
 #include <algorithm>
 
+typedef std::ratio<1l, 1000l> milli;
+typedef std::chrono::duration<long long, milli> Milliseconds;
+
 // Init entity
 Entity::Entity()
 {
@@ -32,6 +35,8 @@ Entity::Entity()
   fill_ = false;
   lines_ = false;
   orbit_vel_ = 0;
+  destroying_ = false;
+  destroyed_ = false;
 
   bytesSize = 0;
   bytesSize += sizeof(Vec3);
@@ -57,25 +62,31 @@ Entity::Entity()
   bytesSize += sizeof(bool);
   bytesSize += sizeof(bool);
   bytesSize += sizeof(float);
+  bytesSize += sizeof(bool);
+  bytesSize += sizeof(bool);
 };
 
 void Entity::operator=(const Entity &other)
 {
-  scale_ = other.scale_;
-  rotate_ = other.rotate_;
   dim_ = other.dim_;
   mov_ = other.mov_;
-
-  res_ = other.res_;
-
-  vertex_ = other.vertex_;
-  nFaces_ = other.nFaces_;
   orbit_ = other.orbit_;
   orbit_center_ = other.orbit_center_;
+  renderLight_ = other.renderLight_;
   fillColor_ = other.fillColor_;
   linesColor_ = other.linesColor_;
-  fill_ = other.fill_;
+  fill_ = other.fill_; 
+  lines_ = other.lines_;
   orbit_vel_ = other.orbit_vel_;
+  bytesSize = bytesSize;
+  destroying_ = other.destroying_;
+  destroyed_ = other.destroyed_;
+  nFaces_ = other.nFaces_;
+  scale_ = other.scale_; 
+  rotate_ = other.rotate_;
+
+  res_ = other.res_;
+  vertex_ = other.vertex_;
 
   points_ = (Vec3 *)calloc(vertex_, sizeof(Vec3));
 
@@ -103,7 +114,6 @@ void Entity::operator=(const Entity &other)
 void Entity::proportion()
 {
   Vec3 extrem = MathUtils::TakeMax(points_, vertex_);
-  float magn = extrem.Magnitude();
 
   float max = extrem.x;
   max = std::max(max, extrem.y);
@@ -111,14 +121,13 @@ void Entity::proportion()
 
   scale_.x = scale_.y = scale_.z = dim_ = max;
 
-  if(max != 1.0f)
+  if (max != 1.0f)
   {
     scale(1 / max);
   }
 
   scale(0.5f);
 }
-
 
 void Entity::centered()
 {
@@ -312,8 +321,62 @@ void Entity::inputs(Keys *keys)
     scale({1.1f, 1.1f, 1.1f});
 }
 
+void Entity::startDestroy()
+{
+  destroying_ = true;
+  destroying_time_ = std::chrono::steady_clock::now();
+}
+
+bool Entity::isDestroyed()
+{
+  return destroyed_;
+}
+
+void Entity::destroying()
+{
+  check_time_ = std::chrono::steady_clock::now();
+
+  auto elapsed_milli = std::chrono::duration_cast<Milliseconds>(check_time_ - destroying_time_);
+
+  fill_ = false;
+  lines_ = true;
+  renderLight_ = false;
+
+  if (elapsed_milli.count() > 200.0f)
+  {
+    lines_ = false;
+  }
+
+  if (elapsed_milli.count() >= 750.0f)
+  {
+    if (fillColor_.a > (Uint8)5.0f)
+      fillColor_.a -= (Uint8)5.0f;
+    else
+    {
+      fillColor_.a = 0;
+      destroyed_ = true;
+      destroying_ = false;
+    }
+  }
+
+  Vec3 mov = mov_;
+  translation({-mov_.x, -mov_.y, -mov_.z});
+  for (int i = 0; i < vertex_; i++)
+  {
+    if (rand() < FLT_MAX / 1000)
+    {
+      Mat4 model = Mat4::Scale(MathUtils::fRand(1.075f, 0.99f));
+      *(points_ + i) = MathUtils::Mat4TransformVec3(model, *(points_ + i));
+    }
+  }
+  translation(mov);
+}
+
 void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, Vec3 light, int id)
 {
+  if (destroying_)
+    destroying();
+
   // Transform of 2D points
   Mat3 model = Mat3::Identity();
   Mat3 scale = Mat3::Scale(drawRender.getRenderScale());
@@ -350,9 +413,7 @@ void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, Vec3 ligh
     }
 
     std::sort(order_, order_ + nFaces_, [this, &drawRender](int a, int b)
-    {
-      return Vec3::Substract(centers_[a], drawRender.camera_).Magnitude() > Vec3::Substract(centers_[b], drawRender.camera_).Magnitude();
-    });
+              { return Vec3::Substract(centers_[a], drawRender.camera_).Magnitude() > Vec3::Substract(centers_[b], drawRender.camera_).Magnitude(); });
 
     // Draw Triangles
     for (int i = 0; i < nFaces_; i++)
@@ -389,34 +450,35 @@ void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, Vec3 ligh
         }
       }
 
-        draw = true;
-        if (faces_[order_[i]].n_points == 4) {
-          draw = (draw && draw_sdl_[faces_[order_[i]].points[0]].active);
-          draw = (draw && draw_sdl_[faces_[order_[i]].points[2]].active);
-          draw = (draw && draw_sdl_[faces_[order_[i]].points[3]].active);
-        }
-        if (faces_[order_[i]].n_points == 4 && draw)
+      draw = true;
+      if (faces_[order_[i]].n_points == 4)
+      {
+        draw = (draw && draw_sdl_[faces_[order_[i]].points[0]].active);
+        draw = (draw && draw_sdl_[faces_[order_[i]].points[2]].active);
+        draw = (draw && draw_sdl_[faces_[order_[i]].points[3]].active);
+      }
+      if (faces_[order_[i]].n_points == 4 && draw)
+      {
+        static SDL_Vertex triangle1[3];
+        triangle1[0] = draw_sdl_[faces_[order_[i]].points[3]].point;
+        triangle1[1] = draw_sdl_[faces_[order_[i]].points[2]].point;
+        triangle1[2] = draw_sdl_[faces_[order_[i]].points[0]].point;
+
+        if (fill_)
         {
-          static SDL_Vertex triangle1[3];
-          triangle1[0] = draw_sdl_[faces_[order_[i]].points[3]].point;
-          triangle1[1] = draw_sdl_[faces_[order_[i]].points[2]].point;
-          triangle1[2] = draw_sdl_[faces_[order_[i]].points[0]].point;
-
-          if (fill_)
-          {
-            SDL_RenderGeometry(render, NULL, triangle1, 3, NULL, 0);
-          }
-
-          if (lines_)
-          {
-            SDL_RenderDrawLine(render, triangle1[0].position.x, triangle1[0].position.y,
-                               triangle1[1].position.x, triangle1[1].position.y);
-            SDL_RenderDrawLine(render, triangle1[1].position.x, triangle1[1].position.y,
-                               triangle1[2].position.x, triangle1[2].position.y);
-            SDL_RenderDrawLine(render, triangle1[2].position.x, triangle1[2].position.y,
-                               triangle1[0].position.x, triangle1[0].position.y);
-          }
+          SDL_RenderGeometry(render, NULL, triangle1, 3, NULL, 0);
         }
+
+        if (lines_)
+        {
+          SDL_RenderDrawLine(render, triangle1[0].position.x, triangle1[0].position.y,
+                             triangle1[1].position.x, triangle1[1].position.y);
+          SDL_RenderDrawLine(render, triangle1[1].position.x, triangle1[1].position.y,
+                             triangle1[2].position.x, triangle1[2].position.y);
+          SDL_RenderDrawLine(render, triangle1[2].position.x, triangle1[2].position.y,
+                             triangle1[0].position.x, triangle1[0].position.y);
+        }
+      }
     }
   }
   else
@@ -430,7 +492,7 @@ void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, Vec3 ligh
   }
 }
 
-void Entity::print () {}
+void Entity::print() {}
 
 Entity::~Entity()
 {

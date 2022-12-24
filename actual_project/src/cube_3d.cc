@@ -124,6 +124,8 @@ int Cube::init(SDL_Color color, bool fill, Vec3 p_scale, Vec3 mov, Vec3 rot, Vec
   bytesSize += sizeof(bool);
   bytesSize += sizeof(bool);
   bytesSize += sizeof(float);
+  bytesSize += sizeof(bool);
+  bytesSize += sizeof(bool);
 
   std::cout << "Bytes size: " << bytesSize << std::endl;
   std::cout << "Real size " << sizeof(this) << std::endl;
@@ -131,4 +133,4 @@ int Cube::init(SDL_Color color, bool fill, Vec3 p_scale, Vec3 mov, Vec3 rot, Vec
   return 0;
 }
 
-void Cube::print () {}
+void Cube::print() {}

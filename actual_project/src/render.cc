@@ -233,6 +233,8 @@ SDL_Color renderColorLight(Vec3 point, Vec3 desp, Vec3 light, SDL_Color color)
   light_vector.Normalize();
 
   float euler = std::abs(MathUtils::Radian_To_Euler(Vec3::Angle(point_vector, light_vector)));
+  euler+=45;
+  euler = std::min(euler, 180.0f);
 
   const float kAngleRestMultiplier = 255.0f / 180.0f;
   float angleRest = euler * kAngleRestMultiplier;
@@ -358,7 +360,7 @@ void Render::renderPoint(Render_Vert &ret_vert, Vec3 point, Vec3 desp, Vec3 ligh
     ret_vert = Render_Vert{{0, 0, 0}, false};
 }
 
-void Render::cameraDraw(Keys *keys, SDL_Renderer *render, Vec2 max_win)
+void Render::cameraDraw(Keys *keys, SDL_Renderer *render, Vec2 max_win, Vec3 light)
 {
   // 2D point transformation
   Mat3 model = Mat3::Identity();
@@ -377,6 +379,11 @@ void Render::cameraDraw(Keys *keys, SDL_Renderer *render, Vec2 max_win)
     }
     renderPoint(draw[i], faces_centers_[i], Vec3{0,0,0}, Vec3{0,0,0}, {255,0,255,255}, model, true);
   }
+
+  Render_Vert drawLight;
+  renderPoint(drawLight, light, Vec3{0,0,0}, light, SDL_Color{255,255,255,255}, model, true);
+  SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
+  SDL_RenderDrawPoint(render, drawLight.point.position.x, drawLight.point.position.y);
 
   SDL_SetRenderDrawColor(render, 255, 0, 255, 128);
   SDL_RenderDrawLine(render, square[0].point.position.x, square[0].point.position.y, square[1].point.position.x, square[1].point.position.y);

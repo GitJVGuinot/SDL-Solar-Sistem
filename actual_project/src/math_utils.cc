@@ -144,6 +144,7 @@ float MathUtils::Radian_To_Euler(float radian)
 {
   return (radian * 180 / PI);
 }
+
 float MathUtils::Euler_To_Radian(float euler)
 {
   return (euler * PI / 180);

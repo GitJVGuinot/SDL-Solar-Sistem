@@ -78,8 +78,7 @@ void Sphere::obtainSphere()
 
 int Sphere::init(SDL_Color color, bool fill, int res, Vec3 p_scale, Vec3 mov, Vec3 rot, Vec3 orbit, Vec3 orbit_center)
 {
-  if (res > 50)
-    return 1;
+  res = std::min(res, 50);
 
   fillColor_ = color;
   linesColor_ = color;
@@ -132,8 +131,10 @@ int Sphere::init(SDL_Color color, bool fill, int res, Vec3 p_scale, Vec3 mov, Ve
   bytesSize += sizeof(bool);
   bytesSize += sizeof(bool);
   bytesSize += sizeof(float);
+  bytesSize += sizeof(bool);
+  bytesSize += sizeof(bool);
 
   return 0;
 }
 
-void Sphere::print () {}
+void Sphere::print() {}

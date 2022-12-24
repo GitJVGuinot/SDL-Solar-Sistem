@@ -12,6 +12,7 @@
 #include <SDL_event_control.h>
 #include <common_defs.h>
 #include <render.h>
+#include <chrono>
 
 /**
  * @struct Faces.
@@ -38,22 +39,35 @@ struct Faces
 class Entity
 {
 protected:
-  Vec3 scale_;           ///< The scale of the entity.
-  Vec3 rotate_;          ///< The rotation of the entity.
+  Vec3 scale_;  ///< The scale of the entity.
+  Vec3 rotate_; ///< The rotation of the entity.
 
-  int res_;              ///< The resolution of the entity.
-  int vertex_;           ///< The number of vertices in the entity.
-  Vec3 *points_;         ///< An array of vertices that make up the entity.
-  Vec3 *centers_;        ///< An array of center points for each face of the entity.
+  int res_;       ///< The resolution of the entity.
+  int vertex_;    ///< The number of vertices in the entity.
+  Vec3 *points_;  ///< An array of vertices that make up the entity.
+  Vec3 *centers_; ///< An array of center points for each face of the entity.
 
   Render_Vert *draw_sdl_; ///< A pointer to an array of vertices used for rendering the entity with SDL.
 
-  Faces *faces_;         ///< A pointer to an array of faces that make up the entity.
-  int nFaces_;           ///< The number of faces in the entity.
+  Faces *faces_; ///< A pointer to an array of faces that make up the entity.
+  int nFaces_;   ///< The number of faces in the entity.
 
-  int *order_;           ///< An array of indices used to specify the order in which the faces are rendered.
+  int *order_; ///< An array of indices used to specify the order in which the faces are rendered.
 
-  int bytesSize;         ///< The size of the entity in bytes.
+  int bytesSize; ///< The size of the entity in bytes.
+
+  bool destroying_; ///< Flag that says if the entity are in the destroying cinematic
+  bool destroyed_;  ///< Flag that say if the object is destroyed (Is useless try to draw a destroyed entity)
+
+  std::chrono::time_point<std::chrono::steady_clock> destroying_time_; ///< The current time since the destruction starts
+  std::chrono::time_point<std::chrono::steady_clock> check_time_;      ///< A variable to ceck the passed time
+
+  /**
+   * @brief Make the entity destruction cinematics
+   *
+   * This function is called in the draw function if the fla destroing are activated
+   */
+  void destroying();
 
 public:
   float dim_;            ///< The dimensions of the entity.
@@ -75,77 +89,89 @@ public:
   Entity();
 
   /**
-     * @brief Assigns the values of another Entity to this one.
-     *
-     * @param other The Entity to copy from.
-     */
-    void operator=(const Entity &other);
+   * @brief Start the destruction of an object
+   */
+  void startDestroy();
 
-    /**
-     * @brief Calculates the proportions of the Entity.
-     */
-    void proportion();
+  /**
+   * @brief Returns the entity state
+   *
+   * @return Return true if the object was destroyed
+   */
+  bool isDestroyed();
 
-    /**
-     * @brief Centers the Entity.
-     */
-    void centered();
+  /**
+   * @brief Assigns the values of another Entity to this one.
+   *
+   * @param other The Entity to copy from.
+   */
+  void operator=(const Entity &other);
 
-    /**
-     * @brief Standardizes the Entity.
-     */
-    void standarize();
+  /**
+   * @brief Calculates the proportions of the Entity.
+   */
+  void proportion();
 
-    /**
-     * @brief Returns the point at a given position in the Entity.
-     *
-     * @param position The index of the point to retrieve.
-     *
-     * @return The point at the given position.
-     */
-    Vec3 point(int position);
+  /**
+   * @brief Centers the Entity.
+   */
+  void centered();
 
-    /**
-     * @brief Returns the scale of the Entity.
-     *
-     * @return The scale of the Entity.
-     */
-    Vec3 getScale();
+  /**
+   * @brief Standardizes the Entity.
+   */
+  void standarize();
 
-    /**
-     * @brief Returns the number of faces in the Entity.
-     *
-     * @return The number of faces in the Entity.
-     */
-    int getFaces();
+  /**
+   * @brief Returns the point at a given position in the Entity.
+   *
+   * @param position The index of the point to retrieve.
+   *
+   * @return The point at the given position.
+   */
+  Vec3 point(int position);
 
-    /**
-     * @brief Returns the size of the Entity.
-     *
-     * @return The size of the Entity.
-     */
-    int getSize();
+  /**
+   * @brief Returns the scale of the Entity.
+   *
+   * @return The scale of the Entity.
+   */
+  Vec3 getScale();
 
-    /**
-     * @brief Rotates the Entity by a given amount.
-     *
-     * @param rot The amount to rotate the Entity by.
-     */
-    void rotation(Vec3 rot);
+  /**
+   * @brief Returns the number of faces in the Entity.
+   *
+   * @return The number of faces in the Entity.
+   */
+  int getFaces();
 
-    /**
-     * @brief Orbits the Entity around a point.
-     */
-    void orbit();
+  /**
+   * @brief Returns the size of the Entity.
+   *
+   * @return The size of the Entity.
+   */
+  int getSize();
 
-    /**
-     * @brief Translates the Entity by a given amount.
-     *
-     * @param mov The amount to translate the Entity by.
-     */
-    void translation(Vec3 mov);
+  /**
+   * @brief Rotates the Entity by a given amount.
+   *
+   * @param rot The amount to rotate the Entity by.
+   */
+  void rotation(Vec3 rot);
 
-    /**
+  /**
+   * @brief Orbits the Entity around a point.
+   */
+  void orbit();
+
+  /**
+   * @brief Translates the Entity by a given amount.
+   *
+   * @param mov The amount to translate the Entity by.
+   */
+  void translation(Vec3 mov);
+
+  /**
    * @brief Scales the Entity by a given amount.
    *
    * @param scale The amount to scale the Entity by.
@@ -194,7 +220,7 @@ public:
   /**
    * @brief Function created to demostrate virtual inheritance.
    */
-  void print ();
+  void print();
 
   /**
    * @brief Destroys the Entity object.
