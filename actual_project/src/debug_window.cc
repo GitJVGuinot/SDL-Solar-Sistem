@@ -116,7 +116,7 @@ void Objects_Control(std::vector<Objects> &objects, Vec3 **objects_mov, Vec3 **o
 
   static int nObject = 0;
 
-  for (int i = 0; i < objects.size(); i++)
+  for (int i = 0; i < (int)objects.size(); i++)
   {
     switch (objects.at(i).type)
     {
