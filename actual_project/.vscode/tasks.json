@@ -1,15 +1,16 @@
 {
-    "version": "2.0.0",
-    "tasks": [ {
-			"type": "cppbuild",
-			"label": "C/C++: compilar archivo activo",
-			"command": "g++",
-			"args": [
-				"-fdiagnostics-color=always",
-				"-g",
-				"-O0",
-				"-Wall",
-				// Own src
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "cppbuild",
+      "label": "C/C++: compilar archivo activo",
+      "command": "g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-O0",
+        "-Wall",
+        // Own src
         "${workspaceFolder}/src/cube_3d.cc",
         "${workspaceFolder}/src/debug_window.cc",
         "${workspaceFolder}/src/entity_3d.cc",
@@ -18,56 +19,59 @@
         "${workspaceFolder}/src/math_utils.cc",
         "${workspaceFolder}/src/matrix_2.cc",
         "${workspaceFolder}/src/matrix_3.cc",
-				"${workspaceFolder}/src/matrix_4.cc",
+        "${workspaceFolder}/src/matrix_4.cc",
         "${workspaceFolder}/src/objects.cc",
         "${workspaceFolder}/src/render.cc",
         "${workspaceFolder}/src/sphere_3d.cc",
         "${workspaceFolder}/src/vector_2.cc",
         "${workspaceFolder}/src/vector_3.cc",
-				"${workspaceFolder}/src/vector_4.cc",
-				// Imgui src
-				"${workspaceFolder}/deps/includes/IMGUI/imgui.cpp",
-				"${workspaceFolder}/deps/includes/IMGUI/imgui_draw.cpp",
-				"${workspaceFolder}/deps/includes/IMGUI/imgui_impl_sdl.cpp",
-				"${workspaceFolder}/deps/includes/IMGUI/imgui_impl_sdlrenderer.cpp",
-				"${workspaceFolder}/deps/includes/IMGUI/imgui_tables.cpp",
-				"${workspaceFolder}/deps/includes/IMGUI/imgui_widgets.cpp",
+        "${workspaceFolder}/src/vector_4.cc",
+        "${workspaceFolder}/src/game_server.cc",
+        "${workspaceFolder}/src/game_client.cc",
+        // Imgui src
+        "${workspaceFolder}/deps/includes/IMGUI/imgui.cpp",
+        "${workspaceFolder}/deps/includes/IMGUI/imgui_draw.cpp",
+        "${workspaceFolder}/deps/includes/IMGUI/imgui_impl_sdl.cpp",
+        "${workspaceFolder}/deps/includes/IMGUI/imgui_impl_sdlrenderer.cpp",
+        "${workspaceFolder}/deps/includes/IMGUI/imgui_tables.cpp",
+        "${workspaceFolder}/deps/includes/IMGUI/imgui_widgets.cpp",
         // Tiny Obj Loader
-				"${workspaceFolder}/deps/includes/Obj_Loader/tiny_obj_loader.cpp",
-				// Salida de objetos
-				"-o",
-				"${workspaceFolder}/bin/main.elf", // Ejecutable Linux
-				"-m64",
-				"-Bstatic",
-				"-pedantic",
-				"-std=c++17",
-				"-I${workspaceFolder}/includes", // Includes propios
-				"-I${workspaceFolder}/deps/includes", // includes de 3º
-				"-D_THREAD_SAFE",
-				////////////////////////////////////
+        "${workspaceFolder}/deps/includes/Obj_Loader/tiny_obj_loader.cpp",
+        // Salida de objetos
+        "-o",
+        "${workspaceFolder}/bin/main.elf", // Ejecutable Linux
+        "-m64",
+        "-Bstatic",
+        "-pedantic",
+        "-std=c++17",
+        "-I${workspaceFolder}/includes", // Includes propios
+        "-I${workspaceFolder}/deps/includes", // includes de 3º
+        "-D_THREAD_SAFE",
+        ////////////////////////////////////
         // Librerias propias
-				"-L${workspaceFolder}/deps/libs/Linux_own/",
+        "-L${workspaceFolder}/deps/libs/Linux_own/",
         "-l:libmy_window.a",
-				////////////////////////////////////
-				// Liberias SDL2 y config SDL2
-				"`sdl2-config --cflags --libs`",
-				"-D_REENTRANT",
-				"-lSDL2",
-				"-lSDL2_mixer",
-				"-lSDL2_image",
-				"-lSDL2_ttf"
-				////////////////////////////////////
-			],
-			"options": {
-				"cwd": "${fileDirname}"
-			},
-			"problemMatcher": [
-				"$gcc"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"detail": "compilador: g++"
-		} ]
+        ////////////////////////////////////
+        // Liberias SDL2 y config SDL2
+        "`sdl2-config --cflags --libs`",
+        "-D_REENTRANT",
+        "-lSDL2",
+        "-lSDL2_mixer",
+        "-lSDL2_image",
+        "-lSDL2_ttf"
+        ////////////////////////////////////
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "compilador: g++"
+    }
+  ]
 }

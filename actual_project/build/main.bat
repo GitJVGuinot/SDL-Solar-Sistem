@@ -36,7 +36,7 @@ REM COMPILER
   set "My_Window_Lib=..\deps\libs\Win_own\my_window.lib"
   set "Libs=%SDL2_Lib% %SDL2main_Lib% %SDL2ttf_Lib% %SDL2image_lib% %SDL2mixer_lib% %My_Window_Lib%"
 
-  cl /nologo /Zi /EHs /GR- /MDd /Fe:../bin/%name%_debug.exe *.obj /link /SUBSYSTEM:CONSOLE %Libs% opengl32.lib shell32.lib user32.lib gdi32.lib
+  cl /nologo /Zi /EHs /GR- /MDd /Fe:../bin/%name%_debug.exe *.obj /link /SUBSYSTEM:CONSOLE %Libs% opengl32.lib shell32.lib user32.lib gdi32.lib ws2_32.lib
 
 @echo -----------------------------------------------------------------------
 @echo  Debug Compiler Finish
@@ -69,7 +69,7 @@ REM COMPILER
   set "My_Window_Lib=..\deps\libs\Win_own\my_window_release.lib"
   set "Libs=%SDL2_Lib% %SDL2main_Lib% %SDL2ttf_Lib% %SDL2image_lib% %SDL2mixer_lib% %My_Window_Lib%"
 
-  cl /nologo /O2 /EHs /GR- /MT /Fe:../bin/%name%.exe *.obj /link /SUBSYSTEM:CONSOLE %Libs% opengl32.lib shell32.lib user32.lib gdi32.lib
+  cl /nologo /O2 /EHs /GR- /MT /Fe:../bin/%name%.exe *.obj /link /SUBSYSTEM:CONSOLE %Libs% opengl32.lib shell32.lib user32.lib gdi32.lib ws2_32.lib
 
   @echo -----------------------------------------------------------------------
   @echo  Release compiler Finish
