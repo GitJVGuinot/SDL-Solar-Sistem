@@ -142,37 +142,37 @@ void Render::translation(Vec3 desp)
   }
 }
 
-void Render::inputs(Keys *keys)
+void Render::inputs()
 {
 
-  if (EVENT_DOWN(UP, keys))
+  if (EVENT_DOWN(UP))
     rotation(right_);
-  if (EVENT_DOWN(DOWN, keys))
+  if (EVENT_DOWN(DOWN))
     rotation(left_);
 
-  if (EVENT_DOWN(RIGHT, keys))
+  if (EVENT_DOWN(RIGHT))
     rotation(up_);
-  if (EVENT_DOWN(LEFT, keys))
+  if (EVENT_DOWN(LEFT))
     rotation(down_);
 
-  if (EVENT_DOWN(K_n, keys))
+  if (EVENT_DOWN(K_n))
     rotation(front_);
-  if (EVENT_DOWN(K_m, keys))
+  if (EVENT_DOWN(K_m))
     rotation(back_);
 
-  if (EVENT_DOWN(K_w, keys))
+  if (EVENT_DOWN(K_w))
     translation(back_);
-  if (EVENT_DOWN(K_s, keys))
+  if (EVENT_DOWN(K_s))
     translation(front_);
 
-  if (EVENT_DOWN(K_a, keys))
+  if (EVENT_DOWN(K_a))
     translation(right_);
-  if (EVENT_DOWN(K_d, keys))
+  if (EVENT_DOWN(K_d))
     translation(left_);
 
-  if (EVENT_DOWN(K_q, keys))
+  if (EVENT_DOWN(K_q))
     translation(down_);
-  if (EVENT_DOWN(K_e, keys))
+  if (EVENT_DOWN(K_e))
     translation(up_);
 }
 
@@ -357,10 +357,10 @@ void Render::renderPoint(Render_Vert &ret_vert, Vec3 point, Vec3 desp, Vec3 ligh
     ret_vert = Render_Vert{ret, true};
   }
   else
-    ret_vert = Render_Vert{{0, 0, 0}, false};
+    ret_vert = Render_Vert{{{0,0}, {0,0,0,0}, {0,0}}, false};
 }
 
-void Render::cameraDraw(Keys *keys, SDL_Renderer *render, Vec2 max_win, Vec3 light)
+void Render::cameraDraw(SDL_Renderer *render, Vec2 max_win, Vec3 light)
 {
   // 2D point transformation
   Mat3 model = Mat3::Identity();

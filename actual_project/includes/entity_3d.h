@@ -183,7 +183,7 @@ public:
    *
    * @param keys The Keys object to use for input processing.
    */
-  void inputs(Keys *keys);
+  void inputs();
 
   /**
    * @brief Calculates the color of a point on the Entity under a given light.
@@ -215,7 +215,7 @@ public:
    * @param light The lighting vector for the Entity.
    * @param id An optional identifier for the Entity.
    */
-  void draw(Keys *keys, SDL_Renderer *render, Render drawRender, Vec3 light, int id = 0);
+  void draw(SDL_Renderer *render, Render drawRender, Vec3 light, int id = 0);
 
   /**
    * @brief Function created to demostrate virtual inheritance.

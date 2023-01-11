@@ -1,9 +1,9 @@
-/// @author F.c.o Javier Guinot Almenar <guinotal@esat-alumni.com>
-/// @file SDL_event_control.h
+/// @author F.c.o Javier Guinot Almenar
 
 ////////////////////////////////
-#ifndef __SDL_EVENT_CONTROL_H__
-#define __SDL_EVENT_CONTROL_H__ 1
+// Guardas, NO TOCAR
+#ifndef SDL_event_control_h
+#define SDL_event_control_h
 ////////////////////////////////
 
 #include <SDL2/SDL.h>
@@ -90,48 +90,41 @@ const int FULL_EXIT_WINDOW = 66;
 
 const int MAX_INPUTS = 67;
 
-/**
- * @struct Keys
- * @brief Struct representing a keyboard key
- *
- * The Keys struct stores information about a keyboard key.
- */
 struct Keys
 {
-  bool down; ///< Boolean indicating whether the key is currently being pressed down
-  bool up; ///< Boolean indicating whether the key is currently not being pressed
-  char letter; ///< Character representing the lowercase version of the key
-  char may_letter; ///< Character representing the uppercase version of the key
+  bool down;
+  bool up;
+  char letter;
+  char may_letter;
 };
 
 /**
- * @brief Initializes a Keys struct
- * @param keys Pointer to the Keys struct to be initialized
- */
-void InitKeyboard(Keys *keys);
+ * Allows you to modify a especific key
+*/
+void ModifyKeyboard(Keys key, int input);
 
 /**
- * @brief Updates a Keys struct to reflect the current state of the keyboard
- * @param keys Pointer to the Keys struct to be updated
+ * Init a Keys array use after SDL_Inits
  */
-void TakeKeyboard(Keys *keys);
+void InitKeyboard();
 
 /**
- * @brief Returns a boolean indicating whether the key represented by input is currently being pressed down
- * @param input Integer representing the key
- * @param keys Pointer to the Keys struct
- * @return Boolean indicating whether the key is currently being pressed down
+ * Use in the while Start
+ * You can found it in My_Window::whileInit
  */
-bool EVENT_DOWN(int input, Keys *keys);
+void TakeKeyboard();
 
 /**
- * @brief Returns a boolean indicating whether the key represented by input is currently not being pressed
- * @param input Integer representing the key
- * @param keys Pointer to the Keys struct
- * @return Boolean indicating whether the key is currently not being pressed
+ * @return the input down of the Keys array
  */
-bool EVENT_UP(int input, Keys *keys);
+bool EVENT_DOWN(int input);
+
+/**
+ * @return the input up of the Keys array
+ */
+bool EVENT_UP(int input);
 
 ////////////////////////////////
-#endif /* __SDL_EVENT_CONTROL_H__ */
+// Guardas, NO TOCAR
+#endif /* SDL_event_control_h */
 ////////////////////////////////

@@ -78,7 +78,7 @@ void Entity::operator=(const Entity &other)
   fill_ = other.fill_; 
   lines_ = other.lines_;
   orbit_vel_ = other.orbit_vel_;
-  bytesSize = bytesSize;
+  bytesSize = other.bytesSize;
   destroying_ = other.destroying_;
   destroyed_ = other.destroyed_;
   nFaces_ = other.nFaces_;
@@ -287,37 +287,37 @@ void Entity::scale(Vec3 p_scale_)
   translation(mov);
 }
 
-void Entity::inputs(Keys *keys)
+void Entity::inputs()
 {
-  if (EVENT_DOWN(DOWN, keys))
+  if (EVENT_DOWN(DOWN))
     rotation({1.0f, 0.0f, 0.0f});
-  if (EVENT_DOWN(UP, keys))
+  if (EVENT_DOWN(UP))
     rotation({-1.0f, 0.0f, 0.0f});
-  if (EVENT_DOWN(RIGHT, keys))
+  if (EVENT_DOWN(RIGHT))
     rotation({0.0f, 1.0f, 0.0f});
-  if (EVENT_DOWN(LEFT, keys))
+  if (EVENT_DOWN(LEFT))
     rotation({0.0f, -1.0f, 0.0f});
-  if (EVENT_DOWN(K_z, keys))
+  if (EVENT_DOWN(K_z))
     rotation({0.0f, 0.0f, -1.0f});
-  if (EVENT_DOWN(K_x, keys))
+  if (EVENT_DOWN(K_x))
     rotation({0.0f, 0.0f, 1.0f});
 
-  if (EVENT_DOWN(K_a, keys))
+  if (EVENT_DOWN(K_a))
     translation({-0.1f, 0.0f, 0.0f});
-  if (EVENT_DOWN(K_d, keys))
+  if (EVENT_DOWN(K_d))
     translation({0.1f, 0.0f, 0.0f});
-  if (EVENT_DOWN(K_w, keys))
+  if (EVENT_DOWN(K_w))
     translation({0.0f, -0.1f, 0.0f});
-  if (EVENT_DOWN(K_s, keys))
+  if (EVENT_DOWN(K_s))
     translation({0.0f, 0.1f, 0.0f});
-  if (EVENT_DOWN(K_q, keys))
+  if (EVENT_DOWN(K_q))
     translation({0.0f, 0.0f, 0.1f});
-  if (EVENT_DOWN(K_e, keys))
+  if (EVENT_DOWN(K_e))
     translation({0.0f, 0.0f, -0.1f});
 
-  if (EVENT_DOWN(SHIFT, keys))
+  if (EVENT_DOWN(SHIFT))
     scale({0.9f, 0.9f, 0.9f});
-  if (EVENT_DOWN(SPACE, keys))
+  if (EVENT_DOWN(SPACE))
     scale({1.1f, 1.1f, 1.1f});
 }
 
@@ -372,7 +372,7 @@ void Entity::destroying()
   translation(mov);
 }
 
-void Entity::draw(Keys *keys, SDL_Renderer *render, Render drawRender, Vec3 light, int id)
+void Entity::draw(SDL_Renderer *render, Render drawRender, Vec3 light, int id)
 {
   if (destroying_)
     destroying();

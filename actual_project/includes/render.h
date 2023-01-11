@@ -99,7 +99,7 @@ public:
    *
    *  @param keys A pointer to the keys object.
    */
-  void inputs(Keys *keys);
+  void inputs();
 
   /**
    *  @brief Calculate the draw order of the objects.
@@ -150,7 +150,7 @@ public:
    * @param render A pointer to the SDL_Renderer object that should be used for rendering.
    * @param max_win A Vec2 object representing the dimensions of the window in pixels.
    */
-  void cameraDraw(Keys *keys, SDL_Renderer *render, Vec2 max_win, Vec3 light);
+  void cameraDraw(SDL_Renderer *render, Vec2 max_win, Vec3 light);
 
   /**
    * @brief Returns the current render scale as a Vec2 object.

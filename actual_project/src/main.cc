@@ -9,8 +9,7 @@ int main(int argc, char **argv)
   srand(time(nullptr));
 
   // Inputs init
-  Keys keys[MAX_INPUTS];
-  InitKeyboard(keys);
+  InitKeyboard();
 
   // SDL services init
   TTF_Init();
@@ -49,12 +48,12 @@ int main(int argc, char **argv)
   while (win.runing)
   {
     // Start of the graphic window
-    win.whileInit(keys);
+    win.whileInit();
     Debug_Window::Update();
-    drawRender.inputs(keys);
+    drawRender.inputs();
 
     // Limits camera draw & light
-    drawRender.cameraDraw(keys, win.render, {win.win_x, win.win_y}, light);
+    drawRender.cameraDraw(win.render, {win.win_x, win.win_y}, light);
 
     // Objects orbit
     // Get the positioning variables on the screen
@@ -89,21 +88,21 @@ int main(int argc, char **argv)
       switch (objects.at(order[i]).type)
       {
       case typeSphere:
-        objects.at(order[i]).sphere.draw(keys, win.render, drawRender, light, order[i]);
+        objects.at(order[i]).sphere.draw(win.render, drawRender, light, order[i]);
         break;
       case typeCube:
-        objects.at(order[i]).cube.draw(keys, win.render, drawRender, light, order[i]);
+        objects.at(order[i]).cube.draw(win.render, drawRender, light, order[i]);
         break;
       case typeFigure:
-        objects.at(order[i]).figure.draw(keys, win.render, drawRender, light, order[i]);
+        objects.at(order[i]).figure.draw(win.render, drawRender, light, order[i]);
         break;
       }
     }
 
     // ImGui window for objects control
-    if (EVENT_DOWN(F11, keys))
+    if (EVENT_DOWN(F11))
       objects.at(1).sphere.startDestroy();
-    if (EVENT_DOWN(F12, keys))
+    if (EVENT_DOWN(F12))
       showImgui = !showImgui;
     if (showImgui)
     {
@@ -113,7 +112,7 @@ int main(int argc, char **argv)
 
     // End of grafic window
     Debug_Window::Render();
-    win.whileEnd(keys);
+    win.whileEnd();
   }
 
   // Memory allocs liberation
@@ -127,7 +126,7 @@ int main(int argc, char **argv)
 
 void Basic_Objects_Init(std::vector<struct Objects> &objects, Vec3 &light, Render &drawRender, Vec3 **objects_mov, Vec3 **objects_scale)
 {
-  std::cout << "Sizeof Entity: " << sizeof(struct Entity) << std::endl;
+  std::cout << "Sizeof Entity: " << sizeof(class Entity) << std::endl;
 
   std::cout << "Generating objects..." << std::endl;
 
