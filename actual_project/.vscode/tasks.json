@@ -4,7 +4,7 @@
     {
       "type": "cppbuild",
       "label": "C/C++: compilar archivo activo",
-      "command": "clang++",
+      "command": "g++",
       "args": [
         "-fdiagnostics-color=always",
         "-g",
