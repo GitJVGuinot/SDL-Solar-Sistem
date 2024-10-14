@@ -28,8 +28,8 @@
 
 const int k_TextHeight = 28;
 const int k_TextWitdh = ((float)(k_TextHeight * 4 / 7) - 1);
-const int k_Rows = 30;
-const int k_Columns = 80;
+const int k_Rows = 36;
+const int k_Columns = 65;
 
 Vec2 g_max_win = {(float)(k_TextWitdh * k_Columns), (float)(k_TextHeight *k_Rows)};
 Vec2 g_middle_win = {g_max_win.x / 2, g_max_win.y / 2};

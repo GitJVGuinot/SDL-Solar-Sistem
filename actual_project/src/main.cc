@@ -2,6 +2,8 @@
 
 #include <main.h>
 
+int total_planets = 20; // Cambia a la cantidad que necesites
+
 int main(int argc, char **argv)
 {
   system(CLEAR_CONSOLE);
@@ -32,7 +34,7 @@ int main(int argc, char **argv)
   Debug_Window::Init(win.window, win.render);
 
   // Variables init
-  std::vector<struct Objects> objects(5);
+  std::vector<struct Objects> objects(total_planets);
   Vec3 light;
   Render drawRender;
   Vec3 *objects_mov = nullptr;
@@ -45,6 +47,7 @@ int main(int argc, char **argv)
   std::cout << "Height: " << k_TextHeight << ", Width: " << k_TextWitdh << ", Rows: " << k_Rows << ", Columns: " << k_Columns << std::endl;
 
   bool showImgui = true;
+  float dt = 0.016f;
   while (win.runing)
   {
     // Start of the graphic window
@@ -62,17 +65,17 @@ int main(int argc, char **argv)
       switch (objects.at(i).type)
       {
       case typeSphere:
-        objects.at(i).sphere.orbit();
+        objects.at(i).sphere.orbit(dt);
         objects_mov[i] = objects.at(i).sphere.mov_;
         objects_scale[i] = objects.at(i).sphere.getScale();
         break;
       case typeCube:
-        objects.at(i).cube.orbit();
+        objects.at(i).cube.orbit(dt);
         objects_mov[i] = objects.at(i).cube.mov_;
         objects_scale[i] = objects.at(i).cube.getScale();
         break;
       case typeFigure:
-        objects.at(i).figure.orbit();
+        objects.at(i).figure.orbit(dt);
         objects_mov[i] = objects.at(i).figure.mov_;
         objects_scale[i] = objects.at(i).figure.getScale();
         break;
@@ -106,13 +109,14 @@ int main(int argc, char **argv)
       showImgui = !showImgui;
     if (showImgui)
     {
-      Camera_Control(drawRender, win, {win.win_x, win.win_y}, light);
+      Camera_Control(drawRender, win, {win.win_x, win.win_y}, light, dt);
       Objects_Control(objects, &objects_mov, &objects_scale, g_max_win);
     }
 
     // End of grafic window
     Debug_Window::Render();
     win.whileEnd();
+    dt = 1.0f / win.frame_rate;
   }
 
   // Memory allocs liberation
@@ -130,15 +134,53 @@ void Basic_Objects_Init(std::vector<struct Objects> &objects, Vec3 &light, Rende
 
   std::cout << "Generating objects..." << std::endl;
 
-  for (int i = 0; i < 5; i++)
+  // Inicializar el primer objeto (la esfera central)
+  objects.at(0).type = typeSphere;
+  objects.at(0).sphere.init(
+      SDL_Color{255, 255, 255, 100},         // Color blanco
+      true,                                  // Relleno
+      20,                                    // Resolución
+      {30, 30, 30},                          // Escala
+      {g_middle_win.x, g_middle_win.y, 0.0f} // Posición central
+  );
+
+  // Bucle para inicializar los demás planetas orbitando
+  for (int i = 1; i < total_planets; i++)
+  {
     objects.at(i).type = typeSphere;
-  objects.at(0).sphere.init(SDL_Color{255, 255, 255, 100}, true, 20, {30, 30, 30}, {g_middle_win.x, g_middle_win.y, 0.0f});
-  objects.at(1).sphere.init(g_colors[RED], true, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x - 40, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(2).sphere.init(g_colors[GREEN], true, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x, objects.at(0).sphere.mov_.y + 40, 0.0f}, {0, 0, 0}, {0.01f, 0.0f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(3).sphere.init(g_colors[BLUE], true, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x - 60, objects.at(0).sphere.mov_.y, 0.0f}, {0, 0, 0}, {0.0f, 0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  objects.at(4).sphere.init(g_colors[CYAN], true, 10, {5, 5, 5}, {objects.at(0).sphere.mov_.x + 60, objects.at(0).sphere.mov_.y + 60, 0.0f}, {0, 0, 0}, {0.01f, -0.01f, 0.0f}, objects.at(0).sphere.mov_);
-  for (int i = 1; i < 5; i++)
-    objects.at(i).sphere.orbit_vel_ = 45.0f;
+
+    // Posicionamos cada planeta en un círculo alrededor del punto (0,0,0)
+    float angle = i * (360.0f / total_planets); // Ángulo de separación entre planetas
+    float distance = 40.0f + (i * 10);          // Distancia creciente desde el centro de la órbita (0,0,0)
+
+    // Convertimos el ángulo a radianes para calcular la posición inicial de los planetas
+    float radians = angle * M_PI / 180.0f;
+    float x_pos = objects.at(0).sphere.mov_.x + distance * cos(radians); // Posición X inicial del planeta en órbita
+    float y_pos = objects.at(0).sphere.mov_.y + distance * sin(radians); // Posición Y inicial del planeta en órbita
+
+    // Calcular la velocidad tangencial
+    float vel_x = -0.01f * sin(radians); // Velocidad tangente en X (90 grados de la posición)
+    float vel_y = 0.01f * cos(radians);  // Velocidad tangente en Y
+
+    // Iniciar la esfera en una posición orbital alrededor de (0,0,0)
+    objects.at(i).sphere.init(
+        g_colors[i % 6],          // Color del planeta
+        true,                     // Relleno
+        10,                       // Resolución
+        {5, 5, 5},                // Escala
+        {x_pos, y_pos, 0.0f},     // Posición calculada en la órbita
+        {0, 0, 0},                // Rotación inicial
+        {vel_x, vel_y, 0.0f},     // Velocidad tangencial para orbitar
+        objects.at(0).sphere.mov_ // Centro de la órbita
+    );
+
+    // Establecer la velocidad de órbita de los planetas
+    objects.at(i).sphere.orbit_vel_ = 100.0f + i * 5.0f; // Variar ligeramente la velocidad orbital por planeta
+  }
+
+  // Establecer la velocidad de órbita
+  for (int i = 1; i < total_planets; i++)
+    objects.at(i).sphere.orbit_vel_ = 1000.0f;
 
   std::cout << "Objects generated" << std::endl;
 

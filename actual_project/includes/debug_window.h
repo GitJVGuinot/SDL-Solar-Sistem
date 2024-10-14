@@ -66,7 +66,7 @@ public:
  * @param win Reference to the My_Window object.
  * @param max_win Reference to the Vec2 object.
  */
-void Camera_Control(Render &drawRender, My_Window &win, Vec2 max_win, Vec3 &light);
+void Camera_Control(Render &drawRender, My_Window &win, Vec2 max_win, Vec3 &light, float dt);
 
 /**
  * @brief Modifies the given vector of Objects objects, two pointers to Vec3 objects, and Vec2 object to implement object control using ImGui.

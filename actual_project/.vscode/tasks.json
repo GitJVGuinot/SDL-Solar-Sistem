@@ -3,12 +3,12 @@
   "tasks": [
     {
       "type": "cppbuild",
-      "label": "C/C++: compilar archivo activo",
+      "label": "Compile system",
       "command": "g++",
       "args": [
         "-fdiagnostics-color=always",
-        "-g",
-        "-O0",
+        // "-g",
+        "-O2",
         "-Wall",
         // Own src
         "${workspaceFolder}/src/cube_3d.cc",
@@ -53,7 +53,7 @@
         "-l:libmy_window.a",
         ////////////////////////////////////
         // Liberias SDL2 y config SDL2
-        "`sdl2-config --cflags --libs`",
+        "-I/usr/include/SDL2", // "`sdl2-config --cflags --libs`",
         "-D_REENTRANT",
         "-lSDL2",
         "-lSDL2_mixer",

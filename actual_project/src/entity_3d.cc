@@ -75,14 +75,14 @@ void Entity::operator=(const Entity &other)
   renderLight_ = other.renderLight_;
   fillColor_ = other.fillColor_;
   linesColor_ = other.linesColor_;
-  fill_ = other.fill_; 
+  fill_ = other.fill_;
   lines_ = other.lines_;
   orbit_vel_ = other.orbit_vel_;
   bytesSize = other.bytesSize;
   destroying_ = other.destroying_;
   destroyed_ = other.destroyed_;
   nFaces_ = other.nFaces_;
-  scale_ = other.scale_; 
+  scale_ = other.scale_;
   rotate_ = other.rotate_;
 
   res_ = other.res_;
@@ -210,11 +210,11 @@ void Entity::rotation(Vec3 p_rot)
   translation(mov);
 }
 
-void Entity::orbit()
+void Entity::orbit(float dt)
 {
   if ((orbit_center_.x + orbit_center_.y + orbit_center_.z) != 0)
   {
-    Vec3 p_orbit_ = orbit_ * orbit_vel_;
+    Vec3 p_orbit_ = orbit_ * orbit_vel_ * dt;
 
     Mat4 rot_x;
     Mat4 rot_y;

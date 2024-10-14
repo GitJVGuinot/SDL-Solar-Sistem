@@ -161,8 +161,9 @@ public:
 
   /**
    * @brief Orbits the Entity around a point.
+   * 
    */
-  void orbit();
+  void orbit(float dt);
 
   /**
    * @brief Translates the Entity by a given amount.

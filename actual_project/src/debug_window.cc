@@ -47,13 +47,14 @@ void Debug_Window::Quit()
   ImGui::DestroyContext();
 }
 
-void Camera_Control(Render &render, My_Window &win, Vec2 max_win, Vec3 &light)
+void Camera_Control(Render &render, My_Window &win, Vec2 max_win, Vec3 &light, float dt)
 {
   if (ImGui::Begin("Camera controls"))
   {
 
     ImGui::Checkbox("FPS Control?", &win.fps_control);
     ImGui::Checkbox("Show FPS?", &win.show_fps);
+    ImGui::Text("Delta time %f", dt);
 
     Vec3 mov = {0, 0, 0};
     ImGui::Text("Desp-> X: %0.0f, Y: %0.0f, Z: %0.0f", render.camera_.x, render.camera_.y, render.camera_.z);

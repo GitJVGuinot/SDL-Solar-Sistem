@@ -25,7 +25,7 @@
  */
 class My_Window
 {
-private:
+public:
   int rows;
   int columns;
   int textHeight;
@@ -41,7 +41,6 @@ private:
   float frame_rate = 0;
   int ticks = 0;
 
-public:
   double fps = 60.0;
   bool fps_control;
   bool show_fps;
